@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.271
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nuclide", "Nuclide.csproj", "{043E5E11-6589-4BE8-967F-D104E5A6AA3D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nuclide.Test", "Test\Nuclide.Test.csproj", "{E514CC41-7D04-4D78-89AB-AE5E89D3A8E0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{043E5E11-6589-4BE8-967F-D104E5A6AA3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{043E5E11-6589-4BE8-967F-D104E5A6AA3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{043E5E11-6589-4BE8-967F-D104E5A6AA3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{043E5E11-6589-4BE8-967F-D104E5A6AA3D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E514CC41-7D04-4D78-89AB-AE5E89D3A8E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E514CC41-7D04-4D78-89AB-AE5E89D3A8E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E514CC41-7D04-4D78-89AB-AE5E89D3A8E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E514CC41-7D04-4D78-89AB-AE5E89D3A8E0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {652D12E9-061E-4B3F-A523-63E7480504BA}
+	EndGlobalSection
+EndGlobal
