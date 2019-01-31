@@ -121,7 +121,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             Assert.IsTrue(projectLogic.DoAllNetStandardOrCoreConfigurationsHaveNuspecs(projectFactory.Load(solutionFileFullName, solutionFileFullName.Replace(".sln", ".csproj"), projectErrorsAndInfos)));
 
             var target = disableNugetPush ? "IgnoreOutdatedBuildCakePendingChangesAndDoNotPush" : "IgnoreOutdatedBuildCakePendingChanges";
-            TargetRunner.RunBuildCakeScript("build.cake", testTargetFolder, vContainer.Resolve<ICakeRunner>(), target, errorsAndInfos);
+            TargetRunner.RunBuildCakeScript(BuildCake.Standard, testTargetFolder, target, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
         }
 

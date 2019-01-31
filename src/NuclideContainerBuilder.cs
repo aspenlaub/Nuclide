@@ -10,6 +10,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
             builder.RegisterType<NugetPackageInstaller>().As<INugetPackageInstaller>();
             builder.RegisterType<NugetPackageToPushFinder>().As<INugetPackageToPushFinder>();
             builder.RegisterType<NugetPackageRestorer>().As<INugetPackageRestorer>();
+            builder.RegisterType<NuSpecCreator>().As<INuSpecCreator>();
             builder.RegisterType<ObsoletePackageFinder>().As<IObsoletePackageFinder>();
             builder.RegisterType<PackageConfigsScanner>().As<IPackageConfigsScanner>();
             return builder;

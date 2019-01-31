@@ -14,7 +14,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
     [TestClass]
     public class NugetConfigReaderTest {
         protected string NugetConfigFileName = Path.GetTempPath() + nameof(NugetConfigReaderTest) + ".config";
-        protected string Source = "hypothericalsource.net";
+        protected string Source = "hypotheticalsource.net";
         protected string ApiKey = "thisisnotanapikey";
         private static IContainer vContainer;
 
