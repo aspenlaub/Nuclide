@@ -27,7 +27,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
-            vContainer = new ContainerBuilder().UseGitty().UseGittyTestUtilities().UseProtch().UseNuclide().Build();
+            vContainer = new ContainerBuilder().UseGitty().UseGittyTestUtilities().UseProtch().UseNuclideProtchAndGitty().Build();
             TargetInstaller = vContainer.Resolve<TestTargetInstaller>();
             TargetRunner = vContainer.Resolve<TestTargetRunner>();
             TargetInstaller.DeleteCakeFolder(PakledTarget);

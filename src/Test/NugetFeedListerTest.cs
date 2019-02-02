@@ -14,7 +14,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext testContext) {
-            vContainer = new ContainerBuilder().UseGitty().UseGittyTestUtilities().UseNuclide().Build();
+            vContainer = new ContainerBuilder().UseGitty().UseGittyTestUtilities().UseNuclideProtchAndGitty().Build();
         }
 
         [TestMethod]

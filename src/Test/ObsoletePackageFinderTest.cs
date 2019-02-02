@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Linq;
+using System.Reflection;
 using Aspenlaub.Net.GitHub.CSharp.Gitty;
 using Aspenlaub.Net.GitHub.CSharp.Gitty.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Gitty.TestUtilities;
@@ -21,7 +22,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
-            vContainer = new ContainerBuilder().UseGitty().UseGittyTestUtilities().UseNuclide().Build();
+            vContainer = new ContainerBuilder().UseGitty().UseGittyTestUtilities().UseNuclideProtchAndGitty().Build();
             TargetInstaller = vContainer.Resolve<TestTargetInstaller>();
             TargetRunner = vContainer.Resolve<TestTargetRunner>();
             TargetInstaller.DeleteCakeFolder(ChabTarget);
@@ -52,7 +53,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             gitUtilities.Clone(url, ChabTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
-            vContainer.Resolve<TestTargetRunner>().IgnoreOutdatedBuildCakePendingChangesAndDoNotPush(ChabTarget, errorsAndInfos);
+            vContainer.Resolve<TestTargetRunner>().IgnoreOutdatedBuildCakePendingChangesAndDoNotPush(Assembly.GetExecutingAssembly(), ChabTarget, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
             errorsAndInfos = new ErrorsAndInfos();

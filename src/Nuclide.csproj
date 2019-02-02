@@ -19,12 +19,16 @@
     <None Remove="Test\**" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Aspenlaub.Net.GitHub.CSharp.Protch" Version="1.0.6971.34271" />
+    <PackageReference Include="Aspenlaub.Net.GitHub.CSharp.Gitty" Version="1.0.6972.26768" />
+    <PackageReference Include="Aspenlaub.Net.GitHub.CSharp.Protch" Version="1.0.6972.26978" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
     <PackageReference Include="NuGet.Client" Version="4.2.0" />
     <PackageReference Include="NuGet.Protocol.Core.v3" Version="4.2.0" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Aspenlaub.Net.GitHub.CSharp.Gitty">
+      <HintPath>..\..\..\.nuget\packages\aspenlaub.net.github.csharp.gitty\1.0.6971.34119\lib\netcoreapp2.2\Aspenlaub.Net.GitHub.CSharp.Gitty.dll</HintPath>
+    </Reference>
     <Reference Include="System">
       <HintPath>System</HintPath>
     </Reference>
