@@ -160,10 +160,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "Aspenlaub.Net.GitHub.CSharp.Pegh" }, true);
         }
 
-        private static bool ParentIsReleasePropertyGroup(XElement e) {
-            return e.Parent?.Attributes("Condition").Any(v => v.Value.Contains("Release")) == true;
-        }
-
         protected void VerifyTextElement(string xpath, string expectedContents) {
             xpath = xpath.Replace("/", "/nu:");
             var element = Document.XPathSelectElements(xpath, NamespaceManager).FirstOrDefault();
