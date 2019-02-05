@@ -20,7 +20,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
         [TestMethod]
         public async Task CanFindPakledPackages() {
             const string feedUrl = "https://www.aspenlaub.net/nuget";
-            const string packageId = "Aspenlaub.Net.GitHub.CSharp.Pakled";
+            const string packageId = "Aspenlaub.Net.GitHub.CSharp.Pegh";
             var sut = vContainer.Resolve<INugetFeedLister>();
             var packages = (await sut.ListReleasedPackagesAsync(feedUrl, packageId)).ToList();
             Assert.IsTrue(packages.Count > 5);

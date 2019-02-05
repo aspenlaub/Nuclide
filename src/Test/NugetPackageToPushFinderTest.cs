@@ -19,7 +19,7 @@ using IContainer = Autofac.IContainer;
 namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
     [TestClass]
     public class NugetPackageToPushFinderTest {
-        protected static TestTargetFolder PakledTarget = new TestTargetFolder(nameof(NugetPackageToPushFinderTest), "Pakled");
+        protected static TestTargetFolder PakledCoreTarget = new TestTargetFolder(nameof(NugetPackageToPushFinderTest), "PakledCore");
         protected static TestTargetFolder ChabStandardTarget = new TestTargetFolder(nameof(NugetPackageToPushFinderTest), "ChabStandard");
         private static IContainer vContainer;
         protected static TestTargetInstaller TargetInstaller;
@@ -30,8 +30,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             vContainer = new ContainerBuilder().UseGitty().UseGittyTestUtilities().UseProtch().UseNuclideProtchAndGitty().Build();
             TargetInstaller = vContainer.Resolve<TestTargetInstaller>();
             TargetRunner = vContainer.Resolve<TestTargetRunner>();
-            TargetInstaller.DeleteCakeFolder(PakledTarget);
-            TargetInstaller.CreateCakeFolder(PakledTarget, out var errorsAndInfos);
+            TargetInstaller.DeleteCakeFolder(PakledCoreTarget);
+            TargetInstaller.CreateCakeFolder(PakledCoreTarget, out var errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsPlusRelevantInfos());
             TargetInstaller.DeleteCakeFolder(ChabStandardTarget);
             TargetInstaller.CreateCakeFolder(ChabStandardTarget, out errorsAndInfos);
@@ -40,19 +40,19 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
 
         [ClassCleanup]
         public static void ClassCleanup() {
-            TargetInstaller.DeleteCakeFolder(PakledTarget);
+            TargetInstaller.DeleteCakeFolder(PakledCoreTarget);
             TargetInstaller.DeleteCakeFolder(ChabStandardTarget);
         }
 
         [TestInitialize]
         public void Initialize() {
-            PakledTarget.Delete();
+            PakledCoreTarget.Delete();
             ChabStandardTarget.Delete();
         }
 
         [TestCleanup]
         public void TestCleanup() {
-            PakledTarget.Delete();
+            PakledCoreTarget.Delete();
             ChabStandardTarget.Delete();
         }
 
@@ -61,13 +61,13 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             var errorsAndInfos = new ErrorsAndInfos();
             var developerSettings = await GetDeveloperSettingsAsync(errorsAndInfos);
 
-            CloneTarget(PakledTarget, errorsAndInfos);
+            CloneTarget(PakledCoreTarget, errorsAndInfos);
 
-            RunCakeScript(PakledTarget, true, errorsAndInfos);
+            RunCakeScript(PakledCoreTarget, true, errorsAndInfos);
 
             errorsAndInfos = new ErrorsAndInfos();
             var sut = vContainer.Resolve<INugetPackageToPushFinder>();
-            var packageToPush = await sut.FindPackageToPushAsync(PakledTarget.Folder().ParentFolder().SubFolder(PakledTarget.SolutionId + @"Bin\Release"), PakledTarget.Folder(), PakledTarget.Folder().SubFolder("src").FullName + @"\" + PakledTarget.SolutionId + ".sln", errorsAndInfos);
+            var packageToPush = await sut.FindPackageToPushAsync(PakledCoreTarget.Folder().ParentFolder().SubFolder(PakledCoreTarget.SolutionId + @"Bin\Release"), PakledCoreTarget.Folder(), PakledCoreTarget.Folder().SubFolder("src").FullName + @"\" + PakledCoreTarget.SolutionId + ".sln", errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
             Assert.AreEqual(developerSettings.NugetFeedUrl, packageToPush.FeedUrl);
             Assert.IsTrue(packageToPush.ApiKey.Length > 256);
@@ -87,22 +87,22 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             var developerSettings = await GetDeveloperSettingsAsync(errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
-            CloneTarget(PakledTarget, errorsAndInfos);
+            CloneTarget(PakledCoreTarget, errorsAndInfos);
 
-            var packages = await vContainer.Resolve<INugetFeedLister>().ListReleasedPackagesAsync(developerSettings.NugetFeedUrl, @"Aspenlaub.Net.GitHub.CSharp." + PakledTarget.SolutionId);
+            var packages = await vContainer.Resolve<INugetFeedLister>().ListReleasedPackagesAsync(developerSettings.NugetFeedUrl, @"Aspenlaub.Net.GitHub.CSharp." + PakledCoreTarget.SolutionId);
             if (!packages.Any()) { return; }
 
             var latestPackageVersion = packages.Max(p => p.Identity.Version.Version);
             var latestPackage = packages.First(p => p.Identity.Version.Version == latestPackageVersion);
 
-            var headTipIdSha = vContainer.Resolve<IGitUtilities>().HeadTipIdSha(PakledTarget.Folder());
+            var headTipIdSha = vContainer.Resolve<IGitUtilities>().HeadTipIdSha(PakledCoreTarget.Folder());
             if (!latestPackage.Tags.Contains(headTipIdSha)) {
-                return; // $"No package has been pushed for {headTipIdSha} and {PakledTarget.SolutionId}, please run build.cake for this solution"
+                return; // $"No package has been pushed for {headTipIdSha} and {PakledCoreTarget.SolutionId}, please run build.cake for this solution"
             }
 
-            RunCakeScript(PakledTarget, false, errorsAndInfos);
+            RunCakeScript(PakledCoreTarget, false, errorsAndInfos);
 
-            packages = await vContainer.Resolve<INugetFeedLister>().ListReleasedPackagesAsync(developerSettings.NugetFeedUrl, @"Aspenlaub.Net.GitHub.CSharp." + PakledTarget.SolutionId);
+            packages = await vContainer.Resolve<INugetFeedLister>().ListReleasedPackagesAsync(developerSettings.NugetFeedUrl, @"Aspenlaub.Net.GitHub.CSharp." + PakledCoreTarget.SolutionId);
             Assert.AreEqual(latestPackageVersion, packages.Max(p => p.Identity.Version.Version));
         }
 

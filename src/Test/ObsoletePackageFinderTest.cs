@@ -15,7 +15,7 @@ using IContainer = Autofac.IContainer;
 namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
     [TestClass]
     public class ObsoletePackageFinderTest {
-        protected static TestTargetFolder ChabTarget = new TestTargetFolder(nameof(ObsoletePackageFinderTest), "Chab");
+        protected static TestTargetFolder ChabStandardTarget = new TestTargetFolder(nameof(ObsoletePackageFinderTest), "ChabStandard");
         private static IContainer vContainer;
         protected static TestTargetInstaller TargetInstaller;
         protected static TestTargetRunner TargetRunner;
@@ -25,40 +25,40 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             vContainer = new ContainerBuilder().UseGitty().UseGittyTestUtilities().UseNuclideProtchAndGitty().Build();
             TargetInstaller = vContainer.Resolve<TestTargetInstaller>();
             TargetRunner = vContainer.Resolve<TestTargetRunner>();
-            TargetInstaller.DeleteCakeFolder(ChabTarget);
-            TargetInstaller.CreateCakeFolder(ChabTarget, out var errorsAndInfos);
+            TargetInstaller.DeleteCakeFolder(ChabStandardTarget);
+            TargetInstaller.CreateCakeFolder(ChabStandardTarget, out var errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsPlusRelevantInfos());
         }
 
         [ClassCleanup]
         public static void ClassCleanup() {
-            TargetInstaller.DeleteCakeFolder(ChabTarget);
+            TargetInstaller.DeleteCakeFolder(ChabStandardTarget);
         }
 
         [TestInitialize]
         public void Initialize() {
-            ChabTarget.Delete();
+            ChabStandardTarget.Delete();
         }
 
         [TestCleanup]
         public void TestCleanup() {
-            ChabTarget.Delete();
+            ChabStandardTarget.Delete();
         }
 
         [TestMethod]
         public void CanFindObsoletePackages() {
             var gitUtilities = new GitUtilities();
             var errorsAndInfos = new ErrorsAndInfos();
-            var url = "https://github.com/aspenlaub/" + ChabTarget.SolutionId + ".git";
-            gitUtilities.Clone(url, ChabTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
+            var url = "https://github.com/aspenlaub/" + ChabStandardTarget.SolutionId + ".git";
+            gitUtilities.Clone(url, ChabStandardTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
-            vContainer.Resolve<TestTargetRunner>().IgnoreOutdatedBuildCakePendingChangesAndDoNotPush(Assembly.GetExecutingAssembly(), ChabTarget, errorsAndInfos);
+            vContainer.Resolve<TestTargetRunner>().IgnoreOutdatedBuildCakePendingChangesAndDoNotPush(Assembly.GetExecutingAssembly(), ChabStandardTarget, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
             errorsAndInfos = new ErrorsAndInfos();
             var sut = vContainer.Resolve<IObsoletePackageFinder>();
-            var solutionFolder = ChabTarget.Folder().SubFolder("src");
+            var solutionFolder = ChabStandardTarget.Folder().SubFolder("src");
             sut.FindObsoletePackages(solutionFolder.FullName, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any());
             Assert.IsFalse(errorsAndInfos.Infos.Any());

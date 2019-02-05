@@ -25,7 +25,6 @@ using IContainer = Autofac.IContainer;
 namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
     [TestClass]
     public class NuSpecCreatorTest {
-        protected static TestTargetFolder PakledTarget = new TestTargetFolder(nameof(NuSpecCreator), "Pakled");
         protected static TestTargetFolder ChabStandardTarget = new TestTargetFolder(nameof(NuSpecCreator), "ChabStandard");
         protected static TestTargetFolder DvinTarget = new TestTargetFolder(nameof(NuSpecCreator), "Dvin");
         protected static TestTargetFolder VishizhukelTarget = new TestTargetFolder(nameof(NuSpecCreator), "Vishizhukel");
@@ -54,7 +53,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
 
         [TestInitialize]
         public void Initialize() {
-            PakledTarget.Delete();
             ChabStandardTarget.Delete();
             DvinTarget.Delete();
             VishizhukelTarget.Delete();
@@ -62,54 +60,9 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
 
         [TestCleanup]
         public void TestCleanup() {
-            PakledTarget.Delete();
             ChabStandardTarget.Delete();
             DvinTarget.Delete();
             VishizhukelTarget.Delete();
-        }
-
-        [TestMethod]
-        public async Task CanCreateNuSpecForPakled() {
-            var gitUtilities = new GitUtilities();
-            var errorsAndInfos = new ErrorsAndInfos();
-            const string url = "https://github.com/aspenlaub/Pakled.git";
-            gitUtilities.Clone(url, PakledTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
-            var sut = vContainer.Resolve<INuSpecCreator>();
-            var solutionFileFullName = PakledTarget.Folder().SubFolder("src").FullName + @"\" + PakledTarget.SolutionId + ".sln";
-            var projectFileFullName = PakledTarget.Folder().SubFolder("src").FullName + @"\" + PakledTarget.SolutionId + ".csproj";
-            Assert.IsTrue(File.Exists(projectFileFullName));
-            Document = XDocument.Load(projectFileFullName);
-            var targetFrameworkElement = Document.XPathSelectElements("./cp:Project/cp:PropertyGroup/cp:TargetFrameworkVersion", NamespaceManager).FirstOrDefault();
-            Assert.IsNotNull(targetFrameworkElement);
-            var rootNamespaceElement = Document.XPathSelectElements("./cp:Project/cp:PropertyGroup/cp:RootNamespace", NamespaceManager).FirstOrDefault();
-            Assert.IsNotNull(rootNamespaceElement);
-            var outputPathElement = Document.XPathSelectElements("./cp:Project/cp:PropertyGroup/cp:OutputPath", NamespaceManager).SingleOrDefault(ParentIsReleasePropertyGroup);
-            Assert.IsNotNull(outputPathElement);
-            Document = await sut.CreateNuSpecAsync(solutionFileFullName, new List<string> { "Red", "White", "Blue", "Green<", "Orange&", "Violet>" }, errorsAndInfos);
-            Assert.IsNotNull(Document);
-            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
-            var developerSettingsSecret = new DeveloperSettingsSecret();
-            var developerSettings = await vContainer.Resolve<ISecretRepository>().GetAsync(developerSettingsSecret, errorsAndInfos);
-            Assert.IsNotNull(developerSettings);
-            VerifyTextElement(@"/package/metadata/id", @"Aspenlaub.Net.GitHub.CSharp." + PakledTarget.SolutionId);
-            VerifyTextElement(@"/package/metadata/title", @"Aspenlaub.Net.GitHub.CSharp." + PakledTarget.SolutionId);
-            VerifyTextElement(@"/package/metadata/description", @"Aspenlaub.Net.GitHub.CSharp." + PakledTarget.SolutionId);
-            VerifyTextElement(@"/package/metadata/releaseNotes", @"Aspenlaub.Net.GitHub.CSharp." + PakledTarget.SolutionId);
-            VerifyTextElement(@"/package/metadata/authors", developerSettings.Author);
-            VerifyTextElement(@"/package/metadata/owners", developerSettings.Author);
-            VerifyTextElement(@"/package/metadata/projectUrl", developerSettings.GitHubRepositoryUrl + PakledTarget.SolutionId);
-            VerifyTextElement(@"/package/metadata/iconUrl", developerSettings.FaviconUrl);
-            VerifyTextElement(@"/package/metadata/requireLicenseAcceptance", @"false");
-            var year = DateTime.Now.Year;
-            VerifyTextElement(@"/package/metadata/copyright", $"Copyright {year}");
-            VerifyTextElement(@"/package/metadata/version", @"$version$");
-            VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "Newtonsoft.Json" }, false);
-            VerifyElements(@"/package/files/file", "src", new List<string> { @"bin\Release\Aspenlaub.*.dll", @"bin\Release\Aspenlaub.*.pdb" }, false);
-            VerifyElements(@"/package/files/file", "exclude", new List<string> { @"bin\Release\*.Test*.*;bin\Release\*.exe", @"bin\Release\*.Test*.*;bin\Release\*.exe" }, false);
-            var target = @"lib\net" + targetFrameworkElement.Value.Replace("v", "").Replace(".", "");
-            VerifyElements(@"/package/files/file", "target", new List<string> { target, target }, false);
-            VerifyTextElement(@"/package/metadata/tags", @"Red White Blue");
         }
 
         [TestMethod]

@@ -13,8 +13,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
         }
 
         public void InstallNugetPackage(IFolder packagesConfigFolder, string packageId, string version, bool excludeVersion, IErrorsAndInfos errorsAndInfos) {
-            if (!File.Exists(packagesConfigFolder.FullName + @"\packages.config")) { return; }
-
             var arguments = new List<string> { "install", packageId };
             if (version != "") {
                 arguments.Add("-Version \"" + version + "\"");
