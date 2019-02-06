@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Aspenlaub.Net.GitHub.CSharp.Nuclide</AssemblyName>
     <RootNamespace>Aspenlaub.Net.GitHub.CSharp.Nuclide</RootNamespace>
     <GenerateBuildInfoConfigFile>false</GenerateBuildInfoConfigFile>
@@ -19,8 +19,8 @@
     <None Remove="Test\**" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Aspenlaub.Net.GitHub.CSharp.Gitty" Version="1.0.6975.13488" />
-    <PackageReference Include="Aspenlaub.Net.GitHub.CSharp.Protch" Version="1.0.6973.28317" />
+    <PackageReference Include="Aspenlaub.Net.GitHub.CSharp.Gitty" Version="1.0.6976.16778" />
+    <PackageReference Include="Aspenlaub.Net.GitHub.CSharp.Protch" Version="1.0.6976.16942" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
     <PackageReference Include="NuGet.Client" Version="4.2.0" />
     <PackageReference Include="NuGet.Protocol.Core.v3" Version="4.2.0" />
@@ -28,9 +28,6 @@
   <ItemGroup>
     <Reference Include="Aspenlaub.Net.GitHub.CSharp.Gitty">
       <HintPath>..\..\..\.nuget\packages\aspenlaub.net.github.csharp.gitty\1.0.6971.34119\lib\netcoreapp2.2\Aspenlaub.Net.GitHub.CSharp.Gitty.dll</HintPath>
-    </Reference>
-    <Reference Include="System">
-      <HintPath>System</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
