@@ -42,7 +42,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
                 return;
             }
 
-            errorsAndInfos.Errors.Add(string.Format(Properties.Resources.PackageNotPinnedToVersion, dependencyIdAndVersion.Key, dependencyIdAndVersion.Key));
+            errorsAndInfos.Errors.Add(string.Format(Properties.Resources.PackageNotPinnedToVersion, dependencyIdAndVersion.Key, dependencyIdAndVersion.Value));
         }
     }
 }
