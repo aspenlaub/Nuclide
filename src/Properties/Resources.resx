@@ -180,4 +180,7 @@
   <data name="NoRemotePackageFilesFound" xml:space="preserve">
     <value>Feed "{0}" does not provide package "{1}"</value>
   </data>
+  <data name="PackageNotPinnedToVersion" xml:space="preserve">
+    <value>Cake add-in package "{0}" is not pinned to version "{1}"</value>
+  </data>
 </root>
