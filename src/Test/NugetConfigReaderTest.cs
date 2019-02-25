@@ -5,6 +5,7 @@ using Aspenlaub.Net.GitHub.CSharp.Gitty.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Gitty.TestUtilities;
 using Aspenlaub.Net.GitHub.CSharp.Nuclide.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using IContainer = Autofac.IContainer;
@@ -12,7 +13,7 @@ using IContainer = Autofac.IContainer;
 namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
     [TestClass]
     public class NugetConfigReaderTest {
-        protected string NugetConfigFileName = Path.GetTempPath() + nameof(NugetConfigReaderTest) + ".config";
+        protected string NugetConfigFileName = new Folder(Path.GetTempPath()).SubFolder("AspenlaubTemp").FullName + '\\' + nameof(NugetConfigReaderTest) + ".config";
         protected string Source = "hypothetical" + "source.net";
         protected string ApiKey = "thisisnotanapikey";
         private static IContainer vContainer;

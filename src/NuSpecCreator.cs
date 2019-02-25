@@ -211,7 +211,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
             var document = await CreateNuSpecAsync(solutionFileFullName, tags, errorsAndInfos);
             if (errorsAndInfos.Errors.Any()) { return; }
 
-            var tempFileName = Path.GetTempPath() + @"\temp.nuspec";
+            var tempFileName = Path.GetTempPath() + @"AspenlaubTemp\temp.nuspec";
             document.Save(tempFileName);
             if (File.Exists(nuSpecFile) && File.ReadAllText(nuSpecFile) == File.ReadAllText(tempFileName)) { return; }
 
