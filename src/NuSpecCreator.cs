@@ -195,8 +195,29 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
                       new XAttribute(@"target", @"lib\net" + TargetFrameworkElementToLibNetSuffix(targetFrameworkElement))))) {
                 filesElement.Add(fileElement);
             }
+            var contentAttributeValuesRelatedToLibFolder = projectDocument.XPathSelectElements("./" + namespaceSelector + "Project/" + namespaceSelector + "ItemGroup/" + namespaceSelector + "Content", NamespaceManager)
+                .Where(IncludesFileInLib).Select(IncludeAttributeValue).ToList();
+
+            foreach (var libFileElement in new[] { @"dll", @"pdb", @"xml" }.Where(extension => contentAttributeValuesRelatedToLibFolder.Any(v => v.EndsWith('.' + extension))).Select(extension
+                => new XElement(NugetNamespace + @"file",
+                    new XAttribute(@"src", outputPath + @"lib\*." + extension),
+                    new XAttribute(@"exclude", ""),
+                    new XAttribute(@"target", @"lib\net" + TargetFrameworkElementToLibNetSuffix(targetFrameworkElement))))) {
+                filesElement.Add(libFileElement);
+            }
 
             return filesElement;
+        }
+
+        private static string IncludeAttributeValue(XElement contentElement) {
+            var attribute = contentElement.Attributes().FirstOrDefault(a => a.Name == "Include");
+            if (attribute?.Value.StartsWith(@"lib\") == false) { return null; }
+
+            return 1 == attribute?.Value.Count(c => c == '\\') ? attribute.Value : null;
+        }
+
+        private static bool IncludesFileInLib(XElement contentElement) {
+            return !string.IsNullOrWhiteSpace(IncludeAttributeValue(contentElement));
         }
 
         private static string TargetFrameworkElementToLibNetSuffix(XElement targetFrameworkElement) {
