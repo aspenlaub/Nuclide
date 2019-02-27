@@ -194,7 +194,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             var targetFrameworkElement = projectDocument.XPathSelectElements("./Project/PropertyGroup/TargetFramework", NamespaceManager).FirstOrDefault();
             Assert.IsNotNull(targetFrameworkElement);
             var target = @"lib\" + targetFrameworkElement.Value;
-            VerifyElements(@"/package/files/file", "target", new List<string> { target, target, "build", "lib", @"runtimes\win-x64\"  + @"native", @"runtimes\win-x86\" + @"native" }, false);
+            VerifyElements(@"/package/files/file", "target", new List<string> { target, target, "build", target, @"runtimes\win-x64\"  + @"native", @"runtimes\win-x86\" + @"native" }, false);
         }
 
         protected void VerifyTextElement(string xpath, string expectedContents) {
