@@ -184,8 +184,9 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
             VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string>(), false);
 
-            VerifyElements(@"/package/files/file", "src", new List<string> { @"bin\Release\Aspenlaub.*.dll", @"bin\Release\Aspenlaub.*.pdb", @"bin\Release\lib\*.dll", @"bin\Release\lib\*.pdb", @"bin\Release\lib\*.xml" }, false);
-            VerifyElements(@"/package/files/file", "exclude", new List<string> { @"bin\Release\*.Test*.*;bin\Release\*.exe", @"bin\Release\*.Test*.*;bin\Release\*.exe", "", "", "" }, false);
+            VerifyElements(@"/package/files/file", "src", new List<string> { @"bin\Release\Aspenlaub.*.dll", @"bin\Release\Aspenlaub.*.pdb", @"bin\Release\" + @"build\*.*", @"bin\Release\" + @"lib\*.*",
+                @"bin\Release\" + @"runtimes\win-x64\" + @"native\*.*", @"bin\Release\" + @"runtimes\win-x86\" + @"native\*.*" }, false);
+            VerifyElements(@"/package/files/file", "exclude", new List<string> { @"bin\Release\*.Test*.*;bin\Release\*.exe", @"bin\Release\*.Test*.*;bin\Release\*.exe", "", "", "", "" }, false);
 
             var projectFileFullName = LibGit2SharpTarget.Folder().SubFolder("src").FullName + @"\" + LibGit2SharpTarget.SolutionId + ".csproj";
             Assert.IsTrue(File.Exists(projectFileFullName));
@@ -193,7 +194,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             var targetFrameworkElement = projectDocument.XPathSelectElements("./Project/PropertyGroup/TargetFramework", NamespaceManager).FirstOrDefault();
             Assert.IsNotNull(targetFrameworkElement);
             var target = @"lib\" + targetFrameworkElement.Value;
-            VerifyElements(@"/package/files/file", "target", new List<string> { target, target, target, target, target }, false);
+            VerifyElements(@"/package/files/file", "target", new List<string> { target, target, "build", "lib", @"runtimes\win-x64\"  + @"native", @"runtimes\win-x86\" + @"native" }, false);
         }
 
         protected void VerifyTextElement(string xpath, string expectedContents) {

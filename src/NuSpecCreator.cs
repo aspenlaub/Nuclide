@@ -195,15 +195,13 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
                       new XAttribute(@"target", @"lib\net" + TargetFrameworkElementToLibNetSuffix(targetFrameworkElement))))) {
                 filesElement.Add(fileElement);
             }
-            var contentAttributeValuesRelatedToLibFolder = projectDocument.XPathSelectElements("./" + namespaceSelector + "Project/" + namespaceSelector + "ItemGroup/" + namespaceSelector + "Content", NamespaceManager)
-                .Where(IncludesFileInLib).Select(IncludeAttributeValue).ToList();
-
-            foreach (var libFileElement in new[] { @"dll", @"pdb", @"xml" }.Where(extension => contentAttributeValuesRelatedToLibFolder.Any(v => v.EndsWith('.' + extension))).Select(extension
-                => new XElement(NugetNamespace + @"file",
-                    new XAttribute(@"src", outputPath + @"lib\*." + extension),
+            var foldersToPack = projectDocument.XPathSelectElements("./" + namespaceSelector + "Project/" + namespaceSelector + "ItemGroup/" + namespaceSelector + "Content", NamespaceManager)
+                .Where(IncludesFileToPack).Select(IncludeAttributeValue).Select(f => f.Substring(0, f.LastIndexOf('\\'))).Distinct().ToList();
+            foreach (var folderToPack in foldersToPack) {
+                filesElement.Add(new XElement(NugetNamespace + @"file",
+                    new XAttribute(@"src", outputPath + folderToPack + @"\*.*"),
                     new XAttribute(@"exclude", ""),
-                    new XAttribute(@"target", @"lib\net" + TargetFrameworkElementToLibNetSuffix(targetFrameworkElement))))) {
-                filesElement.Add(libFileElement);
+                    new XAttribute(@"target", folderToPack)));
             }
 
             return filesElement;
@@ -211,12 +209,10 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
 
         private static string IncludeAttributeValue(XElement contentElement) {
             var attribute = contentElement.Attributes().FirstOrDefault(a => a.Name == "Include");
-            if (attribute?.Value.StartsWith(@"lib\") == false) { return null; }
-
-            return 1 == attribute?.Value.Count(c => c == '\\') ? attribute.Value : null;
+            return new[] { @"build\", @"lib\", @"runtimes\" }.Any(folder => attribute?.Value.StartsWith(folder) == true) ? attribute?.Value : null;
         }
 
-        private static bool IncludesFileInLib(XElement contentElement) {
+        private static bool IncludesFileToPack(XElement contentElement) {
             return !string.IsNullOrWhiteSpace(IncludeAttributeValue(contentElement));
         }
 
