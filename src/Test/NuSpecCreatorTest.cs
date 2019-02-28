@@ -163,40 +163,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "Aspenlaub.Net.GitHub.CSharp.Pegh" }, true);
         }
 
-        [TestMethod]
-        public async Task CanCreateNuSpecForLibGit2Sharp() {
-            var gitUtilities = new GitUtilities();
-            var errorsAndInfos = new ErrorsAndInfos();
-            const string url = "https://github.com/aspenlaub/LibGit2Sharp.git";
-            gitUtilities.Clone(url, LibGit2SharpTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
-
-            vContainer.Resolve<CakeBuildUtilities>().CopyCakeScriptEmbeddedInAssembly(Assembly.GetExecutingAssembly(), BuildCake.Standard, LibGit2SharpTarget, errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
-
-            vContainer.Resolve<TestTargetRunner>().RunBuildCakeScript(BuildCake.Standard, LibGit2SharpTarget, "CleanRestorePull", errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
-
-            var sut = vContainer.Resolve<INuSpecCreator>();
-            var solutionFileFullName = LibGit2SharpTarget.Folder().SubFolder("src").FullName + @"\" + LibGit2SharpTarget.SolutionId + ".sln";
-            Document = await sut.CreateNuSpecAsync(solutionFileFullName, new List<string> { "The", "Little", "Things" }, errorsAndInfos);
-            Assert.IsNotNull(Document);
-            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
-            VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string>(), false);
-
-            VerifyElements(@"/package/files/file", "src", new List<string> { @"bin\Release\Aspenlaub.*.dll", @"bin\Release\Aspenlaub.*.pdb", @"bin\Release\" + @"build\*.*", @"bin\Release\" + @"lib\*.*",
-                @"bin\Release\" + @"runtimes\win-x64\" + @"native\*.*", @"bin\Release\" + @"runtimes\win-x86\" + @"native\*.*" }, false);
-            VerifyElements(@"/package/files/file", "exclude", new List<string> { @"bin\Release\*.Test*.*;bin\Release\*.exe", @"bin\Release\*.Test*.*;bin\Release\*.exe", "", "", "", "" }, false);
-
-            var projectFileFullName = LibGit2SharpTarget.Folder().SubFolder("src").FullName + @"\" + LibGit2SharpTarget.SolutionId + ".csproj";
-            Assert.IsTrue(File.Exists(projectFileFullName));
-            var projectDocument = XDocument.Load(projectFileFullName);
-            var targetFrameworkElement = projectDocument.XPathSelectElements("./Project/PropertyGroup/TargetFramework", NamespaceManager).FirstOrDefault();
-            Assert.IsNotNull(targetFrameworkElement);
-            var target = @"lib\" + targetFrameworkElement.Value;
-            VerifyElements(@"/package/files/file", "target", new List<string> { target, target, "build", target, @"runtimes\win-x64\"  + @"native", @"runtimes\win-x86\" + @"native" }, false);
-        }
-
         protected void VerifyTextElement(string xpath, string expectedContents) {
             xpath = xpath.Replace("/", "/nu:");
             var element = Document.XPathSelectElements(xpath, NamespaceManager).FirstOrDefault();
