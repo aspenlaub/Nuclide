@@ -12,8 +12,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'" />
   <ItemGroup>
-    <PackageReference Include="Aspenlaub.Net.GitHub.CSharp.Gitty" Version="1.0.6998.31270" />
-    <PackageReference Include="Aspenlaub.Net.GitHub.CSharp.Protch" Version="1.0.6998.31433" />
+    <PackageReference Include="Aspenlaub.Net.GitHub.CSharp.Gitty" Version="1.0.6998.35025" />
+    <PackageReference Include="Aspenlaub.Net.GitHub.CSharp.Protch" Version="1.0.6998.35350" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.0.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="1.4.0" />
     <PackageReference Include="MSTest.TestFramework" Version="1.4.0" />
