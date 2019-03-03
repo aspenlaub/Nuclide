@@ -15,8 +15,13 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
         };
 
         public IDictionary<string, string> DependencyIdsAndVersions(string projectFolder, bool includeTest, IErrorsAndInfos errorsAndInfos) {
+            return DependencyIdsAndVersions(projectFolder, includeTest, false, errorsAndInfos);
+        }
+
+        public IDictionary<string, string> DependencyIdsAndVersions(string projectFolder, bool includeTest, bool topFolderOnly, IErrorsAndInfos errorsAndInfos) {
             var dependencyIdsAndVersions = new Dictionary<string, string>();
-            foreach (var fileName in Directory.GetFiles(projectFolder, "packages.config", SearchOption.AllDirectories).Where(f => includeTest || !f.Contains(@"Test"))) {
+            var searchOption = topFolderOnly ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories;
+            foreach (var fileName in Directory.GetFiles(projectFolder, "packages.config", searchOption).Where(f => includeTest || !f.Contains(@"Test"))) {
                 var document = XDocument.Load(fileName);
                 foreach (var element in document.XPathSelectElements("/packages/package")) {
                     var id = element.Attribute("id")?.Value;
@@ -54,7 +59,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
 
             var namespaceManager = new XmlNamespaceManager(new NameTable());
             namespaceManager.AddNamespace("cp", XmlNamespaces.CsProjNamespaceUri);
-            foreach (var fileName in Directory.GetFiles(projectFolder, "*.csproj", SearchOption.AllDirectories).Where(f => includeTest || !f.Contains(@"Test"))) {
+            foreach (var fileName in Directory.GetFiles(projectFolder, "*.csproj", searchOption).Where(f => includeTest || !f.Contains(@"Test"))) {
                 XDocument document;
                 string namespaceSelector;
                 try {
