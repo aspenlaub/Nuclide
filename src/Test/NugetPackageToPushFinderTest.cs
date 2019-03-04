@@ -109,7 +109,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
         private static void CloneTarget(ITestTargetFolder testTargetFolder, IErrorsAndInfos errorsAndInfos) {
             var gitUtilities = new GitUtilities();
             var url = "https://github.com/aspenlaub/" + testTargetFolder.SolutionId + ".git";
-            gitUtilities.Clone(url, testTargetFolder.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
+            gitUtilities.Clone(url, "master", testTargetFolder.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
         }
 

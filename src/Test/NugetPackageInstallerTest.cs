@@ -49,7 +49,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             var gitUtilities = new GitUtilities();
             var errorsAndInfos = new ErrorsAndInfos();
             var url = "https://github.com/aspenlaub/" + ChabStandardTarget.SolutionId + ".git";
-            gitUtilities.Clone(url, ChabStandardTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
+            gitUtilities.Clone(url, "master", ChabStandardTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
             Assert.IsFalse(ChabStandardTarget.Folder().SubFolder(@"src\OctoPack.3.6.0").Exists());
             var sut = vContainer.Resolve<INugetPackageInstaller>();

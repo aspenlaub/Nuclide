@@ -48,7 +48,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             var gitUtilities = vContainer.Resolve<IGitUtilities>();
             var errorsAndInfos = new ErrorsAndInfos();
             var url = "https://github.com/aspenlaub/" + PeghTarget.SolutionId + ".git";
-            gitUtilities.Clone(url, PeghTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
+            gitUtilities.Clone(url, "master", PeghTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
             var mainProjectDependencyIdsAndVersions = vContainer.Resolve<IPackageConfigsScanner>().DependencyIdsAndVersions(PeghTarget.Folder().SubFolder("src").FullName, true, true, errorsAndInfos);

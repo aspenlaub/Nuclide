@@ -73,7 +73,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             var gitUtilities = new GitUtilities();
             var errorsAndInfos = new ErrorsAndInfos();
             const string url = "https://github.com/aspenlaub/ChabStandard.git";
-            gitUtilities.Clone(url, ChabStandardTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
+            gitUtilities.Clone(url, "master", ChabStandardTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
             vContainer.Resolve<CakeBuildUtilities>().CopyCakeScriptEmbeddedInAssembly(Assembly.GetExecutingAssembly(), BuildCake.Standard, ChabStandardTarget, errorsAndInfos);
@@ -124,7 +124,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             var gitUtilities = new GitUtilities();
             var errorsAndInfos = new ErrorsAndInfos();
             const string url = "https://github.com/aspenlaub/Dvin.git";
-            gitUtilities.Clone(url, DvinTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
+            gitUtilities.Clone(url, "master", DvinTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
             vContainer.Resolve<CakeBuildUtilities>().CopyCakeScriptEmbeddedInAssembly(Assembly.GetExecutingAssembly(), BuildCake.Standard, DvinTarget, errorsAndInfos);
@@ -146,7 +146,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             var gitUtilities = new GitUtilities();
             var errorsAndInfos = new ErrorsAndInfos();
             const string url = "https://github.com/aspenlaub/Vishizhukel.git";
-            gitUtilities.Clone(url, VishizhukelTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
+            gitUtilities.Clone(url, "master", VishizhukelTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
             vContainer.Resolve<CakeBuildUtilities>().CopyCakeScriptEmbeddedInAssembly(Assembly.GetExecutingAssembly(), BuildCake.Standard, VishizhukelTarget, errorsAndInfos);

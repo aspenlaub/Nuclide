@@ -43,7 +43,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             var errorsAndInfos = new ErrorsAndInfos();
             const string url = "https://github.com/aspenlaub/AutomationTestProjects.git";
             vAutomationTestProjectsFolder.CreateIfNecessary();
-            vContainer.Resolve<IGitUtilities>().Clone(url, vAutomationTestProjectsFolder, new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
+            vContainer.Resolve<IGitUtilities>().Clone(url, "master", vAutomationTestProjectsFolder, new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
             var sut = vContainer.Resolve<INugetPackageRestorer>();
             errorsAndInfos = new ErrorsAndInfos();

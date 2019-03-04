@@ -49,7 +49,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             var gitUtilities = new GitUtilities();
             var errorsAndInfos = new ErrorsAndInfos();
             const string url = "https://github.com/aspenlaub/Shatilaya.git";
-            gitUtilities.Clone(url, ShatilayaTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
+            gitUtilities.Clone(url, "master", ShatilayaTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
             gitUtilities.Reset(ShatilayaTarget.Folder(), "c895d6d9efc93b71a061d580cec2d88f0d78ea9b", errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
