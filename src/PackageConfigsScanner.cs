@@ -1,26 +1,34 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using Aspenlaub.Net.GitHub.CSharp.Nuclide.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Nuclide.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Protch;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
     public class PackageConfigsScanner : IPackageConfigsScanner {
-        public readonly IList<string> PackageIdsWithoutVersion = new List<string> {
-            "Microsoft.AspNetCore.App", "Microsoft.NETCore.App", "Microsoft.AspNetCore.All"
-        };
-
-        public IDictionary<string, string> DependencyIdsAndVersions(string projectFolder, bool includeTest, IErrorsAndInfos errorsAndInfos) {
-            return DependencyIdsAndVersions(projectFolder, includeTest, false, errorsAndInfos);
+        private readonly ISecretRepository vSecretRepository;
+        public PackageConfigsScanner(ISecretRepository secretRepository) {
+            vSecretRepository = secretRepository;
         }
 
-        public IDictionary<string, string> DependencyIdsAndVersions(string projectFolder, bool includeTest, bool topFolderOnly, IErrorsAndInfos errorsAndInfos) {
+        public async Task<IDictionary<string, string>> DependencyIdsAndVersionsAsync(string projectFolder, bool includeTest, IErrorsAndInfos errorsAndInfos) {
+            return await DependencyIdsAndVersionsAsync(projectFolder, includeTest, false, errorsAndInfos);
+        }
+
+        public async Task<IDictionary<string, string>> DependencyIdsAndVersionsAsync(string projectFolder, bool includeTest, bool topFolderOnly, IErrorsAndInfos errorsAndInfos) {
             var dependencyIdsAndVersions = new Dictionary<string, string>();
             var searchOption = topFolderOnly ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories;
+
+            var secret = new SecretPackagesReferencedWithoutVersion();
+            var packagesReferencedWithoutVersion = await vSecretRepository.GetAsync(secret, errorsAndInfos);
+            if (errorsAndInfos.AnyErrors()) { return dependencyIdsAndVersions; }
+
             foreach (var fileName in Directory.GetFiles(projectFolder, "packages.config", searchOption).Where(f => includeTest || !f.Contains(@"Test"))) {
                 var document = XDocument.Load(fileName);
                 foreach (var element in document.XPathSelectElements("/packages/package")) {
@@ -31,7 +39,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
                     }
 
                     var version = element.Attribute("version")?.Value;
-                    if (PackageIdsWithoutVersion.Contains(id)) {
+                    if (packagesReferencedWithoutVersion.Any(p => p.Id == id)) {
                         if (!string.IsNullOrEmpty(version) && !errorsAndInfos.Errors.Any()) {
                             errorsAndInfos.Errors.Add(string.Format(Properties.Resources.PackageWithVersion, fileName, id));
                             continue;
@@ -86,7 +94,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
                     if (string.IsNullOrEmpty(version)) {
                         version = element.XPathSelectElement("./" + namespaceSelector + "Version", namespaceManager)?.Value;
                     }
-                    if (PackageIdsWithoutVersion.Contains(id)) {
+                    if (packagesReferencedWithoutVersion.Any(p => p.Id == id)) {
                         if (!string.IsNullOrEmpty(version) && !errorsAndInfos.Errors.Any()) {
                             errorsAndInfos.Errors.Add(string.Format(Properties.Resources.PackageWithVersion, fileName, id));
                             continue;

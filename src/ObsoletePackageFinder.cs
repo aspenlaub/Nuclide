@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Aspenlaub.Net.GitHub.CSharp.Nuclide.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Components;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
@@ -14,8 +15,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
             vPackageConfigsScanner = packageConfigsScanner;
         }
 
-        public void FindObsoletePackages(string solutionFolder, IErrorsAndInfos errorsAndInfos) {
-            var dependencyIdsAndVersions = vPackageConfigsScanner.DependencyIdsAndVersions(solutionFolder, true, errorsAndInfos);
+        public async Task FindObsoletePackagesAsync(string solutionFolder, IErrorsAndInfos errorsAndInfos) {
+            var dependencyIdsAndVersions = await vPackageConfigsScanner.DependencyIdsAndVersionsAsync(solutionFolder, true, errorsAndInfos);
             if (!Directory.Exists(solutionFolder + @"\packages\")) { return; }
 
             var folders = Directory.GetDirectories(solutionFolder + @"\packages\").ToList().Where(f => !f.Contains("OctoPack") && !f.Contains("CodeAnalysis")).ToList();

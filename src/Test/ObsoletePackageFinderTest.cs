@@ -59,7 +59,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             errorsAndInfos = new ErrorsAndInfos();
             var sut = vContainer.Resolve<IObsoletePackageFinder>();
             var solutionFolder = ChabStandardTarget.Folder().SubFolder("src");
-            sut.FindObsoletePackages(solutionFolder.FullName, errorsAndInfos);
+            sut.FindObsoletePackagesAsync(solutionFolder.FullName, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any());
             Assert.IsFalse(errorsAndInfos.Infos.Any());
             var obsoleteFolder = solutionFolder.SubFolder(@"packages\ObsoPack");
@@ -69,7 +69,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             }
             File.WriteAllText(obsoleteFolder.FullName + "\\somefile.csproj", "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<Project ToolsVersion=\"14.0\" DefaultTargets=\"Build\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\"></Project>");
 
-            sut.FindObsoletePackages(solutionFolder.FullName, errorsAndInfos);
+            sut.FindObsoletePackagesAsync(solutionFolder.FullName, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
             Assert.IsTrue(errorsAndInfos.Infos.Any(i => i.Contains(obsoleteFolder.FullName) && i.Contains("has been deleted")));
         }

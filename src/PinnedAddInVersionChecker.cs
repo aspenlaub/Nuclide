@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Aspenlaub.Net.GitHub.CSharp.Gitty;
 using Aspenlaub.Net.GitHub.CSharp.Nuclide.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
@@ -13,18 +14,18 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
             vPackageConfigsScanner = packageConfigsScanner;
         }
 
-        public void CheckPinnedAddInVersions(IFolder solutionFolder, IErrorsAndInfos errorsAndInfos) {
+        public async Task CheckPinnedAddInVersionsAsync(IFolder solutionFolder, IErrorsAndInfos errorsAndInfos) {
             var buildCakeFileName = solutionFolder.FullName + @"\" + BuildCake.Standard;
             if (!File.Exists(buildCakeFileName)) {
                 errorsAndInfos.Errors.Add(string.Format(Properties.Resources.FileNotFound, buildCakeFileName));
                 return;
             }
 
-            CheckPinnedAddInVersions(File.ReadAllLines(buildCakeFileName), solutionFolder, errorsAndInfos);
+            await CheckPinnedAddInVersionsAsync(File.ReadAllLines(buildCakeFileName), solutionFolder, errorsAndInfos);
         }
 
-        public void CheckPinnedAddInVersions(IList<string> cakeScript, IFolder solutionFolder, IErrorsAndInfos errorsAndInfos) {
-            var dependencyIdsAndVersions = vPackageConfigsScanner.DependencyIdsAndVersions(solutionFolder.FullName, true, errorsAndInfos);
+        public async Task CheckPinnedAddInVersionsAsync(IList<string> cakeScript, IFolder solutionFolder, IErrorsAndInfos errorsAndInfos) {
+            var dependencyIdsAndVersions = await vPackageConfigsScanner.DependencyIdsAndVersionsAsync(solutionFolder.FullName, true, errorsAndInfos);
             if (errorsAndInfos.AnyErrors()) { return; }
 
             foreach (var dependencyIdAndVersion in dependencyIdsAndVersions) {
