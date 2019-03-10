@@ -151,8 +151,9 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
             }
 
             foreach (var dependencyElement in dependencyIdsAndVersions.Select(dependencyIdAndVersion
-                => new XElement(NugetNamespace + @"dependency",
-                    new XAttribute("id", dependencyIdAndVersion.Key), new XAttribute("version", dependencyIdAndVersion.Value)))) {
+                => dependencyIdAndVersion.Value == ""
+                    ? new XElement(NugetNamespace + @"dependency", new XAttribute("id", dependencyIdAndVersion.Key))
+                    : new XElement(NugetNamespace + @"dependency", new XAttribute("id", dependencyIdAndVersion.Key), new XAttribute("version", dependencyIdAndVersion.Value)))) {
                 dependenciesElement.Add(dependencyElement);
             }
 
