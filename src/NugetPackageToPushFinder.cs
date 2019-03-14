@@ -18,12 +18,15 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
         private readonly INugetFeedLister vNugetFeedLister;
         private readonly IProjectFactory vProjectFactory;
         private readonly ISecretRepository vSecretRepository;
+        private readonly IPushedHeadTipShaRepository vPushedHeadTipShaRepository;
 
-        public NugetPackageToPushFinder(IGitUtilities gitUtilities, INugetConfigReader nugetConfigReader, INugetFeedLister nugetFeedLister, IProjectFactory projectFactory, ISecretRepository secretRepository) {
+        public NugetPackageToPushFinder(IGitUtilities gitUtilities, INugetConfigReader nugetConfigReader, INugetFeedLister nugetFeedLister, IProjectFactory projectFactory,
+                IPushedHeadTipShaRepository pushedHeadTipShaRepository, ISecretRepository secretRepository) {
             vGitUtilities = gitUtilities;
             vNugetConfigReader = nugetConfigReader;
             vNugetFeedLister = nugetFeedLister;
             vProjectFactory = projectFactory;
+            vPushedHeadTipShaRepository = pushedHeadTipShaRepository;
             vSecretRepository = secretRepository;
         }
 
@@ -79,12 +82,17 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
                 return packageToPush;
             }
 
+            var pushedHeadTipShas = vPushedHeadTipShaRepository.Get(errorsAndInfos);
+            if (errorsAndInfos.AnyErrors()) { return packageToPush; }
+
+            var headTipIdSha = repositoryFolder == null ? "" : vGitUtilities.HeadTipIdSha(repositoryFolder);
+            if (!string.IsNullOrWhiteSpace(headTipIdSha) && pushedHeadTipShas.Contains(headTipIdSha)) { return packageToPush; }
+
             var latestRemotePackageVersion = remotePackages.Max(p => p.Identity.Version.Version);
             if (latestRemotePackageVersion >= latestLocalPackageVersion) { return packageToPush; }
 
             var remotePackage = remotePackages.First(p => p.Identity.Version.Version == latestRemotePackageVersion);
-            if (!string.IsNullOrEmpty(remotePackage.Tags) && repositoryFolder != null) {
-                var headTipIdSha = vGitUtilities.HeadTipIdSha(repositoryFolder);
+            if (!string.IsNullOrEmpty(remotePackage.Tags) && !string.IsNullOrWhiteSpace(headTipIdSha)) {
                 var tags = remotePackage.Tags.Split(' ');
                 if (tags.Contains(headTipIdSha)) { return packageToPush; }
             }

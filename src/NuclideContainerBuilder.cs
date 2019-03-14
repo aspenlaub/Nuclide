@@ -18,6 +18,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
             builder.RegisterType<ObsoletePackageFinder>().As<IObsoletePackageFinder>();
             builder.RegisterType<PackageConfigsScanner>().As<IPackageConfigsScanner>();
             builder.RegisterType<PinnedAddInVersionChecker>().As<IPinnedAddInVersionChecker>();
+            builder.RegisterType<PushedHeadTipShaRepository>().As<IPushedHeadTipShaRepository>();
             return builder;
         }
         // ReSharper disable once UnusedMember.Global
@@ -33,6 +34,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
             services.AddTransient<IObsoletePackageFinder, ObsoletePackageFinder>();
             services.AddTransient<IPackageConfigsScanner, PackageConfigsScanner>();
             services.AddTransient<IPinnedAddInVersionChecker, PinnedAddInVersionChecker>();
+            services.AddTransient<IPushedHeadTipShaRepository, PushedHeadTipShaRepository>();
             return services;
         }
     }
