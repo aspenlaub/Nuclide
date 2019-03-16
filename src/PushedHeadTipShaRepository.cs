@@ -45,6 +45,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
             if (errorsAndInfos.AnyErrors()) { return; }
 
             var fileName = folder.FullName + '\\' + headTipSha + ".txt";
+            if (File.Exists(fileName)) { return; }
+
             File.WriteAllText(fileName, headTipSha);
         }
     }
