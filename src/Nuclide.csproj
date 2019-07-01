@@ -20,7 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Aspenlaub.Net.GitHub.CSharp.Gitty" Version="1.0.7052.34315" />
-    <PackageReference Include="Aspenlaub.Net.GitHub.CSharp.Protch" Version="1.0.7035.36811" />
+    <PackageReference Include="Aspenlaub.Net.GitHub.CSharp.Protch" Version="1.0.7121.35395" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
     <PackageReference Include="NuGet.Client" Version="4.2.0" />
     <PackageReference Include="NuGet.Protocol.Core.v3" Version="4.2.0" />
