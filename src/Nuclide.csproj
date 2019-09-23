@@ -19,9 +19,8 @@
     <None Remove="Test\**" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Aspenlaub.Net.GitHub.CSharp.Gitty" Version="1.0.7205.34047" />
-    <PackageReference Include="Aspenlaub.Net.GitHub.CSharp.Protch" Version="1.0.7205.34172" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.0.0" />
+    <PackageReference Include="Aspenlaub.Net.GitHub.CSharp.Gitty" Version="1.0.7205.36911" />
+    <PackageReference Include="Aspenlaub.Net.GitHub.CSharp.Protch" Version="1.0.7205.36675" />
     <PackageReference Include="NuGet.Client" Version="4.2.0" />
     <PackageReference Include="NuGet.Protocol.Core.v3" Version="4.2.0" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.6.0" />
