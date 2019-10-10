@@ -21,7 +21,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext testContext) {
-            vContainer = new ContainerBuilder().UseGittyTestUtilities().UseNuclideProtchAndGitty().Build();
+            vContainer = new ContainerBuilder().UseGittyTestUtilities().UseNuclideProtchAndGitty(new DummyCsArgumentPrompter()).Build();
             vAutomationTestProjectsFolder = new Folder(Path.GetTempPath()).SubFolder("AspenlaubTemp").SubFolder(nameof(NugetRestorerTest));
         }
 

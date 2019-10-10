@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Aspenlaub.Net.GitHub.CSharp.Gitty.TestUtilities;
 using Aspenlaub.Net.GitHub.CSharp.Nuclide.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Components;
 using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using IContainer = Autofac.IContainer;
@@ -13,7 +14,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext testContext) {
-            vContainer = new ContainerBuilder().UseGittyTestUtilities().UseNuclideProtchAndGitty().Build();
+            vContainer = new ContainerBuilder().UseGittyTestUtilities().UseNuclideProtchAndGitty(new DummyCsArgumentPrompter()).Build();
         }
 
         [TestMethod]

@@ -1,13 +1,14 @@
 ﻿using Aspenlaub.Net.GitHub.CSharp.Gitty;
 using Aspenlaub.Net.GitHub.CSharp.Nuclide.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Protch;
 using Autofac;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
     public static class NuclideContainerBuilder {
-        public static ContainerBuilder UseNuclideProtchAndGitty(this ContainerBuilder builder) {
-            builder.UseGitty().UseProtch();
+        public static ContainerBuilder UseNuclideProtchAndGitty(this ContainerBuilder builder, ICsArgumentPrompter csArgumentPrompter) {
+            builder.UseGitty(csArgumentPrompter).UseProtch();
             builder.RegisterType<DependencyTreeBuilder>().As<IDependencyTreeBuilder>();
             builder.RegisterType<NugetConfigReader>().As<INugetConfigReader>();
             builder.RegisterType<NugetFeedLister>().As<INugetFeedLister>();
@@ -22,8 +23,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
             return builder;
         }
         // ReSharper disable once UnusedMember.Global
-        public static IServiceCollection UseNuclideProtchAndGitty(this IServiceCollection services) {
-            services.UseGitty().UseProtch();
+        public static IServiceCollection UseNuclideProtchAndGitty(this IServiceCollection services, ICsArgumentPrompter csArgumentPrompter) {
+            services.UseGitty(csArgumentPrompter).UseProtch();
             services.AddTransient<IDependencyTreeBuilder, DependencyTreeBuilder>();
             services.AddTransient<INugetConfigReader, NugetConfigReader>();
             services.AddTransient<INugetFeedLister, NugetFeedLister>();

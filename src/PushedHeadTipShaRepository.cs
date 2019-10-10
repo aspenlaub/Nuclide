@@ -2,20 +2,19 @@
 using System.IO;
 using System.Linq;
 using Aspenlaub.Net.GitHub.CSharp.Nuclide.Interfaces;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Components;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
     public class PushedHeadTipShaRepository : IPushedHeadTipShaRepository {
-        private readonly IComponentProvider vComponentProvider;
+        private readonly IFolderResolver vFolderResolver;
 
-        public PushedHeadTipShaRepository() {
-            vComponentProvider = new ComponentProvider();
+        public PushedHeadTipShaRepository(IFolderResolver folderResolver) {
+            vFolderResolver = folderResolver;
         }
 
         private IFolder RepositoryFolder(IErrorsAndInfos errorsAndInfos) {
-            var folder = vComponentProvider.FolderResolver.Resolve(@"$(CSharp)\GitHub\PushedHeadTipShas", errorsAndInfos);
+            var folder = vFolderResolver.Resolve(@"$(CSharp)\GitHub\PushedHeadTipShas", errorsAndInfos);
             if (errorsAndInfos.AnyErrors()) { return null; }
             folder.CreateIfNecessary();
             return folder;

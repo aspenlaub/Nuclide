@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Aspenlaub.Net.GitHub.CSharp.Nuclide.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Components;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Autofac;
@@ -13,7 +14,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
-            vContainer = new ContainerBuilder().UseNuclideProtchAndGitty().Build();
+            vContainer = new ContainerBuilder().UseNuclideProtchAndGitty(new DummyCsArgumentPrompter()).Build();
         }
 
         [TestMethod]
