@@ -112,7 +112,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             VerifyTextElement(@"/package/metadata/copyright", $"Copyright {year}");
             VerifyTextElementPattern(@"/package/metadata/version", @"\d+.\d+.\d+.\d+");
             VerifyElements(@"/package/metadata/dependencies/group", "targetFramework", new List<string> { @"netstandard2.0" }, false);
-            VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "LibGit2Sharp", "Newtonsoft.Json" }, false);
+            VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "Autofac" , "LibGit2Sharp", "Newtonsoft.Json" }, false);
             VerifyElements(@"/package/files/file", "src", new List<string> { @"bin\Release\Aspenlaub.*.dll", @"bin\Release\Aspenlaub.*.pdb" }, false);
             VerifyElements(@"/package/files/file", "exclude", new List<string> { @"bin\Release\*.Test*.*;bin\Release\*.exe", @"bin\Release\*.Test*.*;bin\Release\*.exe" }, false);
             var target = @"lib\" + targetFrameworkElement.Value;
