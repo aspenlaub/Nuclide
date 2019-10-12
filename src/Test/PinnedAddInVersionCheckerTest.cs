@@ -22,7 +22,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
-            vContainer = new ContainerBuilder().UseGittyTestUtilities().UseNuclideProtchAndGitty(new DummyCsArgumentPrompter()).Build();
+            vContainer = new ContainerBuilder().UseGittyTestUtilities().UseNuclideProtchGittyDvinAndPegh(new DummyCsArgumentPrompter()).Build();
             TargetInstaller = vContainer.Resolve<TestTargetInstaller>();
             TargetRunner = vContainer.Resolve<TestTargetRunner>();
             TargetInstaller.DeleteCakeFolder(PeghTarget);

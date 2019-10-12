@@ -14,7 +14,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
         public async Task CanGetPackagesReferencedWithoutVersion() {
             var errorsAndInfos = new ErrorsAndInfos();
             var secret = new SecretPackagesReferencedWithoutVersion();
-            var container = new ContainerBuilder().RegisterForPegh(new DummyCsArgumentPrompter()).Build();
+            var container = new ContainerBuilder().UsePegh(new DummyCsArgumentPrompter()).Build();
             var packagesReferencedWithoutVersion = await container.Resolve<ISecretRepository>().GetAsync(secret, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsPlusRelevantInfos());
             Assert.IsNotNull(packagesReferencedWithoutVersion);
