@@ -22,7 +22,14 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
 
         public List<string> Get(IErrorsAndInfos errorsAndInfos) {
             var folder = RepositoryFolder(errorsAndInfos);
-            return errorsAndInfos.AnyErrors() ? new List<string>() : Directory.GetFiles(folder.FullName, "*.txt", SearchOption.TopDirectoryOnly).Select(f => ExtractHeadTipShaFromFileName(f)).ToList();
+            if (errorsAndInfos.AnyErrors()) { return new List<string>(); }
+
+            var resultFiles = Directory.GetFiles(folder.FullName, "*.txt", SearchOption.TopDirectoryOnly).Select(f => ExtractHeadTipShaFromFileName(f)).ToList();
+            if (!resultFiles.Any()) {
+                errorsAndInfos.Errors.Add(string.Format(Properties.Resources.NoPushedHeadTipShasFound, folder.FullName));
+            }
+
+            return resultFiles;
         }
 
         private string ExtractHeadTipShaFromFileName(string fileName) {

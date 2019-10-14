@@ -183,4 +183,7 @@
   <data name="PackageNotPinnedToVersion" xml:space="preserve">
     <value>Cake add-in package "{0}" is not pinned to version "{1}"</value>
   </data>
+  <data name="NoPushedHeadTipShasFound" xml:space="preserve">
+    <value>No pushed head tip shas found in "{0}"</value>
+  </data>
 </root>
