@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Aspenlaub.Net.GitHub.CSharp.Nuclide.Interfaces;
@@ -54,6 +55,14 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
             if (File.Exists(fileName)) { return; }
 
             File.WriteAllText(fileName, headTipSha);
+        }
+
+        public DateTime AddedAt(string headTipSha, IErrorsAndInfos errorsAndInfos) {
+            var folder = RepositoryFolder(errorsAndInfos);
+            if (errorsAndInfos.AnyErrors()) { return DateTime.MaxValue;}
+
+            var fileName = folder.FullName + '\\' + headTipSha +  ".txt";
+            return !File.Exists(fileName) ? DateTime.MaxValue : File.GetLastWriteTime(fileName);
         }
     }
 }
