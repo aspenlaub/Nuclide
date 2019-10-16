@@ -36,7 +36,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             Assert.IsTrue(headTipShas.Any(s => s == TestId));
             var addedAt = sut.AddedAt(TestId, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
-            Assert.IsTrue(addedAt >= timeStamp && addedAt <= DateTime.Now.AddSeconds(10));
+            var now = DateTime.Now.AddSeconds(10);
+            Assert.IsTrue(addedAt >= timeStamp && addedAt <= now, $"Time stamp {addedAt.ToLongTimeString()} should be between {timeStamp.ToLongTimeString()} and {now.ToLongTimeString()}");
             sut.Remove(TestId, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
             headTipShas = sut.Get(errorsAndInfos);
