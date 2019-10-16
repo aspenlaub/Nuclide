@@ -28,7 +28,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
             Assert.IsNotNull(headTipShas);
             Assert.IsFalse(headTipShas.Any(s => s == TestId));
-            var timeStamp = DateTime.Now;
+            var timeStamp = DateTime.Now.AddSeconds(-10);
             sut.Add(TestId, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
             headTipShas = sut.Get(errorsAndInfos);
