@@ -7,8 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
     public static class NuclideContainerBuilder {
-        public static ContainerBuilder UseNuclideProtchGittyDvinAndPegh(this ContainerBuilder builder, ICsArgumentPrompter csArgumentPrompter) {
-            builder.UseGittyDvinAndPegh(csArgumentPrompter).UseProtch();
+        public static ContainerBuilder UseNuclideProtchGittyAndPegh(this ContainerBuilder builder, ICsArgumentPrompter csArgumentPrompter) {
+            builder.UseGittyAndPegh(csArgumentPrompter).UseProtch();
             builder.RegisterType<DependencyTreeBuilder>().As<IDependencyTreeBuilder>();
             builder.RegisterType<NugetConfigReader>().As<INugetConfigReader>();
             builder.RegisterType<NugetFeedLister>().As<INugetFeedLister>();
@@ -23,8 +23,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
             return builder;
         }
         // ReSharper disable once UnusedMember.Global
-        public static IServiceCollection UseNuclideProtchGittyDvinAndPegh(this IServiceCollection services, ICsArgumentPrompter csArgumentPrompter) {
-            services.UseGittyDvinAndPegh(csArgumentPrompter).UseProtch();
+        public static IServiceCollection UseNuclideProtchGittyAndPegh(this IServiceCollection services, ICsArgumentPrompter csArgumentPrompter) {
+            services.UseGittyAndPegh(csArgumentPrompter).UseProtch();
             services.AddTransient<IDependencyTreeBuilder, DependencyTreeBuilder>();
             services.AddTransient<INugetConfigReader, NugetConfigReader>();
             services.AddTransient<INugetFeedLister, NugetFeedLister>();
