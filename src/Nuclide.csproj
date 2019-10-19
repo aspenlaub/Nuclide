@@ -26,11 +26,6 @@
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.6.0" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Aspenlaub.Net.GitHub.CSharp.Gitty">
-      <HintPath>..\..\..\.nuget\packages\aspenlaub.net.github.csharp.gitty\1.0.6971.34119\lib\netcoreapp2.2\Aspenlaub.Net.GitHub.CSharp.Gitty.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
