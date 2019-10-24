@@ -24,7 +24,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Aspenlaub.Net.GitHub.CSharp.Gitty" Version="2.0.90.1197" />
-    <PackageReference Include="Aspenlaub.Net.GitHub.CSharp.Protch" Version="2.0.90.1211" />
+    <PackageReference Include="Aspenlaub.Net.GitHub.CSharp.Protch" Version="2.0.91.468" />
     <PackageReference Include="NuGet.Client" Version="4.2.0" />
     <PackageReference Include="NuGet.Protocol.Core.v3" Version="4.2.0" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.6.0" />
