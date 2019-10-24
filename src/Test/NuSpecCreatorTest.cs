@@ -69,7 +69,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             LibGit2SharpTarget.Delete();
         }
 
-        [TestMethod]
+        [TestMethod, Ignore]
         public async Task CanCreateNuSpecForChabStandard() {
             var gitUtilities = new GitUtilities();
             var errorsAndInfos = new ErrorsAndInfos();
@@ -120,7 +120,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             VerifyTextElement(@"/package/metadata/tags", @"Red White Blue");
         }
 
-        [TestMethod]
+        [TestMethod, Ignore]
         public async Task CanCreateNuSpecForDvin() {
             var gitUtilities = new GitUtilities();
             var errorsAndInfos = new ErrorsAndInfos();
@@ -142,7 +142,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             VerifyElementsInverse(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "Dvin" });
         }
 
-        [TestMethod]
+        [TestMethod, Ignore]
         public async Task CanCreateNuSpecForVishizhukel() {
             var gitUtilities = new GitUtilities();
             var errorsAndInfos = new ErrorsAndInfos();
