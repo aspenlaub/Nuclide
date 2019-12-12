@@ -110,9 +110,13 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
                 return null;
             }
 
+            var packageId
+                = projectDocument.XPathSelectElements("./" + namespaceSelector + "Project/" + namespaceSelector + "PropertyGroup/" + namespaceSelector + "PackageId", NamespaceManager).FirstOrDefault()?.Value
+                ?? rootNamespaceElement.Value;
+
             var element = new XElement(NugetNamespace + @"metadata");
             foreach (var elementName in new[] { @"id", @"title", @"description", @"releaseNotes" }) {
-                element.Add(new XElement(NugetNamespace + elementName, rootNamespaceElement.Value));
+                element.Add(new XElement(NugetNamespace + elementName, elementName == @"id" ? packageId : rootNamespaceElement.Value));
             }
 
             foreach (var elementName in new[] { @"authors", @"owners" }) {
@@ -120,7 +124,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
             }
 
             element.Add(new XElement(NugetNamespace + @"projectUrl", gitHubRepositoryUrl + solutionId));
-            element.Add(new XElement(NugetNamespace + @"iconUrl", faviconUrl));
+            element.Add(new XElement(NugetNamespace + @"icon", faviconUrl));
             element.Add(new XElement(NugetNamespace + @"requireLicenseAcceptance", @"false"));
             var year = DateTime.Now.Year;
             element.Add(new XElement(NugetNamespace + @"copyright", $"Copyright {year}"));

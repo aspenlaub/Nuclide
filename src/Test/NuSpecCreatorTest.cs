@@ -99,14 +99,14 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             var developerSettingsSecret = new DeveloperSettingsSecret();
             var developerSettings = await vContainer.Resolve<ISecretRepository>().GetAsync(developerSettingsSecret, errorsAndInfos);
             Assert.IsNotNull(developerSettings);
-            VerifyTextElement(@"/package/metadata/id", @"Aspenlaub.Net.GitHub.CSharp." + ChabStandardTarget.SolutionId);
+            VerifyTextElement(@"/package/metadata/id", ChabStandardTarget.SolutionId);
             VerifyTextElement(@"/package/metadata/title", @"Aspenlaub.Net.GitHub.CSharp." + ChabStandardTarget.SolutionId);
             VerifyTextElement(@"/package/metadata/description", @"Aspenlaub.Net.GitHub.CSharp." + ChabStandardTarget.SolutionId);
             VerifyTextElement(@"/package/metadata/releaseNotes", @"Aspenlaub.Net.GitHub.CSharp." + ChabStandardTarget.SolutionId);
             VerifyTextElement(@"/package/metadata/authors", developerSettings.Author);
             VerifyTextElement(@"/package/metadata/owners", developerSettings.Author);
             VerifyTextElement(@"/package/metadata/projectUrl", developerSettings.GitHubRepositoryUrl + ChabStandardTarget.SolutionId);
-            VerifyTextElement(@"/package/metadata/iconUrl", developerSettings.FaviconUrl);
+            VerifyTextElement(@"/package/metadata/icon", developerSettings.FaviconUrl);
             VerifyTextElement(@"/package/metadata/requireLicenseAcceptance", @"false");
             var year = DateTime.Now.Year;
             VerifyTextElement(@"/package/metadata/copyright", $"Copyright {year}");
