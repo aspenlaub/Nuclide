@@ -8,8 +8,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Entities {
         public string Email { get; set; }
         public string GitHubRepositoryUrl { get; set; }
         public string FaviconUrl { get; set; }
-        public string FaviconFolder { get; set; }
-        public string FaviconFileName { get; set; }
         public string NugetFeedUrl { get; set; }
         public string NugetFeedId { get; set; }
 
@@ -19,8 +17,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Entities {
                 Email = Email,
                 GitHubRepositoryUrl = GitHubRepositoryUrl,
                 FaviconUrl = FaviconUrl,
-                FaviconFolder = FaviconFolder,
-                FaviconFileName = FaviconFileName,
                 NugetFeedUrl = NugetFeedUrl,
                 NugetFeedId = NugetFeedId
             };
