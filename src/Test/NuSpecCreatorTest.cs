@@ -106,7 +106,11 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             VerifyTextElement(@"/package/metadata/authors", developerSettings.Author);
             VerifyTextElement(@"/package/metadata/owners", developerSettings.Author);
             VerifyTextElement(@"/package/metadata/projectUrl", developerSettings.GitHubRepositoryUrl + ChabStandardTarget.SolutionId);
-            VerifyTextElement(@"/package/metadata/icon", developerSettings.FaviconUrl);
+            var iconFolder = vContainer.Resolve<IFolderResolver>().Resolve(developerSettings.FaviconFolder, errorsAndInfos);
+            Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+            var iconFileFullName = iconFolder.FullName + '\\' + developerSettings.FaviconFileName;
+            Assert.IsTrue(File.Exists(iconFileFullName));
+            VerifyTextElement(@"/package/metadata/icon", iconFileFullName);
             VerifyTextElement(@"/package/metadata/requireLicenseAcceptance", @"false");
             var year = DateTime.Now.Year;
             VerifyTextElement(@"/package/metadata/copyright", $"Copyright {year}");

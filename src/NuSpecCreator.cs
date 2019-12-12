@@ -21,11 +21,13 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
         private readonly IPackageConfigsScanner vPackageConfigsScanner;
         private readonly IProjectFactory vProjectFactory;
         private readonly ISecretRepository vSecretRepository;
+        private readonly IFolderResolver vFolderResolver;
 
-        public NuSpecCreator(IPackageConfigsScanner packageConfigsScanner, IProjectFactory projectFactory, ISecretRepository secretRepository) {
+        public NuSpecCreator(IPackageConfigsScanner packageConfigsScanner, IProjectFactory projectFactory, ISecretRepository secretRepository, IFolderResolver folderResolver) {
             vPackageConfigsScanner = packageConfigsScanner;
             vProjectFactory = projectFactory;
             vSecretRepository = secretRepository;
+            vFolderResolver = folderResolver;
             NugetNamespace = XmlNamespaces.NuSpecNamespaceUri;
             NamespaceManager = new XmlNamespaceManager(new NameTable());
             NamespaceManager.AddNamespace("cp", XmlNamespaces.CsProjNamespaceUri);
@@ -104,8 +106,13 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
 
             var author = developerSettings.Author;
             var gitHubRepositoryUrl = developerSettings.GitHubRepositoryUrl;
-            var faviconUrl = developerSettings.FaviconUrl;
-            if (string.IsNullOrEmpty(author) || string.IsNullOrEmpty(gitHubRepositoryUrl) || string.IsNullOrEmpty(faviconUrl)) {
+            var faviconFolder = vFolderResolver.Resolve(developerSettings.FaviconFolder, errorsAndInfos);
+            if (errorsAndInfos.AnyErrors()) {
+                return null;
+            }
+
+            var faviconFullFileName = faviconFolder.FullName + '\\' + developerSettings.FaviconFileName;
+            if (string.IsNullOrEmpty(author) || string.IsNullOrEmpty(gitHubRepositoryUrl) || string.IsNullOrEmpty(faviconFullFileName)) {
                 errorsAndInfos.Errors.Add(string.Format(Properties.Resources.IncompleteDeveloperSettings, developerSettingsSecret.Guid + ".xml"));
                 return null;
             }
@@ -124,7 +131,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
             }
 
             element.Add(new XElement(NugetNamespace + @"projectUrl", gitHubRepositoryUrl + solutionId));
-            element.Add(new XElement(NugetNamespace + @"icon", faviconUrl));
+            element.Add(new XElement(NugetNamespace + @"icon", faviconFullFileName));
             element.Add(new XElement(NugetNamespace + @"requireLicenseAcceptance", @"false"));
             var year = DateTime.Now.Year;
             element.Add(new XElement(NugetNamespace + @"copyright", $"Copyright {year}"));
