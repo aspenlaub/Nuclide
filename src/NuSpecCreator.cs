@@ -195,6 +195,11 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
                       new XAttribute(@"target", @"lib\net" + TargetFrameworkElementToLibNetSuffix(targetFrameworkElement))))) {
                 filesElement.Add(fileElement);
             }
+
+            filesElement.Add(new XElement(NugetNamespace + @"file",
+                new XAttribute(@"src", outputPath + "packageicon.ico"),
+                new XAttribute(@"target", @"lib\net" + TargetFrameworkElementToLibNetSuffix(targetFrameworkElement))));
+
             var foldersToPack = projectDocument.XPathSelectElements("./" + namespaceSelector + "Project/" + namespaceSelector + "ItemGroup/" + namespaceSelector + "Content", NamespaceManager)
                 .Where(IncludesFileToPack).Select(IncludeAttributeValue).Select(f => f.Substring(0, f.LastIndexOf('\\'))).Distinct().ToList();
             foreach (var folderToPack in foldersToPack) {
