@@ -75,7 +75,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
 
             var latestLocalPackageVersion = localPackages.Max(p => p.Identity.Version.Version);
 
-            var packageId = project.RootNamespace;
+            var packageId = string.IsNullOrWhiteSpace(project.PackageId) ? project.RootNamespace : project.PackageId;
             var remotePackages = await vNugetFeedLister.ListReleasedPackagesAsync(packageToPush.FeedUrl, packageId);
             if (!remotePackages.Any()) {
                 errorsAndInfos.Errors.Add(string.Format(Properties.Resources.NoRemotePackageFilesFound, packageToPush.FeedUrl, packageId));
