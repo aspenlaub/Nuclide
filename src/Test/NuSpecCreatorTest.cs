@@ -140,6 +140,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             Assert.IsNotNull(Document);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
             VerifyElementsInverse(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "Dvin" });
+            VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "Pegh" }, true);
         }
 
         [TestMethod]
@@ -161,7 +162,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             Document = await sut.CreateNuSpecAsync(solutionFileFullName, new List<string> { "The", "Little", "Things" }, errorsAndInfos);
             Assert.IsNotNull(Document);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
-            VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "Aspenlaub.Net.GitHub.CSharp.Pegh" }, true);
+            VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "Microsoft.EntityFrameworkCore.SqlServer", "Newtonsoft.Json", "Pegh" }, true);
         }
 
         protected void VerifyTextElement(string xpath, string expectedContents) {
