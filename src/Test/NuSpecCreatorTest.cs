@@ -106,6 +106,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             VerifyTextElement(@"/package/metadata/authors", developerSettings.Author);
             VerifyTextElement(@"/package/metadata/owners", developerSettings.Author);
             VerifyTextElement(@"/package/metadata/projectUrl", developerSettings.GitHubRepositoryUrl + ChabStandardTarget.SolutionId);
+            VerifyTextElement(@"/package/metadata/iconUrl", developerSettings.FaviconUrl);
             VerifyTextElement(@"/package/metadata/icon", "packageicon.ico");
             VerifyTextElement(@"/package/metadata/requireLicenseAcceptance", @"false");
             var year = DateTime.Now.Year;

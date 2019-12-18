@@ -104,6 +104,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
 
             var author = developerSettings.Author;
             var gitHubRepositoryUrl = developerSettings.GitHubRepositoryUrl;
+            var faviconUrl = developerSettings.FaviconUrl;
 
             var packageId
                 = projectDocument.XPathSelectElements("./" + namespaceSelector + "Project/" + namespaceSelector + "PropertyGroup/" + namespaceSelector + "PackageId", NamespaceManager).FirstOrDefault()?.Value
@@ -120,6 +121,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
 
             element.Add(new XElement(NugetNamespace + @"projectUrl", gitHubRepositoryUrl + solutionId));
             element.Add(new XElement(NugetNamespace + @"icon", "packageicon.ico"));
+            element.Add(new XElement(NugetNamespace + @"iconUrl", faviconUrl));
             element.Add(new XElement(NugetNamespace + @"requireLicenseAcceptance", @"false"));
             var year = DateTime.Now.Year;
             element.Add(new XElement(NugetNamespace + @"copyright", $"Copyright {year}"));
