@@ -1,6 +1,6 @@
 ﻿namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Entities {
     public class NugetFeed {
-        public const string AspenlaubNetFeed = "aspenlaub.net", AspenlaubGitHubFeed = "aspenlaub.github.com";
+        public const string AspenlaubNetFeed = "aspenlaub.net", AspenlaubGitHubFeed = "aspenlaub.github.com", NugetOrgFeed = "nuget.org";
 
         public string Id { get; set; }
         public bool IsMainFeed { get; set; }

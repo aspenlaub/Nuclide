@@ -189,4 +189,7 @@
   <data name="UnknownNugetFeed" xml:space="preserve">
     <value>Unknown nuget feed '{0}', please add to "{1}" in your SecretRepository</value>
   </data>
+  <data name="CouldNotAccessNugetFeed" xml:space="preserve">
+    <value>Could not access nuget feed '{0}'</value>
+  </data>
 </root>

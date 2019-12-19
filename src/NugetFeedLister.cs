@@ -25,16 +25,21 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
             var nugetFeed = nugetFeeds.FirstOrDefault(f => f.Id == nugetFeedId);
             if (nugetFeed == null) {
                 errorsAndInfos.Errors.Add(string.Format(Properties.Resources.UnknownNugetFeed, nugetFeedId, nugetFeedsSecret.Guid + ".xml"));
-                return null;
+                return new List<IPackageSearchMetadata>();
             }
 
-            var packageSource = new PackageSource(nugetFeed.Url);
-            var providers = new List<Lazy<INuGetResourceProvider>>();
-            providers.AddRange(Repository.Provider.GetCoreV3());
-            var repository = new SourceRepository(packageSource, providers);
-            var packageMetaDataResource = await repository.GetResourceAsync<PackageMetadataResource>();
-            var packageMetaData = (await packageMetaDataResource.GetMetadataAsync(packageId, false, false, new NullLogger(), CancellationToken.None)).ToList();
-            return packageMetaData;
+            try {
+                var packageSource = new PackageSource(nugetFeed.Url);
+                var providers = new List<Lazy<INuGetResourceProvider>>();
+                providers.AddRange(Repository.Provider.GetCoreV3());
+                var repository = new SourceRepository(packageSource, providers);
+                var packageMetaDataResource = await repository.GetResourceAsync<PackageMetadataResource>();
+                var packageMetaData = (await packageMetaDataResource.GetMetadataAsync(packageId, false, false, new NullLogger(), CancellationToken.None)).ToList();
+                return packageMetaData;
+            } catch {
+                errorsAndInfos.Errors.Add(string.Format(Properties.Resources.CouldNotAccessNugetFeed, nugetFeedId));
+                return new List<IPackageSearchMetadata>();
+            }
         }
     }
 }
