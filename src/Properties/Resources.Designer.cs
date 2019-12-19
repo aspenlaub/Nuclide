@@ -266,5 +266,14 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Properties {
                 return ResourceManager.GetString("TopLevelNamespaceLacksADot", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown nuget feed &apos;{0}&apos;, please add to &quot;{1}&quot; in your SecretRepository.
+        /// </summary>
+        internal static string UnknownNugetFeed {
+            get {
+                return ResourceManager.GetString("UnknownNugetFeed", resourceCulture);
+            }
+        }
     }
 }

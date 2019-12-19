@@ -30,7 +30,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
             vSecretRepository = secretRepository;
         }
 
-        public async Task<IPackageToPush> FindPackageToPushAsync(IFolder packageFolderWithBinaries, IFolder repositoryFolder, string solutionFileFullName, IErrorsAndInfos errorsAndInfos) {
+        public async Task<IPackageToPush> FindPackageToPushAsync(string nugetFeedId, IFolder packageFolderWithBinaries, IFolder repositoryFolder, string solutionFileFullName, IErrorsAndInfos errorsAndInfos) {
             IPackageToPush packageToPush = new PackageToPush();
             var projectFileFullName = solutionFileFullName.Replace(".sln", ".csproj");
             if (!File.Exists(projectFileFullName)) {
@@ -50,17 +50,23 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
                 return packageToPush;
             }
 
-            var feedId = developerSettings.NugetFeedId;
-            if (string.IsNullOrEmpty(feedId)) {
-                errorsAndInfos.Errors.Add(string.Format(Properties.Resources.IncompleteDeveloperSettings, developerSettingsSecret.Guid + ".xml"));
+            var nugetFeedsSecret = new SecretNugetFeeds();
+            var nugetFeeds = await vSecretRepository.GetAsync(nugetFeedsSecret, errorsAndInfos);
+            if (errorsAndInfos.AnyErrors()) {
+                return packageToPush;
+            }
+
+            var nugetFeed = nugetFeeds.FirstOrDefault(f => f.Id == nugetFeedId);
+            if (nugetFeed == null) {
+                errorsAndInfos.Errors.Add(string.Format(Properties.Resources.UnknownNugetFeed, nugetFeedId, nugetFeedsSecret.Guid + ".xml"));
                 return packageToPush;
             }
 
             var nugetConfigFileFullName = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\NuGet\" + "nuget.config";
-            packageToPush.ApiKey = vNugetConfigReader.GetApiKey(nugetConfigFileFullName, feedId, errorsAndInfos);
+            packageToPush.ApiKey = vNugetConfigReader.GetApiKey(nugetConfigFileFullName, nugetFeed.Id, errorsAndInfos);
             if (errorsAndInfos.Errors.Any()) { return packageToPush; }
 
-            packageToPush.FeedUrl = developerSettings.NugetFeedUrl;
+            packageToPush.FeedUrl = nugetFeed.Url;
             if (string.IsNullOrEmpty(packageToPush.FeedUrl)) {
                 errorsAndInfos.Errors.Add(string.Format(Properties.Resources.IncompleteDeveloperSettings, developerSettingsSecret.Guid + ".xml"));
                 return packageToPush;
@@ -76,7 +82,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
             var latestLocalPackageVersion = localPackages.Max(p => p.Identity.Version.Version);
 
             var packageId = string.IsNullOrWhiteSpace(project.PackageId) ? project.RootNamespace : project.PackageId;
-            var remotePackages = await vNugetFeedLister.ListReleasedPackagesAsync(packageToPush.FeedUrl, packageId);
+            var remotePackages = await vNugetFeedLister.ListReleasedPackagesAsync(nugetFeedId, packageId, errorsAndInfos);
+            if (errorsAndInfos.Errors.Any()) { return packageToPush; }
             if (!remotePackages.Any()) {
                 errorsAndInfos.Errors.Add(string.Format(Properties.Resources.NoRemotePackageFilesFound, packageToPush.FeedUrl, packageId));
                 return packageToPush;

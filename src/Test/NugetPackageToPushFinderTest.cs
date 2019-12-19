@@ -60,7 +60,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
         [TestMethod]
         public async Task CanFindNugetPackagesToPushForPakled() {
             var errorsAndInfos = new ErrorsAndInfos();
-            var developerSettings = await GetDeveloperSettingsAsync(errorsAndInfos);
+
+            var nugetFeed = await GetNugetFeedAsync(errorsAndInfos);
 
             CloneTarget(PakledCoreTarget, errorsAndInfos);
 
@@ -68,29 +69,29 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
 
             errorsAndInfos = new ErrorsAndInfos();
             var sut = vContainer.Resolve<INugetPackageToPushFinder>();
-            var packageToPush = await sut.FindPackageToPushAsync(PakledCoreTarget.Folder().ParentFolder().SubFolder(PakledCoreTarget.SolutionId + @"Bin\Release"), PakledCoreTarget.Folder(), PakledCoreTarget.Folder().SubFolder("src").FullName + @"\" + PakledCoreTarget.SolutionId + ".sln", errorsAndInfos);
+            var packageToPush = await sut.FindPackageToPushAsync(NugetFeed.AspenlaubNetFeed, PakledCoreTarget.Folder().ParentFolder().SubFolder(PakledCoreTarget.SolutionId + @"Bin\Release"), PakledCoreTarget.Folder(), PakledCoreTarget.Folder().SubFolder("src").FullName + @"\" + PakledCoreTarget.SolutionId + ".sln", errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
-            Assert.AreEqual(developerSettings.NugetFeedUrl, packageToPush.FeedUrl);
+            Assert.AreEqual(nugetFeed.Url, packageToPush.FeedUrl);
             Assert.IsTrue(packageToPush.ApiKey.Length > 256);
         }
 
-        private async Task<DeveloperSettings> GetDeveloperSettingsAsync(IErrorsAndInfos errorsAndInfos) {
-            var developerSettingsSecret = new DeveloperSettingsSecret();
-            var developerSettings = await vContainer.Resolve<ISecretRepository>().GetAsync(developerSettingsSecret, errorsAndInfos);
+        private static async Task<NugetFeed> GetNugetFeedAsync(IErrorsAndInfos errorsAndInfos) {
+            var nugetFeedsSecret = new SecretNugetFeeds();
+            var nugetFeeds = await vContainer.Resolve<ISecretRepository>().GetAsync(nugetFeedsSecret, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
-            Assert.IsNotNull(developerSettings);
-            return developerSettings;
+            var nugetFeed = nugetFeeds.FirstOrDefault(f => f.Id == NugetFeed.AspenlaubNetFeed);
+            Assert.IsNotNull(nugetFeed);
+            return nugetFeed;
         }
 
         [TestMethod]
         public async Task PackageForTheSameCommitIsNotPushed() {
             var errorsAndInfos = new ErrorsAndInfos();
-            var developerSettings = await GetDeveloperSettingsAsync(errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
             CloneTarget(PakledCoreTarget, errorsAndInfos);
 
-            var packages = await vContainer.Resolve<INugetFeedLister>().ListReleasedPackagesAsync(developerSettings.NugetFeedUrl, @"Aspenlaub.Net.GitHub.CSharp." + PakledCoreTarget.SolutionId);
+            var packages = await vContainer.Resolve<INugetFeedLister>().ListReleasedPackagesAsync(NugetFeed.AspenlaubNetFeed, @"Aspenlaub.Net.GitHub.CSharp." + PakledCoreTarget.SolutionId, errorsAndInfos);
+            if (errorsAndInfos.AnyErrors()) { return; }
             if (!packages.Any()) { return; }
 
             var latestPackageVersion = packages.Max(p => p.Identity.Version.Version);
@@ -103,7 +104,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
 
             RunCakeScript(PakledCoreTarget, false, errorsAndInfos);
 
-            packages = await vContainer.Resolve<INugetFeedLister>().ListReleasedPackagesAsync(developerSettings.NugetFeedUrl, @"Aspenlaub.Net.GitHub.CSharp." + PakledCoreTarget.SolutionId);
+            packages = await vContainer.Resolve<INugetFeedLister>().ListReleasedPackagesAsync(NugetFeed.AspenlaubNetFeed, @"Aspenlaub.Net.GitHub.CSharp." + PakledCoreTarget.SolutionId, errorsAndInfos);
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
             Assert.AreEqual(latestPackageVersion, packages.Max(p => p.Identity.Version.Version));
         }
 
@@ -129,7 +131,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
         [TestMethod]
         public async Task CanFindNugetPackagesToPushForChabStandard() {
             var errorsAndInfos = new ErrorsAndInfos();
-            var developerSettings = await GetDeveloperSettingsAsync(errorsAndInfos);
+            var nugetFeed = await GetNugetFeedAsync(errorsAndInfos);
 
             CloneTarget(ChabStandardTarget, errorsAndInfos);
 
@@ -139,9 +141,9 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
 
             errorsAndInfos = new ErrorsAndInfos();
             var sut = vContainer.Resolve<INugetPackageToPushFinder>();
-            var packageToPush = await sut.FindPackageToPushAsync(ChabStandardTarget.Folder().ParentFolder().SubFolder(ChabStandardTarget.SolutionId + @"Bin\Release"), ChabStandardTarget.Folder(), ChabStandardTarget.Folder().SubFolder("src").FullName + @"\" + ChabStandardTarget.SolutionId + ".sln", errorsAndInfos);
+            var packageToPush = await sut.FindPackageToPushAsync(NugetFeed.AspenlaubNetFeed, ChabStandardTarget.Folder().ParentFolder().SubFolder(ChabStandardTarget.SolutionId + @"Bin\Release"), ChabStandardTarget.Folder(), ChabStandardTarget.Folder().SubFolder("src").FullName + @"\" + ChabStandardTarget.SolutionId + ".sln", errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
-            Assert.AreEqual(developerSettings.NugetFeedUrl, packageToPush.FeedUrl);
+            Assert.AreEqual(nugetFeed.Url, packageToPush.FeedUrl);
             Assert.IsTrue(packageToPush.ApiKey.Length > 256);
         }
     }

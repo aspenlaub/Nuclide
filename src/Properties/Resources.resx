@@ -186,4 +186,7 @@
   <data name="NoPushedHeadTipShasFound" xml:space="preserve">
     <value>No pushed head tip shas found in "{0}"</value>
   </data>
+  <data name="UnknownNugetFeed" xml:space="preserve">
+    <value>Unknown nuget feed '{0}', please add to "{1}" in your SecretRepository</value>
+  </data>
 </root>

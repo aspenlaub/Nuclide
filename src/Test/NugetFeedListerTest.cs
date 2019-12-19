@@ -1,10 +1,12 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using Aspenlaub.Net.GitHub.CSharp.Gitty.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Gitty.TestUtilities;
 using Aspenlaub.Net.GitHub.CSharp.Nuclide.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Nuclide.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Components;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -25,11 +27,14 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             var developerSettingsSecret = new DeveloperSettingsSecret();
             var errorsAndInfos  = new ErrorsAndInfos();
             var developerSettings = await vContainer.Resolve<ISecretRepository>().GetAsync(developerSettingsSecret, errorsAndInfos);
+            Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
             Assert.IsNotNull(developerSettings);
 
             const string packageId = "Aspenlaub.Net.GitHub.CSharp.Pegh";
             var sut = vContainer.Resolve<INugetFeedLister>();
-            var packages = (await sut.ListReleasedPackagesAsync(developerSettings.NugetFeedUrl, packageId)).ToList();
+
+            var packages = (await sut.ListReleasedPackagesAsync(NugetFeed.AspenlaubNetFeed, packageId, errorsAndInfos)).ToList();
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
             Assert.IsTrue(packages.Count > 5);
             foreach (var package in packages) {
                 Assert.AreEqual(packageId, package.Identity.Id);
