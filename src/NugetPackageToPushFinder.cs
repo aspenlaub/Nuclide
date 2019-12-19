@@ -89,7 +89,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
                 return packageToPush;
             }
 
-            var pushedHeadTipShas = vPushedHeadTipShaRepository.Get(errorsAndInfos);
+            var pushedHeadTipShas = vPushedHeadTipShaRepository.Get(nugetFeedId, errorsAndInfos);
             if (errorsAndInfos.AnyErrors()) { return packageToPush; }
 
             var headTipIdSha = repositoryFolder == null ? "" : vGitUtilities.HeadTipIdSha(repositoryFolder);
@@ -105,6 +105,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
             }
 
             packageToPush.PackageFileFullName = packageFolderWithBinaries.FullName + @"\" + packageId + "." + latestLocalPackageVersion + ".nupkg";
+            packageToPush.Id = packageId;
+            packageToPush.Version = latestLocalPackageVersion.ToString();
             if (File.Exists(packageToPush.PackageFileFullName)) { return packageToPush; }
 
             errorsAndInfos.Errors.Add(string.Format(Properties.Resources.FileNotFound, packageToPush.PackageFileFullName));
