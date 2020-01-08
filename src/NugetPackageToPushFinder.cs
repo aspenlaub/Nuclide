@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Aspenlaub.Net.GitHub.CSharp.Gitty.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Nuclide.Entities;
+using Aspenlaub.Net.GitHub.CSharp.Nuclide.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Nuclide.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Protch.Interfaces;
@@ -13,6 +14,7 @@ using NuGet.Protocol;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
     public class NugetPackageToPushFinder : INugetPackageToPushFinder {
+        private readonly IFolderResolver vFolderResolver;
         private readonly IGitUtilities vGitUtilities;
         private readonly INugetConfigReader vNugetConfigReader;
         private readonly INugetFeedLister vNugetFeedLister;
@@ -20,8 +22,9 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
         private readonly ISecretRepository vSecretRepository;
         private readonly IPushedHeadTipShaRepository vPushedHeadTipShaRepository;
 
-        public NugetPackageToPushFinder(IGitUtilities gitUtilities, INugetConfigReader nugetConfigReader, INugetFeedLister nugetFeedLister, IProjectFactory projectFactory,
-                IPushedHeadTipShaRepository pushedHeadTipShaRepository, ISecretRepository secretRepository) {
+        public NugetPackageToPushFinder(IFolderResolver folderResolver, IGitUtilities gitUtilities, INugetConfigReader nugetConfigReader, INugetFeedLister nugetFeedLister,
+                IProjectFactory projectFactory, IPushedHeadTipShaRepository pushedHeadTipShaRepository, ISecretRepository secretRepository) {
+            vFolderResolver = folderResolver;
             vGitUtilities = gitUtilities;
             vNugetConfigReader = nugetConfigReader;
             vNugetFeedLister = nugetFeedLister;
@@ -63,10 +66,15 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
             }
 
             var nugetConfigFileFullName = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\NuGet\" + "nuget.config";
-            packageToPush.ApiKey = vNugetConfigReader.GetApiKey(nugetConfigFileFullName, nugetFeed.Id, errorsAndInfos);
+            if (!nugetFeed.IsAFolderToResolve()) {
+                packageToPush.ApiKey = vNugetConfigReader.GetApiKey(nugetConfigFileFullName, nugetFeed.Id, errorsAndInfos);
+            }
             if (errorsAndInfos.Errors.Any()) { return packageToPush; }
 
-            packageToPush.FeedUrl = nugetFeed.Url;
+            var source = nugetFeed.UrlOrResolvedFolder(vFolderResolver, errorsAndInfos);
+            if (errorsAndInfos.AnyErrors()) { return packageToPush; }
+
+            packageToPush.FeedUrl = source;
             if (string.IsNullOrEmpty(packageToPush.FeedUrl)) {
                 errorsAndInfos.Errors.Add(string.Format(Properties.Resources.IncompleteDeveloperSettings, developerSettingsSecret.Guid + ".xml"));
                 return packageToPush;

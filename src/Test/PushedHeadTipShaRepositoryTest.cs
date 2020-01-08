@@ -27,11 +27,11 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             vSut = vContainer.Resolve<IPushedHeadTipShaRepository>();
             var errorsAndInfos = new ErrorsAndInfos();
 
-            vSut.Remove(NugetFeed.AspenlaubNetFeed, TestId, errorsAndInfos);
+            vSut.Remove(NugetFeed.AspenlaubLocalFeed, TestId, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
-            vSut.Remove(NugetFeed.AspenlaubNetFeed, JsonTestId, errorsAndInfos);
+            vSut.Remove(NugetFeed.AspenlaubLocalFeed, JsonTestId, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
-            var headTipShas = vSut.Get(NugetFeed.AspenlaubNetFeed, errorsAndInfos);
+            var headTipShas = vSut.Get(NugetFeed.AspenlaubLocalFeed, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
             Assert.IsNotNull(headTipShas);
             Assert.IsFalse(headTipShas.Any(s => s == TestId || s == JsonTestId));
@@ -42,20 +42,20 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             var errorsAndInfos = new ErrorsAndInfos();
             var timeStamp = DateTime.Now.AddSeconds(-10);
 
-            vSut.Add(NugetFeed.AspenlaubNetFeed, TestId, errorsAndInfos);
+            vSut.Add(NugetFeed.AspenlaubLocalFeed, TestId, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
-            var headTipShas = vSut.Get(NugetFeed.AspenlaubNetFeed, errorsAndInfos);
+            var headTipShas = vSut.Get(NugetFeed.AspenlaubLocalFeed, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
             Assert.IsTrue(headTipShas.Any(s => s == TestId));
 
-            var addedAt = vSut.AddedAt(NugetFeed.AspenlaubNetFeed, TestId, errorsAndInfos);
+            var addedAt = vSut.AddedAt(NugetFeed.AspenlaubLocalFeed, TestId, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
             var now = DateTime.Now.AddSeconds(10);
             Assert.IsTrue(addedAt >= timeStamp && addedAt <= now, $"Time stamp {addedAt.ToLongTimeString()} should be between {timeStamp.ToLongTimeString()} and {now.ToLongTimeString()}");
 
-            vSut.Remove(NugetFeed.AspenlaubNetFeed, TestId, errorsAndInfos);
+            vSut.Remove(NugetFeed.AspenlaubLocalFeed, TestId, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
-            headTipShas = vSut.Get(NugetFeed.AspenlaubNetFeed, errorsAndInfos);
+            headTipShas = vSut.Get(NugetFeed.AspenlaubLocalFeed, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
             Assert.IsFalse(headTipShas.Any(s => s == TestId));
 
@@ -65,19 +65,19 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
         public void CanGetRemoveAndAddPushedHeadTipShasUsingJson() {
             var errorsAndInfos = new ErrorsAndInfos();
 
-            vSut.Add(NugetFeed.AspenlaubNetFeed, JsonTestId, PackageId, PackageVersion, errorsAndInfos);
+            vSut.Add(NugetFeed.AspenlaubLocalFeed, JsonTestId, PackageId, PackageVersion, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
-            var headTipShas = vSut.Get(NugetFeed.AspenlaubNetFeed, errorsAndInfos);
+            var headTipShas = vSut.Get(NugetFeed.AspenlaubLocalFeed, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
             Assert.IsTrue(headTipShas.Any(s => s == JsonTestId));
 
-            var packageVersion = vSut.PackageVersion(NugetFeed.AspenlaubNetFeed, JsonTestId, errorsAndInfos);
+            var packageVersion = vSut.PackageVersion(NugetFeed.AspenlaubLocalFeed, JsonTestId, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
             Assert.AreEqual(PackageVersion, packageVersion);
 
-            vSut.Remove(NugetFeed.AspenlaubNetFeed, JsonTestId, errorsAndInfos);
+            vSut.Remove(NugetFeed.AspenlaubLocalFeed, JsonTestId, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
-            headTipShas = vSut.Get(NugetFeed.AspenlaubNetFeed, errorsAndInfos);
+            headTipShas = vSut.Get(NugetFeed.AspenlaubLocalFeed, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
             Assert.IsFalse(headTipShas.Any(s => s == JsonTestId));
         }

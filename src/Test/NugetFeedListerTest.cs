@@ -23,19 +23,20 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
         }
 
         [TestMethod]
-        public async Task CanFindPakledPackages() {
+        public async Task CanFindNuclidePackages() {
             var developerSettingsSecret = new DeveloperSettingsSecret();
             var errorsAndInfos  = new ErrorsAndInfos();
             var developerSettings = await vContainer.Resolve<ISecretRepository>().GetAsync(developerSettingsSecret, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
             Assert.IsNotNull(developerSettings);
 
-            const string packageId = "Aspenlaub.Net.GitHub.CSharp.Pegh";
+            const string packageId = "Nuclide";
             var sut = vContainer.Resolve<INugetFeedLister>();
 
-            var packages = (await sut.ListReleasedPackagesAsync(NugetFeed.AspenlaubNetFeed, packageId, errorsAndInfos)).ToList();
+            var packages = (await sut.ListReleasedPackagesAsync(NugetFeed.AspenlaubLocalFeed, packageId, errorsAndInfos)).ToList();
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
-            Assert.IsTrue(packages.Count > 5);
+            Assert.IsTrue(packages.Count > 1, $"No {packageId} package was found");
+            Assert.IsTrue(packages.Count > 5, $"Only {packages.Count} {packageId} package/-s was/were found");
             foreach (var package in packages) {
                 Assert.AreEqual(packageId, package.Identity.Id);
             }
