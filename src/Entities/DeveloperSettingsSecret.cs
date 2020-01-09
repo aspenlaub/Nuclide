@@ -15,6 +15,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Entities {
             };
         }
 
-        public string Guid => "C9CA6C10-7409-487F-B406-A9EF9AD835A5";
+        public string Guid => "D835A5-C9CA6C10-7409-487F-B406-A9EF9A";
     }
 }
