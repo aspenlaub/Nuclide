@@ -61,6 +61,24 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Checking project ID against solution ID.
+        /// </summary>
+        internal static string CheckingProjectVsSolution {
+            get {
+                return ResourceManager.GetString("CheckingProjectVsSolution", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Checking remote package tag.
+        /// </summary>
+        internal static string CheckingRemotePackageTag {
+            get {
+                return ResourceManager.GetString("CheckingRemotePackageTag", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Could not access nuget feed &apos;{0}&apos;.
         /// </summary>
         internal static string CouldNotAccessNugetFeed {
@@ -97,6 +115,51 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Found local package {0}.
+        /// </summary>
+        internal static string FoundLocalPackage {
+            get {
+                return ResourceManager.GetString("FoundLocalPackage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Found remote package {0}.
+        /// </summary>
+        internal static string FoundRemotePackage {
+            get {
+                return ResourceManager.GetString("FoundRemotePackage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Head tip sha {0} has not yet been pushed.
+        /// </summary>
+        internal static string HeadTipShaNotPushed {
+            get {
+                return ResourceManager.GetString("HeadTipShaNotPushed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Identifying feed URL.
+        /// </summary>
+        internal static string IdentifyingFeedUrl {
+            get {
+                return ResourceManager.GetString("IdentifyingFeedUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Identifying nuget feed.
+        /// </summary>
+        internal static string IdentifyingNugetFeed {
+            get {
+                return ResourceManager.GetString("IdentifyingNugetFeed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Incomplete &apos;DeveloperSettings&apos;. Please update &quot;{0}&quot; in your SecretRepository.
         /// </summary>
         internal static string IncompleteDeveloperSettings {
@@ -111,6 +174,33 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Properties {
         internal static string InvalidXmlFile {
             get {
                 return ResourceManager.GetString("InvalidXmlFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Loading nuget feeds.
+        /// </summary>
+        internal static string LoadingNugetFeeds {
+            get {
+                return ResourceManager.GetString("LoadingNugetFeeds", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Loading project.
+        /// </summary>
+        internal static string LoadingProject {
+            get {
+                return ResourceManager.GetString("LoadingProject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Loading pushed head tip shas.
+        /// </summary>
+        internal static string LoadingPushedHeadTipShas {
+            get {
+                return ResourceManager.GetString("LoadingPushedHeadTipShas", resourceCulture);
             }
         }
         
@@ -214,6 +304,24 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The remote package is already tagged with the head tip sha.
+        /// </summary>
+        internal static string PackageAlreadyTaggedWithHeadTipSha {
+            get {
+                return ResourceManager.GetString("PackageAlreadyTaggedWithHeadTipSha", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The package needs to be pushed.
+        /// </summary>
+        internal static string PackageNeedsToBePushed {
+            get {
+                return ResourceManager.GetString("PackageNeedsToBePushed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cake add-in package &quot;{0}&quot; is not pinned to version &quot;{1}&quot;.
         /// </summary>
         internal static string PackageNotPinnedToVersion {
@@ -264,6 +372,42 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Properties {
         internal static string ProjectFileNotFound {
             get {
                 return ResourceManager.GetString("ProjectFileNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The remote package version number is higher or equal to the version number of the local package.
+        /// </summary>
+        internal static string RemotePackageHasHigherOrEqualVersion {
+            get {
+                return ResourceManager.GetString("RemotePackageHasHigherOrEqualVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Searching local package.
+        /// </summary>
+        internal static string SearchingLocalPackage {
+            get {
+                return ResourceManager.GetString("SearchingLocalPackage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Searching remote package.
+        /// </summary>
+        internal static string SearchingRemotePackage {
+            get {
+                return ResourceManager.GetString("SearchingRemotePackage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remote package tags are: &quot;{0}&quot;.
+        /// </summary>
+        internal static string TagsAre {
+            get {
+                return ResourceManager.GetString("TagsAre", resourceCulture);
             }
         }
         
