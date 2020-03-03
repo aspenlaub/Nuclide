@@ -13,7 +13,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
             builder.RegisterType<NugetConfigReader>().As<INugetConfigReader>();
             builder.RegisterType<NugetFeedLister>().As<INugetFeedLister>();
             builder.RegisterType<NugetPackageInstaller>().As<INugetPackageInstaller>();
-            builder.RegisterType<NugetPackageToPushFinder>().As<INugetPackageToPushFinder>();
             builder.RegisterType<NugetPackageRestorer>().As<INugetPackageRestorer>();
             builder.RegisterType<NuSpecCreator>().As<INuSpecCreator>();
             builder.RegisterType<ObsoletePackageFinder>().As<IObsoletePackageFinder>();
@@ -29,7 +28,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
             services.AddTransient<INugetConfigReader, NugetConfigReader>();
             services.AddTransient<INugetFeedLister, NugetFeedLister>();
             services.AddTransient<INugetPackageInstaller, NugetPackageInstaller>();
-            services.AddTransient<INugetPackageToPushFinder, NugetPackageToPushFinder>();
             services.AddTransient<INugetPackageRestorer, NugetPackageRestorer>();
             services.AddTransient<INuSpecCreator, NuSpecCreator>();
             services.AddTransient<IObsoletePackageFinder, ObsoletePackageFinder>();
