@@ -49,7 +49,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             errorsAndInfos = new ErrorsAndInfos();
             sut.RestoreNugetPackages(vAutomationTestProjectsFolder.FullName + @"\AsyncWpf\AsyncWpf.sln", errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
-            Assert.IsTrue(errorsAndInfos.Infos.Any(i => i.Contains("Restore completed")));
+            Assert.IsTrue(errorsAndInfos.Infos.Any(i => i.Contains($"Restored {vAutomationTestProjectsFolder.FullName}\\AsyncWpf\\AsyncWpf.csproj")));
         }
     }
 }
