@@ -36,7 +36,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             var packages = (await sut.ListReleasedPackagesAsync(NugetFeed.AspenlaubLocalFeed, packageId, errorsAndInfos)).ToList();
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
             Assert.IsTrue(packages.Count > 1, $"No {packageId} package was found");
-            Assert.IsTrue(packages.Count > 5, $"Only {packages.Count} {packageId} package/-s was/were found");
+            Assert.IsTrue(packages.Count > 2, $"Only {packages.Count} {packageId} package/-s was/were found");
             foreach (var package in packages) {
                 Assert.AreEqual(packageId, package.Identity.Id);
             }
