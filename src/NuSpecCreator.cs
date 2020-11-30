@@ -193,7 +193,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
             foreach (var fileElement in new[] { @"dll", @"pdb" }.Select(extension
                   => new XElement(NugetNamespace + @"file",
                       new XAttribute(@"src", outputPath + topLevelNamespace + ".*." + extension),
-                      new XAttribute(@"exclude", string.Join(";", outputPath + @"*.Test*.*", outputPath + @"*.exe")),
+                      new XAttribute(@"exclude", string.Join(";", outputPath + @"*.Test*.*", outputPath + @"*.exe", outputPath + @"ref\*.*")),
                       new XAttribute(@"target", @"lib\net" + TargetFrameworkElementToLibNetSuffix(targetFrameworkElement))))) {
                 filesElement.Add(fileElement);
             }
