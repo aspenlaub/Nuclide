@@ -163,7 +163,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             Document = await sut.CreateNuSpecAsync(solutionFileFullName, new List<string> { "The", "Little", "Things" }, errorsAndInfos);
             Assert.IsNotNull(Document);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
-            VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "Microsoft.EntityFrameworkCore.SqlServer", "Newtonsoft.Json", "Pegh" }, true);
+            VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "Dvin", "Microsoft.EntityFrameworkCore.SqlServer", "Newtonsoft.Json", "System.ComponentModel.Annotations" }, true);
         }
 
         protected void VerifyTextElement(string xpath, string expectedContents) {
