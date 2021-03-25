@@ -107,14 +107,14 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             VerifyTextElement(@"/package/metadata/owners", developerSettings.Author);
             VerifyTextElement(@"/package/metadata/projectUrl", developerSettings.GitHubRepositoryUrl + ChabStandardTarget.SolutionId);
             VerifyTextElement(@"/package/metadata/iconUrl", developerSettings.FaviconUrl);
-            VerifyTextElement(@"/package/metadata/icon", "packageicon.ico");
+            VerifyTextElement(@"/package/metadata/icon", "packageicon.png");
             VerifyTextElement(@"/package/metadata/requireLicenseAcceptance", @"false");
             var year = DateTime.Now.Year;
             VerifyTextElement(@"/package/metadata/copyright", $"Copyright {year}");
             VerifyTextElementPattern(@"/package/metadata/version", @"\d+.\d+.\d+.\d+");
             VerifyElements(@"/package/metadata/dependencies/group", "targetFramework", new List<string> { @"netstandard2.0" }, false);
             VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "Autofac" , "LibGit2Sharp", "Newtonsoft.Json" }, false);
-            VerifyElements(@"/package/files/file", "src", new List<string> { @"bin\Release\Aspenlaub.*.dll", @"bin\Release\Aspenlaub.*.pdb", @"bin\Release\packageicon.ico" }, false);
+            VerifyElements(@"/package/files/file", "src", new List<string> { @"bin\Release\Aspenlaub.*.dll", @"bin\Release\Aspenlaub.*.pdb", @"bin\Release\packageicon.png" }, false);
             VerifyElements(@"/package/files/file", "exclude", new List<string> { @"bin\Release\*.Test*.*;bin\Release\*.exe;bin\Release\ref\*.*", @"bin\Release\*.Test*.*;bin\Release\*.exe;bin\Release\ref\*.*", null }, false);
             var target = @"lib\" + targetFrameworkElement.Value;
             VerifyElements(@"/package/files/file", "target", new List<string> { target, target, "" }, false);

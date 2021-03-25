@@ -120,7 +120,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
             }
 
             element.Add(new XElement(NugetNamespace + @"projectUrl", gitHubRepositoryUrl + solutionId));
-            element.Add(new XElement(NugetNamespace + @"icon", "packageicon.ico"));
+            element.Add(new XElement(NugetNamespace + @"icon", "packageicon.png"));
             element.Add(new XElement(NugetNamespace + @"iconUrl", faviconUrl));
             element.Add(new XElement(NugetNamespace + @"requireLicenseAcceptance", @"false"));
             var year = DateTime.Now.Year;
@@ -199,7 +199,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
             }
 
             filesElement.Add(new XElement(NugetNamespace + @"file",
-                new XAttribute(@"src", outputPath + "packageicon.ico"),
+                new XAttribute(@"src", outputPath + "packageicon.png"),
                 new XAttribute(@"target", "")));
 
             var foldersToPack = projectDocument.XPathSelectElements("./" + namespaceSelector + "Project/" + namespaceSelector + "ItemGroup/" + namespaceSelector + "Content", NamespaceManager)

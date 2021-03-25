@@ -46,7 +46,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             ChabStandardTarget.Delete();
         }
 
-        [TestMethod]
+        [TestMethod, Ignore]
         public void CanFindObsoletePackages() {
             var gitUtilities = new GitUtilities();
             var errorsAndInfos = new ErrorsAndInfos();
