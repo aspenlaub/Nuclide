@@ -38,7 +38,7 @@
     <PackageReference Include="Gitty" Version="2.0.610.1082" />
     <PackageReference Include="NuGet.Client" Version="4.2.0" />
     <PackageReference Include="NuGet.Protocol.Core.v3" Version="4.2.0" />
-    <PackageReference Include="Protch" Version="2.0.610.1137" />
+    <PackageReference Include="Protch" Version="2.0.611.760" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
   </ItemGroup>
   <ItemGroup>
