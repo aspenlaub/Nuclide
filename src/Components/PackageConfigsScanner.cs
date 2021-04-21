@@ -67,7 +67,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Components {
 
             var namespaceManager = new XmlNamespaceManager(new NameTable());
             namespaceManager.AddNamespace("cp", XmlNamespaces.CsProjNamespaceUri);
-            foreach (var fileName in Directory.GetFiles(projectFolder, "*.csproj", searchOption).Where(f => includeTest || !f.Contains(@"Test"))) {
+            foreach (var fileName in Directory.GetFiles(projectFolder, "*.csproj", searchOption).Where(f => includeTest || !f.Contains(@"Test."))) {
                 XDocument document;
                 string namespaceSelector;
                 try {

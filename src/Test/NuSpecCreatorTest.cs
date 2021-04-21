@@ -28,10 +28,11 @@ using IContainer = Autofac.IContainer;
 namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
     [TestClass]
     public class NuSpecCreatorTest {
-        protected static TestTargetFolder ChabStandardTarget = new TestTargetFolder(nameof(NuSpecCreator), "ChabStandard");
-        protected static TestTargetFolder DvinTarget = new TestTargetFolder(nameof(NuSpecCreator), "Dvin");
-        protected static TestTargetFolder VishizhukelTarget = new TestTargetFolder(nameof(NuSpecCreator), "Vishizhukel");
-        protected static TestTargetFolder LibGit2SharpTarget = new TestTargetFolder(nameof(NuSpecCreator), "LibGit2Sharp");
+        protected static TestTargetFolder ChabStandardTarget = new(nameof(NuSpecCreator), "ChabStandard");
+        protected static TestTargetFolder DvinTarget = new(nameof(NuSpecCreator), "Dvin");
+        protected static TestTargetFolder VishizhukelTarget = new(nameof(NuSpecCreator), "Vishizhukel");
+        protected static TestTargetFolder VishnetIntegrationTestToolsTarget = new(nameof(NuSpecCreator), "VishnetIntegrationTestTools");
+        protected static TestTargetFolder LibGit2SharpTarget = new(nameof(NuSpecCreator), "LibGit2Sharp");
         private static IContainer vContainer;
         protected static ITestTargetRunner TargetRunner;
 
@@ -56,6 +57,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             DvinTarget.Delete();
             VishizhukelTarget.Delete();
             LibGit2SharpTarget.Delete();
+            VishnetIntegrationTestToolsTarget.Delete();
         }
 
         [TestCleanup]
@@ -64,6 +66,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             DvinTarget.Delete();
             VishizhukelTarget.Delete();
             LibGit2SharpTarget.Delete();
+            VishnetIntegrationTestToolsTarget.Delete();
         }
 
         [TestMethod]
@@ -138,7 +141,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             Assert.IsNotNull(Document);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
             VerifyElementsInverse(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "Dvin" });
-            VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "Pegh" }, true);
+            VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "Microsoft.AspNetCore.Hosting", "Pegh" }, true);
         }
 
         [TestMethod]
@@ -163,6 +166,27 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "Dvin", "Microsoft.EntityFrameworkCore.SqlServer", "Newtonsoft.Json", "System.ComponentModel.Annotations" }, true);
         }
 
+        [TestMethod]
+        public async Task CanCreateNuSpecForVishnetIntegrationTestTools() {
+            var gitUtilities = new GitUtilities();
+            var errorsAndInfos = new ErrorsAndInfos();
+            const string url = "https://github.com/aspenlaub/VishnetIntegrationTestTools.git";
+            gitUtilities.Clone(url, "master", VishnetIntegrationTestToolsTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
+
+            vContainer.Resolve<IEmbeddedCakeScriptCopier>().CopyCakeScriptEmbeddedInAssembly(Assembly.GetExecutingAssembly(), BuildCake.Standard, VishnetIntegrationTestToolsTarget, errorsAndInfos);
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
+
+            vContainer.Resolve<ITestTargetRunner>().RunBuildCakeScript(BuildCake.Standard, VishnetIntegrationTestToolsTarget, "CleanRestorePull", errorsAndInfos);
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
+
+            var sut = vContainer.Resolve<INuSpecCreator>();
+            var solutionFileFullName = VishnetIntegrationTestToolsTarget.Folder().SubFolder("src").FullName + @"\" + VishnetIntegrationTestToolsTarget.SolutionId + ".sln";
+            Document = await sut.CreateNuSpecAsync(solutionFileFullName, new List<string> { "The", "Little", "Things" }, errorsAndInfos);
+            Assert.IsNotNull(Document);
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
+            VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "MSTest.TestAdapter", "MSTest.TestFramework", "Newtonsoft.Json", "TashClient" }, true);
+        }
         protected void VerifyTextElement(string xpath, string expectedContents) {
             xpath = xpath.Replace("/", "/nu:");
             var element = Document.XPathSelectElements(xpath, NamespaceManager).FirstOrDefault();
