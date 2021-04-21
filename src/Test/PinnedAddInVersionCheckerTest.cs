@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Aspenlaub.Net.GitHub.CSharp.Gitty;
 using Aspenlaub.Net.GitHub.CSharp.Gitty.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Gitty.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Gitty.TestUtilities;
@@ -17,22 +18,12 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
     public class PinnedAddInVersionCheckerTest {
         protected static TestTargetFolder PeghTarget = new TestTargetFolder(nameof(PinnedAddInVersionCheckerTest), "Pegh");
         private static IContainer vContainer;
-        protected static TestTargetInstaller TargetInstaller;
-        protected static TestTargetRunner TargetRunner;
+        protected static ITestTargetRunner TargetRunner;
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
             vContainer = new ContainerBuilder().UseGittyTestUtilities().UseNuclideProtchGittyAndPegh(new DummyCsArgumentPrompter()).Build();
-            TargetInstaller = vContainer.Resolve<TestTargetInstaller>();
-            TargetRunner = vContainer.Resolve<TestTargetRunner>();
-            TargetInstaller.DeleteCakeFolder(PeghTarget);
-            TargetInstaller.CreateCakeFolder(PeghTarget, out var errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsPlusRelevantInfos());
-        }
-
-        [ClassCleanup]
-        public static void ClassCleanup() {
-            TargetInstaller.DeleteCakeFolder(PeghTarget);
+            TargetRunner = vContainer.Resolve<ITestTargetRunner>();
         }
 
         [TestInitialize]

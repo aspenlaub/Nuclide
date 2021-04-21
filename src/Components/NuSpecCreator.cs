@@ -14,7 +14,7 @@ using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Protch;
 using Aspenlaub.Net.GitHub.CSharp.Protch.Interfaces;
 
-namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
+namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Components {
     public class NuSpecCreator : INuSpecCreator {
         protected XNamespace NugetNamespace;
         protected XmlNamespaceManager NamespaceManager;

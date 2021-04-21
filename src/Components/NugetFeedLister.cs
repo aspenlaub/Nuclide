@@ -12,7 +12,7 @@ using NuGet.Configuration;
 using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
 
-namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
+namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Components {
     public class NugetFeedLister : INugetFeedLister {
         private readonly ISecretRepository vSecretRepository;
         private readonly IFolderResolver vFolderResolver;

@@ -10,7 +10,7 @@ using Aspenlaub.Net.GitHub.CSharp.Nuclide.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Protch;
 
-namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
+namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Components {
     public class PackageConfigsScanner : IPackageConfigsScanner {
         private readonly ISecretRepository vSecretRepository;
         public PackageConfigsScanner(ISecretRepository secretRepository) {

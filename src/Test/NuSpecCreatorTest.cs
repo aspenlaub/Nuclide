@@ -9,8 +9,10 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using Aspenlaub.Net.GitHub.CSharp.Gitty;
+using Aspenlaub.Net.GitHub.CSharp.Gitty.Components;
 using Aspenlaub.Net.GitHub.CSharp.Gitty.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Gitty.TestUtilities;
+using Aspenlaub.Net.GitHub.CSharp.Nuclide.Components;
 using Aspenlaub.Net.GitHub.CSharp.Nuclide.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Nuclide.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Components;
@@ -31,8 +33,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
         protected static TestTargetFolder VishizhukelTarget = new TestTargetFolder(nameof(NuSpecCreator), "Vishizhukel");
         protected static TestTargetFolder LibGit2SharpTarget = new TestTargetFolder(nameof(NuSpecCreator), "LibGit2Sharp");
         private static IContainer vContainer;
-        protected static TestTargetInstaller TargetInstaller;
-        protected static TestTargetRunner TargetRunner;
+        protected static ITestTargetRunner TargetRunner;
 
         protected XDocument Document;
         protected XmlNamespaceManager NamespaceManager;
@@ -46,11 +47,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
             vContainer = new ContainerBuilder().UseGittyTestUtilities().UseProtch().UseNuclideProtchGittyAndPegh(new DummyCsArgumentPrompter()).Build();
-            TargetInstaller = vContainer.Resolve<TestTargetInstaller>();
-            TargetRunner = vContainer.Resolve<TestTargetRunner>();
-            TargetInstaller.DeleteCakeFolder(ChabStandardTarget);
-            TargetInstaller.CreateCakeFolder(ChabStandardTarget, out var errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
+            TargetRunner = vContainer.Resolve<ITestTargetRunner>();
         }
 
         [TestInitialize]
@@ -77,10 +74,10 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             gitUtilities.Clone(url, "master", ChabStandardTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
-            vContainer.Resolve<CakeBuildUtilities>().CopyCakeScriptEmbeddedInAssembly(Assembly.GetExecutingAssembly(), BuildCake.Standard, ChabStandardTarget, errorsAndInfos);
+            vContainer.Resolve<IEmbeddedCakeScriptCopier>().CopyCakeScriptEmbeddedInAssembly(Assembly.GetExecutingAssembly(), BuildCake.Standard, ChabStandardTarget, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
-            vContainer.Resolve<TestTargetRunner>().RunBuildCakeScript(BuildCake.Standard, ChabStandardTarget, "IgnoreOutdatedBuildCakePendingChangesAndDoCreateOrPushPackage", errorsAndInfos);
+            vContainer.Resolve<ITestTargetRunner>().RunBuildCakeScript(BuildCake.Standard, ChabStandardTarget, "IgnoreOutdatedBuildCakePendingChangesAndDoCreateOrPushPackage", errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
             Assert.AreEqual(2, errorsAndInfos.Infos.Count(i => i.Contains("Results File:")));
 
@@ -129,10 +126,10 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             gitUtilities.Clone(url, "master", DvinTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
-            vContainer.Resolve<CakeBuildUtilities>().CopyCakeScriptEmbeddedInAssembly(Assembly.GetExecutingAssembly(), BuildCake.Standard, DvinTarget, errorsAndInfos);
+            vContainer.Resolve<IEmbeddedCakeScriptCopier>().CopyCakeScriptEmbeddedInAssembly(Assembly.GetExecutingAssembly(), BuildCake.Standard, DvinTarget, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
-            vContainer.Resolve<TestTargetRunner>().RunBuildCakeScript(BuildCake.Standard, DvinTarget, "CleanRestorePull", errorsAndInfos);
+            vContainer.Resolve<ITestTargetRunner>().RunBuildCakeScript(BuildCake.Standard, DvinTarget, "CleanRestorePull", errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
             var sut = vContainer.Resolve<INuSpecCreator>();
@@ -152,10 +149,10 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             gitUtilities.Clone(url, "master", VishizhukelTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
-            vContainer.Resolve<CakeBuildUtilities>().CopyCakeScriptEmbeddedInAssembly(Assembly.GetExecutingAssembly(), BuildCake.Standard, VishizhukelTarget, errorsAndInfos);
+            vContainer.Resolve<IEmbeddedCakeScriptCopier>().CopyCakeScriptEmbeddedInAssembly(Assembly.GetExecutingAssembly(), BuildCake.Standard, VishizhukelTarget, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
-            vContainer.Resolve<TestTargetRunner>().RunBuildCakeScript(BuildCake.Standard, VishizhukelTarget, "CleanRestorePull", errorsAndInfos);
+            vContainer.Resolve<ITestTargetRunner>().RunBuildCakeScript(BuildCake.Standard, VishizhukelTarget, "CleanRestorePull", errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
             var sut = vContainer.Resolve<INuSpecCreator>();

@@ -7,7 +7,7 @@ using NuGet.Common;
 using NuGet.Protocol;
 using LocalPackageInfo = NuGet.Protocol.LocalPackageInfo;
 
-namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
+namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Components {
     public class DependencyTreeBuilder : IDependencyTreeBuilder {
         public IDependencyNode BuildDependencyTree(string packagesFolder) {
             var logger = new NullLogger();

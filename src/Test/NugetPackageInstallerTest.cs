@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Linq;
 using Aspenlaub.Net.GitHub.CSharp.Gitty;
+using Aspenlaub.Net.GitHub.CSharp.Gitty.Components;
 using Aspenlaub.Net.GitHub.CSharp.Gitty.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Gitty.TestUtilities;
 using Aspenlaub.Net.GitHub.CSharp.Nuclide.Interfaces;
@@ -17,22 +18,12 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
     public class NugetPackageInstallerTest {
         protected static TestTargetFolder ChabStandardTarget = new TestTargetFolder(nameof(NugetPackageInstallerTest), "ChabStandard");
         private static IContainer vContainer;
-        protected static TestTargetInstaller TargetInstaller;
-        protected static TestTargetRunner TargetRunner;
+        protected static ITestTargetRunner TargetRunner;
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
             vContainer = new ContainerBuilder().UseGittyTestUtilities().UseNuclideProtchGittyAndPegh(new DummyCsArgumentPrompter()).Build();
-            TargetInstaller = vContainer.Resolve<TestTargetInstaller>();
-            TargetRunner = vContainer.Resolve<TestTargetRunner>();
-            TargetInstaller.DeleteCakeFolder(ChabStandardTarget);
-            TargetInstaller.CreateCakeFolder(ChabStandardTarget, out var errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsPlusRelevantInfos());
-        }
-
-        [ClassCleanup]
-        public static void ClassCleanup() {
-            TargetInstaller.DeleteCakeFolder(ChabStandardTarget);
+            TargetRunner = vContainer.Resolve<ITestTargetRunner>();
         }
 
         [TestInitialize]

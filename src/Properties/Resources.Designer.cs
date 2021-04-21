@@ -88,6 +88,15 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Could not deserialize object from file &quot;{0}&quot;.
+        /// </summary>
+        internal static string CouldNotDeserializeFromFile {
+            get {
+                return ResourceManager.GetString("CouldNotDeserializeFromFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Could not read target framework from &quot;{0}&quot;.
         /// </summary>
         internal static string ErrorReadingTargetFramework {

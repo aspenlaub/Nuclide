@@ -7,7 +7,7 @@ using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 using Newtonsoft.Json;
 
-namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
+namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Components {
     public class PushedHeadTipShaRepository : IPushedHeadTipShaRepository {
         private readonly IFolderResolver vFolderResolver;
 
@@ -117,7 +117,12 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
             }
 
             var dictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(fileName));
-            return dictionary["packageVersion"];
+            if (dictionary?.ContainsKey("packageVersion") == true) {
+                return dictionary["packageVersion"];
+            }
+
+            errorsAndInfos.Errors.Add(string.Format(Properties.Resources.CouldNotDeserializeFromFile, fileName));
+            return "";
         }
     }
 }

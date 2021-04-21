@@ -6,7 +6,7 @@ using Aspenlaub.Net.GitHub.CSharp.Gitty;
 using Aspenlaub.Net.GitHub.CSharp.Nuclide.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 
-namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
+namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Components {
     public class PinnedAddInVersionChecker : IPinnedAddInVersionChecker {
         private readonly IPackageConfigsScanner vPackageConfigsScanner;
 

@@ -117,17 +117,56 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="CheckingProjectVsSolution" xml:space="preserve">
+    <value>Checking project ID against solution ID</value>
+  </data>
+  <data name="CheckingRemotePackageTag" xml:space="preserve">
+    <value>Checking remote package tag</value>
+  </data>
+  <data name="CouldNotAccessNugetFeed" xml:space="preserve">
+    <value>Could not access nuget feed '{0}'</value>
+  </data>
+  <data name="CouldNotDeserializeFromFile" xml:space="preserve">
+    <value>Could not deserialize object from file "{0}"</value>
+  </data>
   <data name="ErrorReadingTargetFramework" xml:space="preserve">
     <value>Could not read target framework from "{0}"</value>
   </data>
   <data name="FileNotFound" xml:space="preserve">
     <value>File "{0}" not found</value>
   </data>
+  <data name="FolderIsObsolete" xml:space="preserve">
+    <value>Folder "{0}" is obsolete</value>
+  </data>
+  <data name="FoundLocalPackage" xml:space="preserve">
+    <value>Found local package {0}</value>
+  </data>
+  <data name="FoundRemotePackage" xml:space="preserve">
+    <value>Found remote package {0}</value>
+  </data>
+  <data name="HeadTipShaNotPushed" xml:space="preserve">
+    <value>Head tip sha {0} has not yet been pushed</value>
+  </data>
+  <data name="IdentifyingFeedUrl" xml:space="preserve">
+    <value>Identifying feed URL</value>
+  </data>
+  <data name="IdentifyingNugetFeed" xml:space="preserve">
+    <value>Identifying nuget feed</value>
+  </data>
   <data name="IncompleteDeveloperSettings" xml:space="preserve">
     <value>Incomplete 'DeveloperSettings'. Please update "{0}" in your SecretRepository</value>
   </data>
   <data name="InvalidXmlFile" xml:space="preserve">
     <value>There is no valid XML in "{0}"</value>
+  </data>
+  <data name="LoadingNugetFeeds" xml:space="preserve">
+    <value>Loading nuget feeds</value>
+  </data>
+  <data name="LoadingProject" xml:space="preserve">
+    <value>Loading project</value>
+  </data>
+  <data name="LoadingPushedHeadTipShas" xml:space="preserve">
+    <value>Loading pushed head tip shas</value>
   </data>
   <data name="MissingDeveloperSettings" xml:space="preserve">
     <value>Missing 'DeveloperSettings' secret. Open "{0}" in SecretSamples, modify it and save it in SecretRepository</value>
@@ -144,8 +183,32 @@
   <data name="MissingTargetFramework" xml:space="preserve">
     <value>Missing target framework</value>
   </data>
+  <data name="NoApiKeyFound" xml:space="preserve">
+    <value>No apikey was found for this source</value>
+  </data>
+  <data name="NoPackageFilesFound" xml:space="preserve">
+    <value>Folder "{0}" does not contain any packages</value>
+  </data>
+  <data name="NoPushedHeadTipShasFound" xml:space="preserve">
+    <value>No pushed head tip shas found in "{0}"</value>
+  </data>
+  <data name="NoRemotePackageFilesFound" xml:space="preserve">
+    <value>Feed "{0}" does not provide package "{1}"</value>
+  </data>
   <data name="NuSpecFileUpdated" xml:space="preserve">
     <value>"{0}" has been updated</value>
+  </data>
+  <data name="ObsoleteFolderDeleted" xml:space="preserve">
+    <value>Folder "{0}" is obsolete and has been deleted</value>
+  </data>
+  <data name="PackageAlreadyTaggedWithHeadTipSha" xml:space="preserve">
+    <value>The remote package is already tagged with the head tip sha</value>
+  </data>
+  <data name="PackageNeedsToBePushed" xml:space="preserve">
+    <value>The package needs to be pushed</value>
+  </data>
+  <data name="PackageNotPinnedToVersion" xml:space="preserve">
+    <value>Cake add-in package "{0}" is not pinned to version "{1}"</value>
   </data>
   <data name="PackageVersionClashDueToFile" xml:space="preserve">
     <value>File "{0}" requests package '{1}' with version {2}, but another one version {3}</value>
@@ -162,56 +225,8 @@
   <data name="ProjectFileNotFound" xml:space="preserve">
     <value>There is no project file "{0}"</value>
   </data>
-  <data name="TopLevelNamespaceLacksADot" xml:space="preserve">
-    <value>Top level namespace '{0}' does not contain any dot ('.')</value>
-  </data>
-  <data name="FolderIsObsolete" xml:space="preserve">
-    <value>Folder "{0}" is obsolete</value>
-  </data>
-  <data name="ObsoleteFolderDeleted" xml:space="preserve">
-    <value>Folder "{0}" is obsolete and has been deleted</value>
-  </data>
-  <data name="NoApiKeyFound" xml:space="preserve">
-    <value>No apikey was found for this source</value>
-  </data>
-  <data name="NoPackageFilesFound" xml:space="preserve">
-    <value>Folder "{0}" does not contain any packages</value>
-  </data>
-  <data name="NoRemotePackageFilesFound" xml:space="preserve">
-    <value>Feed "{0}" does not provide package "{1}"</value>
-  </data>
-  <data name="PackageNotPinnedToVersion" xml:space="preserve">
-    <value>Cake add-in package "{0}" is not pinned to version "{1}"</value>
-  </data>
-  <data name="NoPushedHeadTipShasFound" xml:space="preserve">
-    <value>No pushed head tip shas found in "{0}"</value>
-  </data>
-  <data name="UnknownNugetFeed" xml:space="preserve">
-    <value>Unknown nuget feed '{0}', please add to "{1}" in your SecretRepository</value>
-  </data>
-  <data name="CouldNotAccessNugetFeed" xml:space="preserve">
-    <value>Could not access nuget feed '{0}'</value>
-  </data>
-  <data name="CheckingProjectVsSolution" xml:space="preserve">
-    <value>Checking project ID against solution ID</value>
-  </data>
-  <data name="FoundLocalPackage" xml:space="preserve">
-    <value>Found local package {0}</value>
-  </data>
-  <data name="IdentifyingFeedUrl" xml:space="preserve">
-    <value>Identifying feed URL</value>
-  </data>
-  <data name="IdentifyingNugetFeed" xml:space="preserve">
-    <value>Identifying nuget feed</value>
-  </data>
-  <data name="LoadingNugetFeeds" xml:space="preserve">
-    <value>Loading nuget feeds</value>
-  </data>
-  <data name="LoadingProject" xml:space="preserve">
-    <value>Loading project</value>
-  </data>
-  <data name="LoadingPushedHeadTipShas" xml:space="preserve">
-    <value>Loading pushed head tip shas</value>
+  <data name="RemotePackageHasHigherOrEqualVersion" xml:space="preserve">
+    <value>The remote package version number is higher or equal to the version number of the local package</value>
   </data>
   <data name="SearchingLocalPackage" xml:space="preserve">
     <value>Searching local package</value>
@@ -219,25 +234,13 @@
   <data name="SearchingRemotePackage" xml:space="preserve">
     <value>Searching remote package</value>
   </data>
-  <data name="CheckingRemotePackageTag" xml:space="preserve">
-    <value>Checking remote package tag</value>
-  </data>
-  <data name="FoundRemotePackage" xml:space="preserve">
-    <value>Found remote package {0}</value>
-  </data>
-  <data name="HeadTipShaNotPushed" xml:space="preserve">
-    <value>Head tip sha {0} has not yet been pushed</value>
-  </data>
-  <data name="PackageAlreadyTaggedWithHeadTipSha" xml:space="preserve">
-    <value>The remote package is already tagged with the head tip sha</value>
-  </data>
-  <data name="PackageNeedsToBePushed" xml:space="preserve">
-    <value>The package needs to be pushed</value>
-  </data>
-  <data name="RemotePackageHasHigherOrEqualVersion" xml:space="preserve">
-    <value>The remote package version number is higher or equal to the version number of the local package</value>
-  </data>
   <data name="TagsAre" xml:space="preserve">
     <value>Remote package tags are: "{0}"</value>
+  </data>
+  <data name="TopLevelNamespaceLacksADot" xml:space="preserve">
+    <value>Top level namespace '{0}' does not contain any dot ('.')</value>
+  </data>
+  <data name="UnknownNugetFeed" xml:space="preserve">
+    <value>Unknown nuget feed '{0}', please add to "{1}" in your SecretRepository</value>
   </data>
 </root>

@@ -4,7 +4,7 @@ using System.Xml.XPath;
 using Aspenlaub.Net.GitHub.CSharp.Nuclide.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 
-namespace Aspenlaub.Net.GitHub.CSharp.Nuclide {
+namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Components {
     public class NugetConfigReader : INugetConfigReader {
         public string GetApiKey(string nugetConfigFileFullName, string source, IErrorsAndInfos errorsAndInfos) {
             XDocument document;
