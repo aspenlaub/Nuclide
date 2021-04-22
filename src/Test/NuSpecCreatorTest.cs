@@ -119,6 +119,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             var target = @"lib\" + targetFrameworkElement.Value;
             VerifyElements(@"/package/files/file", "target", new List<string> { target, target, "" }, false);
             VerifyTextElement(@"/package/metadata/tags", @"Red White Blue");
+            VerifyTargetFrameworkMoniker(@"/package/metadata/dependencies/group", "targetFramework");
+            VerifyTargetFrameworkMoniker(@"/package/files/file", "target");
         }
 
         [TestMethod]
@@ -142,6 +144,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
             VerifyElementsInverse(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "Dvin" });
             VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "Microsoft.AspNetCore.Hosting", "Pegh" }, true);
+            VerifyTargetFrameworkMoniker(@"/package/metadata/dependencies/group", "targetFramework");
+            VerifyTargetFrameworkMoniker(@"/package/files/file", "target");
         }
 
         [TestMethod]
@@ -164,6 +168,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             Assert.IsNotNull(Document);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
             VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "Dvin", "Microsoft.EntityFrameworkCore.SqlServer", "Newtonsoft.Json", "System.ComponentModel.Annotations" }, true);
+            VerifyTargetFrameworkMoniker(@"/package/metadata/dependencies/group", "targetFramework");
+            VerifyTargetFrameworkMoniker(@"/package/files/file", "target");
         }
 
         [TestMethod]
@@ -186,7 +192,10 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             Assert.IsNotNull(Document);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
             VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "MSTest.TestAdapter", "MSTest.TestFramework", "Newtonsoft.Json", "TashClient" }, true);
+            VerifyTargetFrameworkMoniker(@"/package/metadata/dependencies/group", "targetFramework");
+            VerifyTargetFrameworkMoniker(@"/package/files/file", "target");
         }
+
         protected void VerifyTextElement(string xpath, string expectedContents) {
             xpath = xpath.Replace("/", "/nu:");
             var element = Document.XPathSelectElements(xpath, NamespaceManager).FirstOrDefault();
@@ -225,6 +234,16 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             foreach (var element in elements) {
                 var actualValue = element.Attribute(attributeName)?.Value;
                 Assert.IsFalse(unexpectedAttributeValueComponents.Any(c => actualValue?.Contains(c) == true));
+            }
+        }
+
+        protected void VerifyTargetFrameworkMoniker(string xpath, string attributeName) {
+            xpath = xpath.Replace("/", "/nu:");
+            var elements = Document.XPathSelectElements(xpath, NamespaceManager).ToList();
+            foreach (var element in elements) {
+                var actualMoniker = element.Attribute(attributeName)?.Value;
+                Assert.IsNotNull(actualMoniker);
+                Assert.IsFalse(actualMoniker.Contains("-windows"));
             }
         }
     }

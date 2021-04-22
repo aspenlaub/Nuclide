@@ -135,7 +135,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Components {
             element.Add(dependenciesElement);
 
             if (namespaceSelector == "") {
-                var groupElement = new XElement(NugetNamespace + "group", new XAttribute("targetFramework", targetFramework));
+                var groupElement = new XElement(NugetNamespace + "group", new XAttribute("targetFramework", "net" + TargetFrameworkToLibNetSuffix(targetFramework)));
                 dependenciesElement.Add(groupElement);
                 dependenciesElement = groupElement;
             } else {
@@ -228,8 +228,19 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Components {
         }
 
         private static string TargetFrameworkElementToLibNetSuffix(XElement targetFrameworkElement) {
-            var targetFramework = targetFrameworkElement.Value;
-            return targetFramework.StartsWith("v") ? targetFramework.Replace("v", "").Replace(".", "") : targetFramework.StartsWith("net") ? targetFramework.Substring(3) : targetFramework;
+            return TargetFrameworkToLibNetSuffix(targetFrameworkElement.Value);
+        }
+
+        private static string TargetFrameworkToLibNetSuffix(string targetFramework) {
+            var libNetSuffix = targetFramework.StartsWith("v")
+                ? targetFramework.Replace("v", "").Replace(".", "")
+                : targetFramework.StartsWith("net")
+                    ? targetFramework.Substring(3)
+                    : targetFramework;
+            if (libNetSuffix.Contains("-")) {
+                libNetSuffix = libNetSuffix.Substring(0, libNetSuffix.IndexOf("-", StringComparison.InvariantCulture));
+            }
+            return libNetSuffix;
         }
 
         public async Task CreateNuSpecFileIfRequiredOrPresentAsync(bool required, string solutionFileFullName, IList<string> tags, IErrorsAndInfos errorsAndInfos) {
