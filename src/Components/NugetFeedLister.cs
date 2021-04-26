@@ -32,7 +32,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Components {
             }
 
             try {
-                var source = nugetFeed.UrlOrResolvedFolder(vFolderResolver, errorsAndInfos);
+                var source = await nugetFeed.UrlOrResolvedFolderAsync(vFolderResolver, errorsAndInfos);
                 if (errorsAndInfos.AnyErrors()) {  return new List<IPackageSearchMetadata>(); }
 
                 var packageSource = new PackageSource(source);

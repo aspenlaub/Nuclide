@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Aspenlaub.Net.GitHub.CSharp.Nuclide.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
@@ -15,15 +16,15 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Components {
             vFolderResolver = folderResolver;
         }
 
-        private IFolder RepositoryFolder(IErrorsAndInfos errorsAndInfos) {
-            var folder = vFolderResolver.Resolve(@"$(CSharp)\GitHub\PushedHeadTipShas", errorsAndInfos);
+        private async Task<IFolder> RepositoryFolderAsync(IErrorsAndInfos errorsAndInfos) {
+            var folder = await vFolderResolver.ResolveAsync(@"$(CSharp)\GitHub\PushedHeadTipShas", errorsAndInfos);
             if (errorsAndInfos.AnyErrors()) { return null; }
             folder.CreateIfNecessary();
             return folder;
         }
 
-        public List<string> Get(string nugetFeedId, IErrorsAndInfos errorsAndInfos) {
-            var folder = RepositoryFolder(errorsAndInfos);
+        public async Task<List<string>> GetAsync(string nugetFeedId, IErrorsAndInfos errorsAndInfos) {
+            var folder = await RepositoryFolderAsync(errorsAndInfos);
             if (errorsAndInfos.AnyErrors()) { return new List<string>(); }
 
             var resultFiles = new List<string>();
@@ -42,15 +43,15 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Components {
             return fileName.Substring(fileName.LastIndexOf('\\') + 1).Replace(".txt", "").Replace(".json", "");
         }
 
-        public void Remove(string nugetFeedId, string headTipSha, IErrorsAndInfos errorsAndInfos) {
-            var fileName = TextFileName(headTipSha, errorsAndInfos);
+        public async Task RemoveAsync(string nugetFeedId, string headTipSha, IErrorsAndInfos errorsAndInfos) {
+            var fileName = await TextFileNameAsync(headTipSha, errorsAndInfos);
             if (errorsAndInfos.AnyErrors()) { return; }
 
             if (File.Exists(fileName)) {
                 File.Delete(fileName);
             }
 
-            fileName = JsonFileName(nugetFeedId, headTipSha, errorsAndInfos);
+            fileName = await JsonFileNameAsync(nugetFeedId, headTipSha, errorsAndInfos);
             if (errorsAndInfos.AnyErrors()) { return; }
 
             if (File.Exists(fileName)) {
@@ -59,17 +60,17 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Components {
         }
 
 
-        public void Add(string nugetFeedId, string headTipSha, IErrorsAndInfos errorsAndInfos) {
-            var fileName = TextFileName(headTipSha, errorsAndInfos);
+        public async Task AddAsync(string nugetFeedId, string headTipSha, IErrorsAndInfos errorsAndInfos) {
+            var fileName = await TextFileNameAsync(headTipSha, errorsAndInfos);
             if (errorsAndInfos.AnyErrors()) { return; }
 
             if (File.Exists(fileName)) { return; }
 
-            File.WriteAllText(fileName, headTipSha);
+            await File.WriteAllTextAsync(fileName, headTipSha);
         }
 
-        public void Add(string nugetFeedId, string headTipSha, string packageId, string packageVersion, IErrorsAndInfos errorsAndInfos) {
-            var fileName = JsonFileName(nugetFeedId, headTipSha, errorsAndInfos);
+        public async Task AddAsync(string nugetFeedId, string headTipSha, string packageId, string packageVersion, IErrorsAndInfos errorsAndInfos) {
+            var fileName = await JsonFileNameAsync(nugetFeedId, headTipSha, errorsAndInfos);
             if (errorsAndInfos.AnyErrors()) { return; }
 
             if (File.Exists(fileName)) { return; }
@@ -80,26 +81,26 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Components {
 
             var json = JsonConvert.SerializeObject(dictionary);
 
-            File.WriteAllText(fileName, json);
+            await File.WriteAllTextAsync(fileName, json);
         }
 
-        public DateTime AddedAt(string nugetFeedId, string headTipSha, IErrorsAndInfos errorsAndInfos) {
-            var folder = RepositoryFolder(errorsAndInfos);
+        public async Task<DateTime> AddedAtAsync(string nugetFeedId, string headTipSha, IErrorsAndInfos errorsAndInfos) {
+            var folder = await RepositoryFolderAsync(errorsAndInfos);
             if (errorsAndInfos.AnyErrors()) { return DateTime.MaxValue;}
 
             var fileName = folder.FullName + '\\' + headTipSha +  ".txt";
             return !File.Exists(fileName) ? DateTime.MaxValue : File.GetLastWriteTime(fileName);
         }
 
-        private string TextFileName(string headTipSha, IErrorsAndInfos errorsAndInfos) {
-            var folder = RepositoryFolder(errorsAndInfos);
+        private async Task<string> TextFileNameAsync(string headTipSha, IErrorsAndInfos errorsAndInfos) {
+            var folder = await RepositoryFolderAsync(errorsAndInfos);
             if (errorsAndInfos.AnyErrors()) { return ""; }
 
             return folder.FullName + '\\' + headTipSha + ".txt";
         }
 
-        private string JsonFileName(string nugetFeedId, string headTipSha, IErrorsAndInfos errorsAndInfos) {
-            var folder = RepositoryFolder(errorsAndInfos);
+        private async Task<string> JsonFileNameAsync(string nugetFeedId, string headTipSha, IErrorsAndInfos errorsAndInfos) {
+            var folder = await RepositoryFolderAsync(errorsAndInfos);
             if (errorsAndInfos.AnyErrors()) { return ""; }
 
             folder = folder.SubFolder(nugetFeedId);
@@ -107,8 +108,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Components {
             return folder.FullName + '\\' + headTipSha + ".json";
         }
 
-        public string PackageVersion(string nugetFeedId, string headTipSha, IErrorsAndInfos errorsAndInfos) {
-            var fileName = JsonFileName(nugetFeedId, headTipSha, errorsAndInfos);
+        public async Task<string> PackageVersionAsync(string nugetFeedId, string headTipSha, IErrorsAndInfos errorsAndInfos) {
+            var fileName = await JsonFileNameAsync(nugetFeedId, headTipSha, errorsAndInfos);
             if (errorsAndInfos.AnyErrors()) { return ""; }
 
             if (!File.Exists(fileName)) {
