@@ -17,7 +17,7 @@ using IContainer = Autofac.IContainer;
 namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
     [TestClass]
     public class ObsoletePackageFinderTest {
-        protected static TestTargetFolder ChabStandardTarget = new TestTargetFolder(nameof(ObsoletePackageFinderTest), "ChabStandard");
+        protected static TestTargetFolder ChabTarget = new(nameof(ObsoletePackageFinderTest), "Chab");
         private static IContainer vContainer;
         protected static ITestTargetRunner TargetRunner;
 
@@ -29,28 +29,28 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
 
         [TestInitialize]
         public void Initialize() {
-            ChabStandardTarget.Delete();
+            ChabTarget.Delete();
         }
 
         [TestCleanup]
         public void TestCleanup() {
-            ChabStandardTarget.Delete();
+            ChabTarget.Delete();
         }
 
         [TestMethod]
         public void CanFindObsoletePackages() {
             var gitUtilities = new GitUtilities();
             var errorsAndInfos = new ErrorsAndInfos();
-            var url = "https://github.com/aspenlaub/" + ChabStandardTarget.SolutionId + ".git";
-            gitUtilities.Clone(url, "master", ChabStandardTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
+            var url = "https://github.com/aspenlaub/" + ChabTarget.SolutionId + ".git";
+            gitUtilities.Clone(url, "master", ChabTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
-            vContainer.Resolve<ITestTargetRunner>().IgnoreOutdatedBuildCakePendingChangesAndDoNotPush(Assembly.GetExecutingAssembly(), ChabStandardTarget, errorsAndInfos);
+            vContainer.Resolve<ITestTargetRunner>().IgnoreOutdatedBuildCakePendingChangesAndDoNotPush(Assembly.GetExecutingAssembly(), ChabTarget, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
             errorsAndInfos = new ErrorsAndInfos();
             var sut = vContainer.Resolve<IObsoletePackageFinder>();
-            var solutionFolder = ChabStandardTarget.Folder().SubFolder("src");
+            var solutionFolder = ChabTarget.Folder().SubFolder("src");
             sut.FindObsoletePackagesAsync(solutionFolder.FullName, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any());
             Assert.IsFalse(errorsAndInfos.Infos.Any());

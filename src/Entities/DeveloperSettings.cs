@@ -10,7 +10,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Entities {
         public string FaviconUrl { get; set; }
 
         public DeveloperSettings Clone() {
-            return new DeveloperSettings {
+            return new() {
                 Author = Author,
                 Email = Email,
                 GitHubRepositoryUrl = GitHubRepositoryUrl,

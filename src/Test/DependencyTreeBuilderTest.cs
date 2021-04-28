@@ -16,7 +16,7 @@ using IContainer = Autofac.IContainer;
 namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
     [TestClass]
     public class DependencyTreeBuilderTest {
-        protected static TestTargetFolder ShatilayaTarget = new TestTargetFolder(nameof(DependencyTreeBuilderTest), "Shatilaya");
+        protected static TestTargetFolder ShatilayaTarget = new(nameof(DependencyTreeBuilderTest), "Shatilaya");
         private static IContainer vContainer;
         protected static ITestTargetRunner TargetRunner;
 

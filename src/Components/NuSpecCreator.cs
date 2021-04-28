@@ -252,7 +252,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Components {
 
             var tempFileName = Path.GetTempPath() + @"AspenlaubTemp\temp.nuspec";
             document.Save(tempFileName);
-            if (File.Exists(nuSpecFile) && File.ReadAllText(nuSpecFile) == File.ReadAllText(tempFileName)) { return; }
+            if (File.Exists(nuSpecFile) && await File.ReadAllTextAsync(nuSpecFile) == await File.ReadAllTextAsync(tempFileName)) { return; }
 
             File.Copy(tempFileName, nuSpecFile, true);
             errorsAndInfos.Infos.Add(string.Format(Properties.Resources.NuSpecFileUpdated, nuSpecFile));

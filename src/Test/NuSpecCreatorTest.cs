@@ -28,7 +28,7 @@ using IContainer = Autofac.IContainer;
 namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
     [TestClass]
     public class NuSpecCreatorTest {
-        protected static TestTargetFolder ChabStandardTarget = new(nameof(NuSpecCreator), "ChabStandard");
+        protected static TestTargetFolder ChabTarget = new(nameof(NuSpecCreator), "Chab");
         protected static TestTargetFolder DvinTarget = new(nameof(NuSpecCreator), "Dvin");
         protected static TestTargetFolder VishizhukelTarget = new(nameof(NuSpecCreator), "Vishizhukel");
         protected static TestTargetFolder VishnetIntegrationTestToolsTarget = new(nameof(NuSpecCreator), "VishnetIntegrationTestTools");
@@ -53,7 +53,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
 
         [TestInitialize]
         public void Initialize() {
-            ChabStandardTarget.Delete();
+            ChabTarget.Delete();
             DvinTarget.Delete();
             VishizhukelTarget.Delete();
             LibGit2SharpTarget.Delete();
@@ -62,7 +62,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
 
         [TestCleanup]
         public void TestCleanup() {
-            ChabStandardTarget.Delete();
+            ChabTarget.Delete();
             DvinTarget.Delete();
             VishizhukelTarget.Delete();
             LibGit2SharpTarget.Delete();
@@ -70,23 +70,23 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
         }
 
         [TestMethod]
-        public async Task CanCreateNuSpecForChabStandard() {
+        public async Task CanCreateNuSpecForChab() {
             var gitUtilities = new GitUtilities();
             var errorsAndInfos = new ErrorsAndInfos();
-            const string url = "https://github.com/aspenlaub/ChabStandard.git";
-            gitUtilities.Clone(url, "master", ChabStandardTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
+            const string url = "https://github.com/aspenlaub/Chab.git";
+            gitUtilities.Clone(url, "master", ChabTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
-            vContainer.Resolve<IEmbeddedCakeScriptCopier>().CopyCakeScriptEmbeddedInAssembly(Assembly.GetExecutingAssembly(), BuildCake.Standard, ChabStandardTarget, errorsAndInfos);
+            vContainer.Resolve<IEmbeddedCakeScriptCopier>().CopyCakeScriptEmbeddedInAssembly(Assembly.GetExecutingAssembly(), BuildCake.Standard, ChabTarget, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
-            vContainer.Resolve<ITestTargetRunner>().RunBuildCakeScript(BuildCake.Standard, ChabStandardTarget, "IgnoreOutdatedBuildCakePendingChangesAndDoCreateOrPushPackage", errorsAndInfos);
+            vContainer.Resolve<ITestTargetRunner>().RunBuildCakeScript(BuildCake.Standard, ChabTarget, "IgnoreOutdatedBuildCakePendingChangesAndDoCreateOrPushPackage", errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
             Assert.AreEqual(2, errorsAndInfos.Infos.Count(i => i.Contains("Results File:")));
 
             var sut = vContainer.Resolve<INuSpecCreator>();
-            var solutionFileFullName = ChabStandardTarget.Folder().SubFolder("src").FullName + @"\" + ChabStandardTarget.SolutionId + ".sln";
-            var projectFileFullName = ChabStandardTarget.Folder().SubFolder("src").FullName + @"\" + ChabStandardTarget.SolutionId + ".csproj";
+            var solutionFileFullName = ChabTarget.Folder().SubFolder("src").FullName + @"\" + ChabTarget.SolutionId + ".sln";
+            var projectFileFullName = ChabTarget.Folder().SubFolder("src").FullName + @"\" + ChabTarget.SolutionId + ".csproj";
             Assert.IsTrue(File.Exists(projectFileFullName));
             Document = XDocument.Load(projectFileFullName);
             var targetFrameworkElement = Document.XPathSelectElements("./Project/PropertyGroup/TargetFramework", NamespaceManager).FirstOrDefault();
@@ -99,20 +99,20 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             var developerSettingsSecret = new DeveloperSettingsSecret();
             var developerSettings = await vContainer.Resolve<ISecretRepository>().GetAsync(developerSettingsSecret, errorsAndInfos);
             Assert.IsNotNull(developerSettings);
-            VerifyTextElement(@"/package/metadata/id", ChabStandardTarget.SolutionId);
-            VerifyTextElement(@"/package/metadata/title", @"Aspenlaub.Net.GitHub.CSharp." + ChabStandardTarget.SolutionId);
-            VerifyTextElement(@"/package/metadata/description", @"Aspenlaub.Net.GitHub.CSharp." + ChabStandardTarget.SolutionId);
-            VerifyTextElement(@"/package/metadata/releaseNotes", @"Aspenlaub.Net.GitHub.CSharp." + ChabStandardTarget.SolutionId);
+            VerifyTextElement(@"/package/metadata/id", ChabTarget.SolutionId);
+            VerifyTextElement(@"/package/metadata/title", @"Aspenlaub.Net.GitHub.CSharp." + ChabTarget.SolutionId);
+            VerifyTextElement(@"/package/metadata/description", @"Aspenlaub.Net.GitHub.CSharp." + ChabTarget.SolutionId);
+            VerifyTextElement(@"/package/metadata/releaseNotes", @"Aspenlaub.Net.GitHub.CSharp." + ChabTarget.SolutionId);
             VerifyTextElement(@"/package/metadata/authors", developerSettings.Author);
             VerifyTextElement(@"/package/metadata/owners", developerSettings.Author);
-            VerifyTextElement(@"/package/metadata/projectUrl", developerSettings.GitHubRepositoryUrl + ChabStandardTarget.SolutionId);
+            VerifyTextElement(@"/package/metadata/projectUrl", developerSettings.GitHubRepositoryUrl + ChabTarget.SolutionId);
             VerifyTextElement(@"/package/metadata/iconUrl", developerSettings.FaviconUrl);
             VerifyTextElement(@"/package/metadata/icon", "packageicon.png");
             VerifyTextElement(@"/package/metadata/requireLicenseAcceptance", @"false");
             var year = DateTime.Now.Year;
             VerifyTextElement(@"/package/metadata/copyright", $"Copyright {year}");
             VerifyTextElementPattern(@"/package/metadata/version", @"\d+.\d+.\d+.\d+");
-            VerifyElements(@"/package/metadata/dependencies/group", "targetFramework", new List<string> { @"netstandard2.0" }, false);
+            VerifyElements(@"/package/metadata/dependencies/group", "targetFramework", new List<string> { @"net5.0" }, false);
             VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "Autofac" , "LibGit2Sharp", "Newtonsoft.Json" }, false);
             VerifyElements(@"/package/files/file", "src", new List<string> { @"bin\Release\Aspenlaub.*.dll", @"bin\Release\Aspenlaub.*.pdb", @"bin\Release\packageicon.png" }, false);
             VerifyElements(@"/package/files/file", "exclude", new List<string> { @"bin\Release\*.Test*.*;bin\Release\*.exe;bin\Release\ref\*.*", @"bin\Release\*.Test*.*;bin\Release\*.exe;bin\Release\ref\*.*", null }, false);

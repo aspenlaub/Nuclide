@@ -117,7 +117,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Components {
                 return "";
             }
 
-            var dictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(fileName));
+            var dictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(await File.ReadAllTextAsync(fileName));
             if (dictionary?.ContainsKey("packageVersion") == true) {
                 return dictionary["packageVersion"];
             }

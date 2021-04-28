@@ -15,7 +15,7 @@ using IContainer = Autofac.IContainer;
 namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
     [TestClass]
     public class NugetPackageInstallerTest {
-        protected static TestTargetFolder ChabStandardTarget = new TestTargetFolder(nameof(NugetPackageInstallerTest), "ChabStandard");
+        protected static TestTargetFolder ChabTarget = new(nameof(NugetPackageInstallerTest), "Chab");
         private static IContainer vContainer;
         protected static ITestTargetRunner TargetRunner;
 
@@ -27,28 +27,28 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
 
         [TestInitialize]
         public void Initialize() {
-            ChabStandardTarget.Delete();
+            ChabTarget.Delete();
         }
 
         [TestCleanup]
         public void TestCleanup() {
-            ChabStandardTarget.Delete();
+            ChabTarget.Delete();
         }
 
         [TestMethod]
         public void CanInstallNugetPackage() {
             var gitUtilities = new GitUtilities();
             var errorsAndInfos = new ErrorsAndInfos();
-            var url = "https://github.com/aspenlaub/" + ChabStandardTarget.SolutionId + ".git";
-            gitUtilities.Clone(url, "master", ChabStandardTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
+            var url = "https://github.com/aspenlaub/" + ChabTarget.SolutionId + ".git";
+            gitUtilities.Clone(url, "master", ChabTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
-            Assert.IsFalse(ChabStandardTarget.Folder().SubFolder(@"src\OctoPack.3.6.0").Exists());
+            Assert.IsFalse(ChabTarget.Folder().SubFolder(@"src\OctoPack.3.6.0").Exists());
             var sut = vContainer.Resolve<INugetPackageInstaller>();
 
-            sut.InstallNugetPackage(ChabStandardTarget.Folder().SubFolder("src"), "OctoPack", "3.6.0", false, errorsAndInfos);
+            sut.InstallNugetPackage(ChabTarget.Folder().SubFolder("src"), "OctoPack", "3.6.0", false, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
             Assert.IsTrue(errorsAndInfos.Infos.Any(i => i.Contains("Adding package") && i.Contains("to folder")));
-            Assert.IsTrue(ChabStandardTarget.Folder().SubFolder(@"src\OctoPack.3.6.0").Exists());
+            Assert.IsTrue(ChabTarget.Folder().SubFolder(@"src\OctoPack.3.6.0").Exists());
         }
     }
 }

@@ -21,7 +21,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Components {
                 return;
             }
 
-            await CheckPinnedAddInVersionsAsync(File.ReadAllLines(buildCakeFileName), solutionFolder, errorsAndInfos);
+            await CheckPinnedAddInVersionsAsync(await File.ReadAllLinesAsync(buildCakeFileName), solutionFolder, errorsAndInfos);
         }
 
         public async Task CheckPinnedAddInVersionsAsync(IList<string> cakeScript, IFolder solutionFolder, IErrorsAndInfos errorsAndInfos) {

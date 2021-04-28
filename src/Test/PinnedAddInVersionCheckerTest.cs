@@ -16,7 +16,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
     [TestClass]
     public class PinnedAddInVersionCheckerTest {
-        protected static TestTargetFolder PeghTarget = new TestTargetFolder(nameof(PinnedAddInVersionCheckerTest), "Pegh");
+        protected static TestTargetFolder PeghTarget = new(nameof(PinnedAddInVersionCheckerTest), "Pegh");
         private static IContainer vContainer;
         protected static ITestTargetRunner TargetRunner;
 
