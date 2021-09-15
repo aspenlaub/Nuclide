@@ -17,11 +17,11 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
         protected string NugetConfigFileName = new Folder(Path.GetTempPath()).SubFolder("AspenlaubTemp").FullName + '\\' + nameof(NugetConfigReaderTest) + ".config";
         protected string Source = "hypothetical" + "source.net";
         protected string ApiKey = "thisisnotanapikey";
-        private static IContainer vContainer;
+        private static IContainer Container;
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext testContext) {
-            vContainer = new ContainerBuilder().UseGittyTestUtilities().UseNuclideProtchGittyAndPegh(new DummyCsArgumentPrompter()).Build();
+            Container = new ContainerBuilder().UseGittyTestUtilities().UseNuclideProtchGittyAndPegh(new DummyCsArgumentPrompter()).Build();
         }
 
         [TestCleanup]
@@ -34,7 +34,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
         [TestMethod]
         public void CanGetApiKey() {
             CreateNugetConfig();
-            var sut = vContainer.Resolve<INugetConfigReader>();
+            var sut = Container.Resolve<INugetConfigReader>();
             var errorsAndInfos = new ErrorsAndInfos();
             Assert.AreEqual(ApiKey, sut.GetApiKey(NugetConfigFileName, Source, errorsAndInfos));
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());

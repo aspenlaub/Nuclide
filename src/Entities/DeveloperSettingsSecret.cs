@@ -3,8 +3,8 @@ using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Entities {
     public class DeveloperSettingsSecret : ISecret<DeveloperSettings> {
-        private DeveloperSettings vDeveloperSettings;
-        public DeveloperSettings DefaultValue => vDeveloperSettings ??= Sample();
+        private DeveloperSettings DefaultDeveloperSettings;
+        public DeveloperSettings DefaultValue => DefaultDeveloperSettings ??= Sample();
 
         private DeveloperSettings Sample() {
             return new() {

@@ -15,23 +15,23 @@ using IContainer = Autofac.IContainer;
 namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
     [TestClass]
     public class NugetFeedListerTest {
-        private static IContainer vContainer;
+        private static IContainer Container;
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext testContext) {
-            vContainer = new ContainerBuilder().UseGittyTestUtilities().UseNuclideProtchGittyAndPegh(new DummyCsArgumentPrompter()).Build();
+            Container = new ContainerBuilder().UseGittyTestUtilities().UseNuclideProtchGittyAndPegh(new DummyCsArgumentPrompter()).Build();
         }
 
         [TestMethod]
         public async Task CanFindNuclidePackages() {
             var developerSettingsSecret = new DeveloperSettingsSecret();
             var errorsAndInfos  = new ErrorsAndInfos();
-            var developerSettings = await vContainer.Resolve<ISecretRepository>().GetAsync(developerSettingsSecret, errorsAndInfos);
+            var developerSettings = await Container.Resolve<ISecretRepository>().GetAsync(developerSettingsSecret, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
             Assert.IsNotNull(developerSettings);
 
             const string packageId = "Nuclide";
-            var sut = vContainer.Resolve<INugetFeedLister>();
+            var sut = Container.Resolve<INugetFeedLister>();
 
             var packages = (await sut.ListReleasedPackagesAsync(NugetFeed.AspenlaubLocalFeed, packageId, errorsAndInfos)).ToList();
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());

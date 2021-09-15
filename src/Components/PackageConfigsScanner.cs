@@ -12,9 +12,10 @@ using Aspenlaub.Net.GitHub.CSharp.Protch;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Components {
     public class PackageConfigsScanner : IPackageConfigsScanner {
-        private readonly ISecretRepository vSecretRepository;
+        private readonly ISecretRepository SecretRepository;
+
         public PackageConfigsScanner(ISecretRepository secretRepository) {
-            vSecretRepository = secretRepository;
+            SecretRepository = secretRepository;
         }
 
         public async Task<IDictionary<string, string>> DependencyIdsAndVersionsAsync(string projectFolder, bool includeTest, IErrorsAndInfos errorsAndInfos) {
@@ -26,7 +27,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Components {
             var searchOption = topFolderOnly ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories;
 
             var secret = new SecretPackagesReferencedWithoutVersion();
-            var packagesReferencedWithoutVersion = await vSecretRepository.GetAsync(secret, errorsAndInfos);
+            var packagesReferencedWithoutVersion = await SecretRepository.GetAsync(secret, errorsAndInfos);
             if (errorsAndInfos.AnyErrors()) { return dependencyIdsAndVersions; }
 
             foreach (var fileName in Directory.GetFiles(projectFolder, "packages.config", searchOption).Where(f => includeTest || !f.Contains(@"Test"))) {

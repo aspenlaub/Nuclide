@@ -10,14 +10,14 @@ using Newtonsoft.Json;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Components {
     public class PushedHeadTipShaRepository : IPushedHeadTipShaRepository {
-        private readonly IFolderResolver vFolderResolver;
+        private readonly IFolderResolver FolderResolver;
 
         public PushedHeadTipShaRepository(IFolderResolver folderResolver) {
-            vFolderResolver = folderResolver;
+            FolderResolver = folderResolver;
         }
 
         private async Task<IFolder> RepositoryFolderAsync(IErrorsAndInfos errorsAndInfos) {
-            var folder = await vFolderResolver.ResolveAsync(@"$(CSharp)\GitHub\PushedHeadTipShas", errorsAndInfos);
+            var folder = await FolderResolver.ResolveAsync(@"$(CSharp)\GitHub\PushedHeadTipShas", errorsAndInfos);
             if (errorsAndInfos.AnyErrors()) { return null; }
             folder.CreateIfNecessary();
             return folder;

@@ -12,18 +12,18 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
     [TestClass]
     public class SecretNugetFeedsTest {
-        private static IContainer vContainer;
+        private static IContainer Container;
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext testContext) {
-            vContainer = new ContainerBuilder().UseGittyTestUtilities().UseNuclideProtchGittyAndPegh(new DummyCsArgumentPrompter()).Build();
+            Container = new ContainerBuilder().UseGittyTestUtilities().UseNuclideProtchGittyAndPegh(new DummyCsArgumentPrompter()).Build();
         }
 
         [TestMethod]
         public async Task CanGetSecretNugetFeeds() {
             var nugetFeedsSecret = new SecretNugetFeeds();
             var errorsAndInfos = new ErrorsAndInfos();
-            var nugetFeeds = await vContainer.Resolve<ISecretRepository>().GetAsync(nugetFeedsSecret, errorsAndInfos);
+            var nugetFeeds = await Container.Resolve<ISecretRepository>().GetAsync(nugetFeedsSecret, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
             Assert.IsNotNull(nugetFeeds);
             Assert.IsTrue(nugetFeeds.Count(f => f.IsMainFeed) == 1);

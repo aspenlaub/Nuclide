@@ -18,13 +18,13 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
     [TestClass]
     public class ObsoletePackageFinderTest {
         protected static TestTargetFolder ChabTarget = new(nameof(ObsoletePackageFinderTest), "Chab");
-        private static IContainer vContainer;
+        private static IContainer Container;
         protected static ITestTargetRunner TargetRunner;
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
-            vContainer = new ContainerBuilder().UseGittyTestUtilities().UseNuclideProtchGittyAndPegh(new DummyCsArgumentPrompter()).Build();
-            TargetRunner = vContainer.Resolve<ITestTargetRunner>();
+            Container = new ContainerBuilder().UseGittyTestUtilities().UseNuclideProtchGittyAndPegh(new DummyCsArgumentPrompter()).Build();
+            TargetRunner = Container.Resolve<ITestTargetRunner>();
         }
 
         [TestInitialize]
@@ -45,11 +45,11 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             gitUtilities.Clone(url, "master", ChabTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
-            vContainer.Resolve<ITestTargetRunner>().IgnoreOutdatedBuildCakePendingChangesAndDoNotPush(Assembly.GetExecutingAssembly(), ChabTarget, errorsAndInfos);
+            Container.Resolve<ITestTargetRunner>().IgnoreOutdatedBuildCakePendingChangesAndDoNotPush(Assembly.GetExecutingAssembly(), ChabTarget, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
             errorsAndInfos = new ErrorsAndInfos();
-            var sut = vContainer.Resolve<IObsoletePackageFinder>();
+            var sut = Container.Resolve<IObsoletePackageFinder>();
             var solutionFolder = ChabTarget.Folder().SubFolder("src");
             sut.FindObsoletePackagesAsync(solutionFolder.FullName, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any());

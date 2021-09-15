@@ -17,13 +17,13 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
     [TestClass]
     public class DependencyTreeBuilderTest {
         protected static TestTargetFolder ShatilayaTarget = new(nameof(DependencyTreeBuilderTest), "Shatilaya");
-        private static IContainer vContainer;
+        private static IContainer Container;
         protected static ITestTargetRunner TargetRunner;
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
-            vContainer = new ContainerBuilder().UseGittyTestUtilities().UseNuclideProtchGittyAndPegh(new DummyCsArgumentPrompter()).Build();
-            TargetRunner = vContainer.Resolve<ITestTargetRunner>();
+            Container = new ContainerBuilder().UseGittyTestUtilities().UseNuclideProtchGittyAndPegh(new DummyCsArgumentPrompter()).Build();
+            TargetRunner = Container.Resolve<ITestTargetRunner>();
         }
 
         [TestInitialize]
@@ -45,13 +45,13 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
             gitUtilities.Reset(ShatilayaTarget.Folder(), "c895d6d9efc93b71a061d580cec2d88f0d78ea9b", errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
-            var restorer = vContainer.Resolve<INugetPackageRestorer>();
+            var restorer = Container.Resolve<INugetPackageRestorer>();
             var sourceFolder = ShatilayaTarget.Folder().SubFolder("src").FullName;
             Directory.CreateDirectory(sourceFolder + @"\packages\");
             restorer.RestoreNugetPackages(sourceFolder + @"\" + ShatilayaTarget.SolutionId + ".sln", errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
             Assert.IsTrue(errorsAndInfos.Infos.Any(i => i.Contains("package(s) to packages.config")));
-            var builder = vContainer.Resolve<IDependencyTreeBuilder>();
+            var builder = Container.Resolve<IDependencyTreeBuilder>();
             var dependencyTree = builder.BuildDependencyTree(sourceFolder + @"\packages\");
             var nodes = dependencyTree.FindNodes(ContainsValueTuple);
             Assert.IsTrue(nodes.Any());

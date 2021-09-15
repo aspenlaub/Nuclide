@@ -6,10 +6,10 @@ using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Components {
     public class NugetPackageInstaller : INugetPackageInstaller {
-        private readonly IProcessRunner vProcessRunner;
+        private readonly IProcessRunner ProcessRunner;
 
         public NugetPackageInstaller(IProcessRunner processRunner) {
-            vProcessRunner = processRunner;
+            ProcessRunner = processRunner;
         }
 
         public void InstallNugetPackage(IFolder packagesConfigFolder, string packageId, string version, bool excludeVersion, IErrorsAndInfos errorsAndInfos) {
@@ -20,7 +20,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Components {
             if (excludeVersion) {
                 arguments.Add("-ExcludeVersion");
             }
-            vProcessRunner.RunProcess("nuget.exe", string.Join(" ", arguments), new Folder(packagesConfigFolder.FullName), errorsAndInfos);
+            ProcessRunner.RunProcess("nuget.exe", string.Join(" ", arguments), new Folder(packagesConfigFolder.FullName), errorsAndInfos);
         }
     }
 }
