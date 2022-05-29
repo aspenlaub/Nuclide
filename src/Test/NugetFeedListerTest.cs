@@ -12,34 +12,34 @@ using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using IContainer = Autofac.IContainer;
 
-namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
-    [TestClass]
-    public class NugetFeedListerTest {
-        private static IContainer Container;
+namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test;
 
-        [ClassInitialize]
-        public static void ClassInitialize(TestContext testContext) {
-            Container = new ContainerBuilder().UseGittyTestUtilities().UseNuclideProtchGittyAndPegh(new DummyCsArgumentPrompter()).Build();
-        }
+[TestClass]
+public class NugetFeedListerTest {
+    private static IContainer Container;
 
-        [TestMethod]
-        public async Task CanFindNuclidePackages() {
-            var developerSettingsSecret = new DeveloperSettingsSecret();
-            var errorsAndInfos  = new ErrorsAndInfos();
-            var developerSettings = await Container.Resolve<ISecretRepository>().GetAsync(developerSettingsSecret, errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
-            Assert.IsNotNull(developerSettings);
+    [ClassInitialize]
+    public static void ClassInitialize(TestContext testContext) {
+        Container = new ContainerBuilder().UseGittyTestUtilities().UseNuclideProtchGittyAndPegh("Nuclide", new DummyCsArgumentPrompter()).Build();
+    }
 
-            const string packageId = "Nuclide";
-            var sut = Container.Resolve<INugetFeedLister>();
+    [TestMethod]
+    public async Task CanFindNuclidePackages() {
+        var developerSettingsSecret = new DeveloperSettingsSecret();
+        var errorsAndInfos  = new ErrorsAndInfos();
+        var developerSettings = await Container.Resolve<ISecretRepository>().GetAsync(developerSettingsSecret, errorsAndInfos);
+        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+        Assert.IsNotNull(developerSettings);
 
-            var packages = (await sut.ListReleasedPackagesAsync(NugetFeed.AspenlaubLocalFeed, packageId, errorsAndInfos)).ToList();
-            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
-            Assert.IsTrue(packages.Count > 1, $"No {packageId} package was found");
-            Assert.IsTrue(packages.Count > 2, $"Only {packages.Count} {packageId} package/-s was/were found");
-            foreach (var package in packages) {
-                Assert.AreEqual(packageId, package.Identity.Id);
-            }
+        const string packageId = "Nuclide";
+        var sut = Container.Resolve<INugetFeedLister>();
+
+        var packages = (await sut.ListReleasedPackagesAsync(NugetFeed.AspenlaubLocalFeed, packageId, errorsAndInfos)).ToList();
+        Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
+        Assert.IsTrue(packages.Count > 1, $"No {packageId} package was found");
+        Assert.IsTrue(packages.Count > 2, $"Only {packages.Count} {packageId} package/-s was/were found");
+        foreach (var package in packages) {
+            Assert.AreEqual(packageId, package.Identity.Id);
         }
     }
 }

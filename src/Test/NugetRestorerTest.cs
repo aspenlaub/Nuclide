@@ -13,43 +13,43 @@ using LibGit2Sharp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using IContainer = Autofac.IContainer;
 
-namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
-    [TestClass]
-    public class NugetRestorerTest {
-        private static IContainer Container;
-        private static IFolder AutomationTestProjectsFolder;
+namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test;
 
-        [ClassInitialize]
-        public static void ClassInitialize(TestContext testContext) {
-            Container = new ContainerBuilder().UseGittyTestUtilities().UseNuclideProtchGittyAndPegh(new DummyCsArgumentPrompter()).Build();
-            AutomationTestProjectsFolder = new Folder(Path.GetTempPath()).SubFolder("AspenlaubTemp").SubFolder(nameof(NugetRestorerTest));
-        }
+[TestClass]
+public class NugetRestorerTest {
+    private static IContainer Container;
+    private static IFolder AutomationTestProjectsFolder;
 
-        [TestInitialize]
-        public void Initialize() {
-            CleanUp();
-        }
+    [ClassInitialize]
+    public static void ClassInitialize(TestContext testContext) {
+        Container = new ContainerBuilder().UseGittyTestUtilities().UseNuclideProtchGittyAndPegh("Nuclide", new DummyCsArgumentPrompter()).Build();
+        AutomationTestProjectsFolder = new Folder(Path.GetTempPath()).SubFolder("AspenlaubTemp").SubFolder(nameof(NugetRestorerTest));
+    }
 
-        [TestCleanup]
-        public void CleanUp() {
-            if (!AutomationTestProjectsFolder.Exists()) { return; }
+    [TestInitialize]
+    public void Initialize() {
+        CleanUp();
+    }
 
-            var deleter = new FolderDeleter();
-            deleter.DeleteFolder(AutomationTestProjectsFolder);
-        }
+    [TestCleanup]
+    public void CleanUp() {
+        if (!AutomationTestProjectsFolder.Exists()) { return; }
 
-        [TestMethod]
-        public void CanRestoreNugetPackagesForWpfSolution() {
-            var errorsAndInfos = new ErrorsAndInfos();
-            const string url = "https://github.com/aspenlaub/AutomationTestProjects.git";
-            AutomationTestProjectsFolder.CreateIfNecessary();
-            Container.Resolve<IGitUtilities>().Clone(url, "master", AutomationTestProjectsFolder, new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
-            var sut = Container.Resolve<INugetPackageRestorer>();
-            errorsAndInfos = new ErrorsAndInfos();
-            sut.RestoreNugetPackages(AutomationTestProjectsFolder.FullName + @"\AsyncWpf\AsyncWpf.sln", errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
-            Assert.IsTrue(errorsAndInfos.Infos.Any(i => i.Contains($"Restored {AutomationTestProjectsFolder.FullName}\\AsyncWpf\\AsyncWpf.csproj")));
-        }
+        var deleter = new FolderDeleter();
+        deleter.DeleteFolder(AutomationTestProjectsFolder);
+    }
+
+    [TestMethod]
+    public void CanRestoreNugetPackagesForWpfSolution() {
+        var errorsAndInfos = new ErrorsAndInfos();
+        const string url = "https://github.com/aspenlaub/AutomationTestProjects.git";
+        AutomationTestProjectsFolder.CreateIfNecessary();
+        Container.Resolve<IGitUtilities>().Clone(url, "master", AutomationTestProjectsFolder, new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
+        Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
+        var sut = Container.Resolve<INugetPackageRestorer>();
+        errorsAndInfos = new ErrorsAndInfos();
+        sut.RestoreNugetPackages(AutomationTestProjectsFolder.FullName + @"\AsyncWpf\AsyncWpf.sln", errorsAndInfos);
+        Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
+        Assert.IsTrue(errorsAndInfos.Infos.Any(i => i.Contains($"Restored {AutomationTestProjectsFolder.FullName}\\AsyncWpf\\AsyncWpf.csproj")));
     }
 }

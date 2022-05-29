@@ -13,63 +13,63 @@ using Autofac;
 using LibGit2Sharp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test {
-    [TestClass]
-    public class PinnedAddInVersionCheckerTest {
-        protected static TestTargetFolder PeghTarget = new(nameof(PinnedAddInVersionCheckerTest), "Pegh");
-        private static IContainer Container;
-        protected static ITestTargetRunner TargetRunner;
+namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test;
 
-        [ClassInitialize]
-        public static void ClassInitialize(TestContext context) {
-            Container = new ContainerBuilder().UseGittyTestUtilities().UseNuclideProtchGittyAndPegh(new DummyCsArgumentPrompter()).Build();
-            TargetRunner = Container.Resolve<ITestTargetRunner>();
-        }
+[TestClass]
+public class PinnedAddInVersionCheckerTest {
+    protected static TestTargetFolder PeghTarget = new(nameof(PinnedAddInVersionCheckerTest), "Pegh");
+    private static IContainer Container;
+    protected static ITestTargetRunner TargetRunner;
 
-        [TestInitialize]
-        public void Initialize() {
-            PeghTarget.Delete();
-        }
+    [ClassInitialize]
+    public static void ClassInitialize(TestContext context) {
+        Container = new ContainerBuilder().UseGittyTestUtilities().UseNuclideProtchGittyAndPegh("Nuclide", new DummyCsArgumentPrompter()).Build();
+        TargetRunner = Container.Resolve<ITestTargetRunner>();
+    }
 
-        [TestCleanup]
-        public void TestCleanup() {
-            PeghTarget.Delete();
-        }
+    [TestInitialize]
+    public void Initialize() {
+        PeghTarget.Delete();
+    }
 
-        [TestMethod]
-        public async Task CanCheckPinnedAddInVersions() {
-            var gitUtilities = Container.Resolve<IGitUtilities>();
-            var errorsAndInfos = new ErrorsAndInfos();
-            var url = "https://github.com/aspenlaub/" + PeghTarget.SolutionId + ".git";
-            gitUtilities.Clone(url, "master", PeghTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
+    [TestCleanup]
+    public void TestCleanup() {
+        PeghTarget.Delete();
+    }
 
-            var mainProjectDependencyIdsAndVersions = await Container.Resolve<IPackageConfigsScanner>().DependencyIdsAndVersionsAsync(PeghTarget.Folder().SubFolder("src").FullName, true, true, errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
-            var dependencyIdsAndVersions = await Container.Resolve<IPackageConfigsScanner>().DependencyIdsAndVersionsAsync(PeghTarget.Folder().FullName, true, false, errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+    [TestMethod]
+    public async Task CanCheckPinnedAddInVersions() {
+        var gitUtilities = Container.Resolve<IGitUtilities>();
+        var errorsAndInfos = new ErrorsAndInfos();
+        var url = "https://github.com/aspenlaub/" + PeghTarget.SolutionId + ".git";
+        gitUtilities.Clone(url, "master", PeghTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
+        Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
-            Assert.IsTrue(mainProjectDependencyIdsAndVersions.Count > 0, "Main project should have package references");
-            Assert.IsTrue(dependencyIdsAndVersions.Count > mainProjectDependencyIdsAndVersions.Count, "Solution should not only contain packages that are referenced by the main project");
+        var mainProjectDependencyIdsAndVersions = await Container.Resolve<IPackageConfigsScanner>().DependencyIdsAndVersionsAsync(PeghTarget.Folder().SubFolder("src").FullName, true, true, errorsAndInfos);
+        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+        var dependencyIdsAndVersions = await Container.Resolve<IPackageConfigsScanner>().DependencyIdsAndVersionsAsync(PeghTarget.Folder().FullName, true, false, errorsAndInfos);
+        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
 
-            var sut = Container.Resolve<IPinnedAddInVersionChecker>();
-            await sut.CheckPinnedAddInVersionsAsync(PeghTarget.Folder(), errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
+        Assert.IsTrue(mainProjectDependencyIdsAndVersions.Count > 0, "Main project should have package references");
+        Assert.IsTrue(dependencyIdsAndVersions.Count > mainProjectDependencyIdsAndVersions.Count, "Solution should not only contain packages that are referenced by the main project");
 
-            await sut.CheckPinnedAddInVersionsAsync(new List<string>(), PeghTarget.Folder(), errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
+        var sut = Container.Resolve<IPinnedAddInVersionChecker>();
+        await sut.CheckPinnedAddInVersionsAsync(PeghTarget.Folder(), errorsAndInfos);
+        Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
-            var package = dependencyIdsAndVersions.First().Key;
-            await sut.CheckPinnedAddInVersionsAsync(new List<string> { $"#addin nuget:?package={package}" }, PeghTarget.Folder(), errorsAndInfos);
-            Assert.IsTrue(errorsAndInfos.Errors.Any());
-            errorsAndInfos.Errors.Clear();
+        await sut.CheckPinnedAddInVersionsAsync(new List<string>(), PeghTarget.Folder(), errorsAndInfos);
+        Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
-            var version = dependencyIdsAndVersions.First().Value;
-            await sut.CheckPinnedAddInVersionsAsync(new List<string> { $"#addin nuget:?package={package}&version={version}" }, PeghTarget.Folder(), errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
+        var package = dependencyIdsAndVersions.First().Key;
+        await sut.CheckPinnedAddInVersionsAsync(new List<string> { $"#addin nuget:?package={package}" }, PeghTarget.Folder(), errorsAndInfos);
+        Assert.IsTrue(errorsAndInfos.Errors.Any());
+        errorsAndInfos.Errors.Clear();
 
-            await sut.CheckPinnedAddInVersionsAsync(new List<string> { $"#addin nuget:?package={package}&version=3.{version}" }, PeghTarget.Folder(), errorsAndInfos);
-            Assert.IsTrue(errorsAndInfos.Errors.Any());
-        }
+        var version = dependencyIdsAndVersions.First().Value;
+        await sut.CheckPinnedAddInVersionsAsync(new List<string> { $"#addin nuget:?package={package}&version={version}" }, PeghTarget.Folder(), errorsAndInfos);
+        Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
+
+        await sut.CheckPinnedAddInVersionsAsync(new List<string> { $"#addin nuget:?package={package}&version=3.{version}" }, PeghTarget.Folder(), errorsAndInfos);
+        Assert.IsTrue(errorsAndInfos.Errors.Any());
     }
 }
