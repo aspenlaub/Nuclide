@@ -15,17 +15,17 @@ using NuGet.Protocol.Core.Types;
 namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Components;
 
 public class NugetFeedLister : INugetFeedLister {
-    private readonly ISecretRepository SecretRepository;
-    private readonly IFolderResolver FolderResolver;
+    private readonly ISecretRepository _SecretRepository;
+    private readonly IFolderResolver _FolderResolver;
 
     public NugetFeedLister(ISecretRepository secretRepository, IFolderResolver folderResolver) {
-        SecretRepository = secretRepository;
-        FolderResolver = folderResolver;
+        _SecretRepository = secretRepository;
+        _FolderResolver = folderResolver;
     }
 
     public async Task<IList<IPackageSearchMetadata>> ListReleasedPackagesAsync(string nugetFeedId, string packageId, IErrorsAndInfos errorsAndInfos) {
         var nugetFeedsSecret = new SecretNugetFeeds();
-        var nugetFeeds = await SecretRepository.GetAsync(nugetFeedsSecret, errorsAndInfos);
+        var nugetFeeds = await _SecretRepository.GetAsync(nugetFeedsSecret, errorsAndInfos);
         var nugetFeed = nugetFeeds.FirstOrDefault(f => f.Id == nugetFeedId);
         if (nugetFeed == null) {
             errorsAndInfos.Errors.Add(string.Format(Properties.Resources.UnknownNugetFeed, nugetFeedId, nugetFeedsSecret.Guid + ".xml"));
@@ -33,7 +33,7 @@ public class NugetFeedLister : INugetFeedLister {
         }
 
         try {
-            var source = await nugetFeed.UrlOrResolvedFolderAsync(FolderResolver, errorsAndInfos);
+            var source = await nugetFeed.UrlOrResolvedFolderAsync(_FolderResolver, errorsAndInfos);
             if (errorsAndInfos.AnyErrors()) {  return new List<IPackageSearchMetadata>(); }
 
             var packageSource = new PackageSource(source);

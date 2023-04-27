@@ -11,14 +11,14 @@ using Newtonsoft.Json;
 namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Components;
 
 public class PushedHeadTipShaRepository : IPushedHeadTipShaRepository {
-    private readonly IFolderResolver FolderResolver;
+    private readonly IFolderResolver _FolderResolver;
 
     public PushedHeadTipShaRepository(IFolderResolver folderResolver) {
-        FolderResolver = folderResolver;
+        _FolderResolver = folderResolver;
     }
 
     private async Task<IFolder> RepositoryFolderAsync(IErrorsAndInfos errorsAndInfos) {
-        var folder = await FolderResolver.ResolveAsync(@"$(CSharp)\GitHub\PushedHeadTipShas", errorsAndInfos);
+        var folder = await _FolderResolver.ResolveAsync(@"$(CSharp)\GitHub\PushedHeadTipShas", errorsAndInfos);
         if (errorsAndInfos.AnyErrors()) { return null; }
         folder.CreateIfNecessary();
         return folder;
@@ -65,6 +65,10 @@ public class PushedHeadTipShaRepository : IPushedHeadTipShaRepository {
         var fileName = await TextFileNameAsync(headTipSha, errorsAndInfos);
         if (errorsAndInfos.AnyErrors()) { return; }
 
+        if (fileName == null) {
+            throw new Exception(nameof(fileName));
+        }
+
         if (File.Exists(fileName)) { return; }
 
         await File.WriteAllTextAsync(fileName, headTipSha);
@@ -73,6 +77,10 @@ public class PushedHeadTipShaRepository : IPushedHeadTipShaRepository {
     public async Task AddAsync(string nugetFeedId, string headTipSha, string packageId, string packageVersion, IErrorsAndInfos errorsAndInfos) {
         var fileName = await JsonFileNameAsync(nugetFeedId, headTipSha, errorsAndInfos);
         if (errorsAndInfos.AnyErrors()) { return; }
+
+        if (fileName == null) {
+            throw new Exception(nameof(fileName));
+        }
 
         if (File.Exists(fileName)) { return; }
 

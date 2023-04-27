@@ -3,8 +3,8 @@
 namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Entities;
 
 public class SecretNugetFeeds : ISecret<NugetFeeds> {
-    private NugetFeeds DefaultNugetFeeds;
-    public NugetFeeds DefaultValue => DefaultNugetFeeds ??= new NugetFeeds {
+    private NugetFeeds _DefaultNugetFeeds;
+    public NugetFeeds DefaultValue => _DefaultNugetFeeds ??= new NugetFeeds {
         new() { Id = "main", IsMainFeed = true, Url = "http://localhost/main/nuget/" },
         new() { Id = "experimental", IsMainFeed = false, Url = "http://localhost/experimental/nuget/" },
     };

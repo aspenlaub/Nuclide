@@ -54,9 +54,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Interfaces\" />
     <Folder Include="Extensions\" />
     <Folder Include="Entities\" />
-    <Folder Include="Components\" />
   </ItemGroup>
 </Project>

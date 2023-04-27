@@ -10,14 +10,14 @@ using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Components;
 
 public class ObsoletePackageFinder : IObsoletePackageFinder {
-    private readonly IPackageConfigsScanner PackageConfigsScanner;
+    private readonly IPackageReferencesScanner _PackageReferencesScanner;
 
-    public ObsoletePackageFinder(IPackageConfigsScanner packageConfigsScanner) {
-        PackageConfigsScanner = packageConfigsScanner;
+    public ObsoletePackageFinder(IPackageReferencesScanner packageReferencesScanner) {
+        _PackageReferencesScanner = packageReferencesScanner;
     }
 
     public async Task FindObsoletePackagesAsync(string solutionFolder, IErrorsAndInfos errorsAndInfos) {
-        var dependencyIdsAndVersions = await PackageConfigsScanner.DependencyIdsAndVersionsAsync(solutionFolder, true, errorsAndInfos);
+        var dependencyIdsAndVersions = await _PackageReferencesScanner.DependencyIdsAndVersionsAsync(solutionFolder, true, errorsAndInfos);
         if (!Directory.Exists(solutionFolder + @"\packages\")) { return; }
 
         var folders = Directory.GetDirectories(solutionFolder + @"\packages\").ToList().Where(f => !f.Contains("OctoPack") && !f.Contains("CodeAnalysis")).ToList();

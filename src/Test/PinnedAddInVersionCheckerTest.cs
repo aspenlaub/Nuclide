@@ -45,9 +45,9 @@ public class PinnedAddInVersionCheckerTest {
         gitUtilities.Clone(url, "master", PeghTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
-        var mainProjectDependencyIdsAndVersions = await Container.Resolve<IPackageConfigsScanner>().DependencyIdsAndVersionsAsync(PeghTarget.Folder().SubFolder("src").FullName, true, true, errorsAndInfos);
+        var mainProjectDependencyIdsAndVersions = await Container.Resolve<IPackageReferencesScanner>().DependencyIdsAndVersionsAsync(PeghTarget.Folder().SubFolder("src").FullName, true, true, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
-        var dependencyIdsAndVersions = await Container.Resolve<IPackageConfigsScanner>().DependencyIdsAndVersionsAsync(PeghTarget.Folder().FullName, true, false, errorsAndInfos);
+        var dependencyIdsAndVersions = await Container.Resolve<IPackageReferencesScanner>().DependencyIdsAndVersionsAsync(PeghTarget.Folder().FullName, true, false, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
 
         Assert.IsTrue(mainProjectDependencyIdsAndVersions.Count > 0, "Main project should have package references");

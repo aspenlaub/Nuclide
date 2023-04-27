@@ -12,11 +12,11 @@ using Aspenlaub.Net.GitHub.CSharp.Protch;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Components;
 
-public class PackageConfigsScanner : IPackageConfigsScanner {
-    private readonly ISecretRepository SecretRepository;
+public class PackageReferencesScanner : IPackageReferencesScanner {
+    private readonly ISecretRepository _SecretRepository;
 
-    public PackageConfigsScanner(ISecretRepository secretRepository) {
-        SecretRepository = secretRepository;
+    public PackageReferencesScanner(ISecretRepository secretRepository) {
+        _SecretRepository = secretRepository;
     }
 
     public async Task<IDictionary<string, string>> DependencyIdsAndVersionsAsync(string projectFolder, bool includeTest, IErrorsAndInfos errorsAndInfos) {
@@ -28,44 +28,8 @@ public class PackageConfigsScanner : IPackageConfigsScanner {
         var searchOption = topFolderOnly ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories;
 
         var secret = new SecretPackagesReferencedWithoutVersion();
-        var packagesReferencedWithoutVersion = await SecretRepository.GetAsync(secret, errorsAndInfos);
+        var packagesReferencedWithoutVersion = await _SecretRepository.GetAsync(secret, errorsAndInfos);
         if (errorsAndInfos.AnyErrors()) { return dependencyIdsAndVersions; }
-
-        foreach (var fileName in Directory.GetFiles(projectFolder, "packages.config", searchOption).Where(f => includeTest || !f.Contains(@"Test"))) {
-            var document = XDocument.Load(fileName);
-            foreach (var element in document.XPathSelectElements("/packages/package")) {
-                var id = element.Attribute("id")?.Value;
-                if (string.IsNullOrEmpty(id)) {
-                    errorsAndInfos.Errors.Add(string.Format(Properties.Resources.PackageWithoutId, fileName));
-                    continue;
-                }
-
-                var version = element.Attribute("version")?.Value;
-                if (packagesReferencedWithoutVersion.Any(p => p.Id == id)) {
-                    if (!string.IsNullOrEmpty(version) && !errorsAndInfos.Errors.Any()) {
-                        errorsAndInfos.Errors.Add(string.Format(Properties.Resources.PackageWithVersion, fileName, id));
-                        continue;
-                    }
-
-                    version = "";
-                } else if (string.IsNullOrEmpty(version) && !errorsAndInfos.Errors.Any()) {
-                    errorsAndInfos.Errors.Add(string.Format(Properties.Resources.PackageWithoutVersion, fileName, id));
-                    continue;
-                }
-
-                if (element.Attributes("developmentDependency").Any(a => a.Value.ToLower() == "true")) { continue; }
-
-                if (dependencyIdsAndVersions.ContainsKey(id) && dependencyIdsAndVersions[id] == version) { continue; }
-
-                if (dependencyIdsAndVersions.ContainsKey(id)) {
-                    errorsAndInfos.Errors.Add(string.Format(Properties.Resources.PackageVersionClashDueToFile, fileName, id, version, dependencyIdsAndVersions[id]));
-                    continue;
-                }
-
-                dependencyIdsAndVersions[id] = version;
-            }
-        }
-
 
         var namespaceManager = new XmlNamespaceManager(new NameTable());
         namespaceManager.AddNamespace("cp", XmlNamespaces.CsProjNamespaceUri);

@@ -9,10 +9,10 @@ using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Components;
 
 public class PinnedAddInVersionChecker : IPinnedAddInVersionChecker {
-    private readonly IPackageConfigsScanner PackageConfigsScanner;
+    private readonly IPackageReferencesScanner _PackageReferencesScanner;
 
-    public PinnedAddInVersionChecker(IPackageConfigsScanner packageConfigsScanner) {
-        PackageConfigsScanner = packageConfigsScanner;
+    public PinnedAddInVersionChecker(IPackageReferencesScanner packageReferencesScanner) {
+        _PackageReferencesScanner = packageReferencesScanner;
     }
 
     public async Task CheckPinnedAddInVersionsAsync(IFolder solutionFolder, IErrorsAndInfos errorsAndInfos) {
@@ -26,7 +26,7 @@ public class PinnedAddInVersionChecker : IPinnedAddInVersionChecker {
     }
 
     public async Task CheckPinnedAddInVersionsAsync(IList<string> cakeScript, IFolder solutionFolder, IErrorsAndInfos errorsAndInfos) {
-        var dependencyIdsAndVersions = await PackageConfigsScanner.DependencyIdsAndVersionsAsync(solutionFolder.FullName, true, errorsAndInfos);
+        var dependencyIdsAndVersions = await _PackageReferencesScanner.DependencyIdsAndVersionsAsync(solutionFolder.FullName, true, errorsAndInfos);
         if (errorsAndInfos.AnyErrors()) { return; }
 
         foreach (var dependencyIdAndVersion in dependencyIdsAndVersions) {

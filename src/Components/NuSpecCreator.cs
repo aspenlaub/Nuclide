@@ -19,14 +19,14 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Components;
 public class NuSpecCreator : INuSpecCreator {
     protected XNamespace NugetNamespace;
     protected XmlNamespaceManager NamespaceManager;
-    private readonly IPackageConfigsScanner PackageConfigsScanner;
-    private readonly IProjectFactory ProjectFactory;
-    private readonly ISecretRepository SecretRepository;
+    private readonly IPackageReferencesScanner _PackageReferencesScanner;
+    private readonly IProjectFactory _ProjectFactory;
+    private readonly ISecretRepository _SecretRepository;
 
-    public NuSpecCreator(IPackageConfigsScanner packageConfigsScanner, IProjectFactory projectFactory, ISecretRepository secretRepository) {
-        PackageConfigsScanner = packageConfigsScanner;
-        ProjectFactory = projectFactory;
-        SecretRepository = secretRepository;
+    public NuSpecCreator(IPackageReferencesScanner packageReferencesScanner, IProjectFactory projectFactory, ISecretRepository secretRepository) {
+        _PackageReferencesScanner = packageReferencesScanner;
+        _ProjectFactory = projectFactory;
+        _SecretRepository = secretRepository;
         NugetNamespace = XmlNamespaces.NuSpecNamespaceUri;
         NamespaceManager = new XmlNamespaceManager(new NameTable());
         NamespaceManager.AddNamespace("cp", XmlNamespaces.CsProjNamespaceUri);
@@ -59,7 +59,7 @@ public class NuSpecCreator : INuSpecCreator {
 
         var version = @"$version$";
         if (namespaceSelector == "") {
-            var project = ProjectFactory.Load(solutionFileFullName, projectFile, errorsAndInfos);
+            var project = _ProjectFactory.Load(solutionFileFullName, projectFile, errorsAndInfos);
             var releasePropertyGroup = project.PropertyGroups.FirstOrDefault(p => p.Condition.Contains("Release"));
             if (releasePropertyGroup != null) {
                 var solutionFolder = new Folder(solutionFileFullName.Substring(0, solutionFileFullName.LastIndexOf('\\')));
@@ -71,7 +71,7 @@ public class NuSpecCreator : INuSpecCreator {
             }
         }
 
-        var dependencyIdsAndVersions = await PackageConfigsScanner.DependencyIdsAndVersionsAsync(solutionFileFullName.Substring(0, solutionFileFullName.LastIndexOf('\\') + 1), false, errorsAndInfos);
+        var dependencyIdsAndVersions = await _PackageReferencesScanner.DependencyIdsAndVersionsAsync(solutionFileFullName.Substring(0, solutionFileFullName.LastIndexOf('\\') + 1), false, errorsAndInfos);
         var element = new XElement(NugetNamespace + "package");
         var solutionId = solutionFileFullName.Substring(solutionFileFullName.LastIndexOf('\\') + 1).Replace(".sln", "");
         var metaData = await ReadMetaDataAsync(solutionId, projectDocument, dependencyIdsAndVersions, tags, namespaceSelector, version, targetFramework, errorsAndInfos);
@@ -97,7 +97,7 @@ public class NuSpecCreator : INuSpecCreator {
         if (rootNamespaceElement == null) { return null; }
 
         var developerSettingsSecret = new DeveloperSettingsSecret();
-        var developerSettings = await SecretRepository.GetAsync(developerSettingsSecret, errorsAndInfos);
+        var developerSettings = await _SecretRepository.GetAsync(developerSettingsSecret, errorsAndInfos);
         if (developerSettings == null) {
             errorsAndInfos.Errors.Add(string.Format(Properties.Resources.MissingDeveloperSettings, developerSettingsSecret.Guid + ".xml"));
             return null;

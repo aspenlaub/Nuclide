@@ -6,15 +6,15 @@ using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Components;
 
 public class NugetPackageRestorer : INugetPackageRestorer {
-    private readonly IProcessRunner ProcessRunner;
+    private readonly IProcessRunner _ProcessRunner;
 
     public NugetPackageRestorer(IProcessRunner processRunner) {
-        ProcessRunner = processRunner;
+        _ProcessRunner = processRunner;
     }
 
     public void RestoreNugetPackages(string solutionFileFullName, IErrorsAndInfos errorsAndInfos) {
         var directoryName = solutionFileFullName.Substring(0, solutionFileFullName.LastIndexOf('\\'));
 
-        ProcessRunner.RunProcess("nuget.exe", "restore " + solutionFileFullName, new Folder(directoryName), errorsAndInfos);
+        _ProcessRunner.RunProcess("nuget.exe", "restore " + solutionFileFullName, new Folder(directoryName), errorsAndInfos);
     }
 }
