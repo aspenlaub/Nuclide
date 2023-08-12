@@ -112,7 +112,7 @@ public class PushedHeadTipShaRepository : IPushedHeadTipShaRepository {
         var folder = await RepositoryFolderAsync(errorsAndInfos);
         if (errorsAndInfos.AnyErrors()) { return ""; }
 
-        folder = folder.SubFolder(nugetFeedId);
+        folder = folder.SubFolder(string.IsNullOrEmpty(nugetFeedId) ? "nofeed" : nugetFeedId);
         folder.CreateIfNecessary();
         return folder.FullName + '\\' + headTipSha + ".json";
     }
