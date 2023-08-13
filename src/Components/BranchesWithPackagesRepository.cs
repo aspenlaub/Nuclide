@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Aspenlaub.Net.GitHub.CSharp.Gitty.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Nuclide.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
+using BranchesWithPackages = Aspenlaub.Net.GitHub.CSharp.Nuclide.Entities.BranchesWithPackages;
+using SecretBranchesWithPackages = Aspenlaub.Net.GitHub.CSharp.Nuclide.Entities.SecretBranchesWithPackages;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Components;
 
