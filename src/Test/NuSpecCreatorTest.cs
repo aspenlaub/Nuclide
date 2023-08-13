@@ -11,6 +11,7 @@ using System.Xml.XPath;
 using Aspenlaub.Net.GitHub.CSharp.Gitty;
 using Aspenlaub.Net.GitHub.CSharp.Gitty.Components;
 using Aspenlaub.Net.GitHub.CSharp.Gitty.Extensions;
+using Aspenlaub.Net.GitHub.CSharp.Gitty.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Gitty.TestUtilities;
 using Aspenlaub.Net.GitHub.CSharp.Nuclide.Components;
 using Aspenlaub.Net.GitHub.CSharp.Nuclide.Entities;
@@ -29,13 +30,14 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test;
 
 [TestClass]
 public class NuSpecCreatorTest {
-    protected static TestTargetFolder ChabTarget = new(nameof(NuSpecCreator), "Chab");
-    protected static TestTargetFolder DvinTarget = new(nameof(NuSpecCreator), "Dvin");
-    protected static TestTargetFolder VishizhukelTarget = new(nameof(NuSpecCreator), "Vishizhukel");
-    protected static TestTargetFolder VishnetIntegrationTestToolsTarget = new(nameof(NuSpecCreator), "VishnetIntegrationTestTools");
-    protected static TestTargetFolder LibGit2SharpTarget = new(nameof(NuSpecCreator), "LibGit2Sharp");
+    private static readonly TestTargetFolder ChabTarget = new(nameof(NuSpecCreator), "Chab");
+    private static readonly TestTargetFolder DvinTarget = new(nameof(NuSpecCreator), "Dvin");
+    private static readonly TestTargetFolder VishizhukelTarget = new(nameof(NuSpecCreator), "Vishizhukel");
+    private static readonly TestTargetFolder VishnetIntegrationTestToolsTarget = new(nameof(NuSpecCreator), "VishnetIntegrationTestTools");
+    private static readonly TestTargetFolder LibGit2SharpTarget = new(nameof(NuSpecCreator), "LibGit2Sharp");
+    private static readonly TestTargetFolder PakledTarget = new(nameof(NuSpecCreator), "Pakled");
     private static IContainer Container;
-    protected static ITestTargetRunner TargetRunner;
+    private static IGitUtilities GitUtilities;
 
     protected XDocument Document;
     protected XmlNamespaceManager NamespaceManager;
@@ -49,7 +51,7 @@ public class NuSpecCreatorTest {
     [ClassInitialize]
     public static void ClassInitialize(TestContext context) {
         Container = new ContainerBuilder().UseGittyTestUtilities().UseProtch().UseNuclideProtchGittyAndPegh("Nuclide", new DummyCsArgumentPrompter()).Build();
-        TargetRunner = Container.Resolve<ITestTargetRunner>();
+        GitUtilities = Container.Resolve<IGitUtilities>();
     }
 
     [TestInitialize]
@@ -58,6 +60,7 @@ public class NuSpecCreatorTest {
         DvinTarget.Delete();
         VishizhukelTarget.Delete();
         LibGit2SharpTarget.Delete();
+        PakledTarget.Delete();
         VishnetIntegrationTestToolsTarget.Delete();
     }
 
@@ -67,6 +70,7 @@ public class NuSpecCreatorTest {
         DvinTarget.Delete();
         VishizhukelTarget.Delete();
         LibGit2SharpTarget.Delete();
+        PakledTarget.Delete();
         VishnetIntegrationTestToolsTarget.Delete();
     }
 
@@ -94,7 +98,8 @@ public class NuSpecCreatorTest {
         Assert.IsNotNull(targetFrameworkElement);
         var rootNamespaceElement = Document.XPathSelectElements("./Project/PropertyGroup/RootNamespace", NamespaceManager).FirstOrDefault();
         Assert.IsNotNull(rootNamespaceElement);
-        Document = await sut.CreateNuSpecAsync(solutionFileFullName, new List<string> { "Red", "White", "Blue", "Green<", "Orange&", "Violet>" }, errorsAndInfos);
+        var checkedOutBranch = GitUtilities.CheckedOutBranch(ChabTarget.Folder());
+        Document = await sut.CreateNuSpecAsync(solutionFileFullName, checkedOutBranch , new List<string> { "Red", "White", "Blue", "Green<", "Orange&", "Violet>" }, errorsAndInfos);
         Assert.IsNotNull(Document);
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
         var developerSettingsSecret = new DeveloperSettingsSecret();
@@ -140,7 +145,8 @@ public class NuSpecCreatorTest {
 
         var sut = Container.Resolve<INuSpecCreator>();
         var solutionFileFullName = DvinTarget.Folder().SubFolder("src").FullName + @"\" + DvinTarget.SolutionId + ".sln";
-        Document = await sut.CreateNuSpecAsync(solutionFileFullName, new List<string> { "The", "Little", "Things" }, errorsAndInfos);
+        var checkedOutBranch = GitUtilities.CheckedOutBranch(DvinTarget.Folder());
+        Document = await sut.CreateNuSpecAsync(solutionFileFullName, checkedOutBranch, new List<string> { "The", "Little", "Things" }, errorsAndInfos);
         Assert.IsNotNull(Document);
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
         VerifyElementsInverse(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "Dvin" });
@@ -165,7 +171,8 @@ public class NuSpecCreatorTest {
 
         var sut = Container.Resolve<INuSpecCreator>();
         var solutionFileFullName = VishizhukelTarget.Folder().SubFolder("src").FullName + @"\" + VishizhukelTarget.SolutionId + ".sln";
-        Document = await sut.CreateNuSpecAsync(solutionFileFullName, new List<string> { "The", "Little", "Things" }, errorsAndInfos);
+        var checkedOutBranch = GitUtilities.CheckedOutBranch(VishizhukelTarget.Folder());
+        Document = await sut.CreateNuSpecAsync(solutionFileFullName, checkedOutBranch, new List<string> { "The", "Little", "Things" }, errorsAndInfos);
         Assert.IsNotNull(Document);
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
         VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "Dvin", "Microsoft.EntityFrameworkCore.SqlServer", "Newtonsoft.Json", "System.ComponentModel.Annotations" }, true);
@@ -189,10 +196,67 @@ public class NuSpecCreatorTest {
 
         var sut = Container.Resolve<INuSpecCreator>();
         var solutionFileFullName = VishnetIntegrationTestToolsTarget.Folder().SubFolder("src").FullName + @"\" + VishnetIntegrationTestToolsTarget.SolutionId + ".sln";
-        Document = await sut.CreateNuSpecAsync(solutionFileFullName, new List<string> { "The", "Little", "Things" }, errorsAndInfos);
+        var checkedOutBranch = GitUtilities.CheckedOutBranch(VishnetIntegrationTestToolsTarget.Folder());
+        Document = await sut.CreateNuSpecAsync(solutionFileFullName, checkedOutBranch, new List<string> { "The", "Little", "Things" }, errorsAndInfos);
         Assert.IsNotNull(Document);
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
         VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "MSTest.TestAdapter", "MSTest.TestFramework", "Newtonsoft.Json", "TashClient" }, true);
+        VerifyTargetFrameworkMoniker(@"/package/metadata/dependencies/group", "targetFramework");
+        VerifyTargetFrameworkMoniker(@"/package/files/file", "target");
+    }
+
+    [TestMethod]
+    public async Task CanCreateNuSpecForPakledPkgBranchTest() {
+        var gitUtilities = new GitUtilities();
+        var errorsAndInfos = new ErrorsAndInfos();
+        const string url = "https://github.com/aspenlaub/Pakled.git";
+        gitUtilities.Clone(url, "pkg-branch-test", PakledTarget.Folder(), new CloneOptions { BranchName = "pkg-branch-test" }, true, errorsAndInfos);
+        Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
+
+        Container.Resolve<IEmbeddedCakeScriptCopier>().CopyCakeScriptEmbeddedInAssembly(Assembly.GetExecutingAssembly(), BuildCake.Standard, PakledTarget, errorsAndInfos);
+        Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
+
+        Container.Resolve<ITestTargetRunner>().RunBuildCakeScript(BuildCake.Standard, PakledTarget, "IgnoreOutdatedBuildCakePendingChangesAndDoCreateOrPushPackage", errorsAndInfos);
+        Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
+        Assert.AreEqual(2, errorsAndInfos.Infos.Count(i => i.Contains("Results File:")));
+
+        var sut = Container.Resolve<INuSpecCreator>();
+        var solutionFileFullName = PakledTarget.Folder().SubFolder("src").FullName + @"\" + PakledTarget.SolutionId + ".sln";
+        var projectFileFullName = PakledTarget.Folder().SubFolder("src").FullName + @"\" + PakledTarget.SolutionId + ".csproj";
+        Assert.IsTrue(File.Exists(projectFileFullName));
+        Document = XDocument.Load(projectFileFullName);
+        var targetFrameworkElement = Document.XPathSelectElements("./Project/PropertyGroup/TargetFramework", NamespaceManager).FirstOrDefault();
+        Assert.IsNotNull(targetFrameworkElement);
+        var rootNamespaceElement = Document.XPathSelectElements("./Project/PropertyGroup/RootNamespace", NamespaceManager).FirstOrDefault();
+        Assert.IsNotNull(rootNamespaceElement);
+        var checkedOutBranch = GitUtilities.CheckedOutBranch(PakledTarget.Folder());
+        Document = await sut.CreateNuSpecAsync(solutionFileFullName, checkedOutBranch, new List<string> { "Red", "White", "Blue", "Green<", "Orange&", "Violet>" }, errorsAndInfos);
+        Assert.IsNotNull(Document);
+        Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
+        var developerSettingsSecret = new DeveloperSettingsSecret();
+        var developerSettings = await Container.Resolve<ISecretRepository>().GetAsync(developerSettingsSecret, errorsAndInfos);
+        Assert.IsNotNull(developerSettings);
+        var idWithBranch = PakledTarget.SolutionId + "-PkgBranchTest";
+        VerifyTextElement(@"/package/metadata/id", idWithBranch);
+        VerifyTextElement(@"/package/metadata/title", @"Aspenlaub.Net.GitHub.CSharp." + idWithBranch);
+        VerifyTextElement(@"/package/metadata/description", @"Aspenlaub.Net.GitHub.CSharp." + idWithBranch);
+        VerifyTextElement(@"/package/metadata/releaseNotes", @"Aspenlaub.Net.GitHub.CSharp." + idWithBranch);
+        VerifyTextElement(@"/package/metadata/authors", developerSettings.Author);
+        VerifyTextElement(@"/package/metadata/owners", developerSettings.Author);
+        VerifyTextElement(@"/package/metadata/projectUrl", developerSettings.GitHubRepositoryUrl + PakledTarget.SolutionId);
+        VerifyTextElement(@"/package/metadata/iconUrl", developerSettings.FaviconUrl);
+        VerifyTextElement(@"/package/metadata/icon", "packageicon.png");
+        VerifyTextElement(@"/package/metadata/requireLicenseAcceptance", @"false");
+        var year = DateTime.Now.Year;
+        VerifyTextElement(@"/package/metadata/copyright", $"Copyright {year}");
+        VerifyTextElementPattern(@"/package/metadata/version", @"\d+.\d+.\d+.\d+");
+        VerifyElements(@"/package/metadata/dependencies/group", "targetFramework", new List<string> { @"net7.0" }, false);
+        VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "Autofac", "Newtonsoft.Json" }, false);
+        VerifyElements(@"/package/files/file", "src", new List<string> { @"bin\Release\Aspenlaub.*.dll", @"bin\Release\Aspenlaub.*.pdb", @"bin\Release\packageicon.png" }, false);
+        VerifyElements(@"/package/files/file", "exclude", new List<string> { @"bin\Release\*.Test*.*;bin\Release\*.exe;bin\Release\ref\*.*", @"bin\Release\*.Test*.*;bin\Release\*.exe;bin\Release\ref\*.*", null }, false);
+        var target = @"lib\" + targetFrameworkElement.Value;
+        VerifyElements(@"/package/files/file", "target", new List<string> { target, target, "" }, false);
+        VerifyTextElement(@"/package/metadata/tags", @"Red White Blue");
         VerifyTargetFrameworkMoniker(@"/package/metadata/dependencies/group", "targetFramework");
         VerifyTargetFrameworkMoniker(@"/package/files/file", "target");
     }
@@ -201,7 +265,7 @@ public class NuSpecCreatorTest {
         xpath = xpath.Replace("/", "/nu:");
         var element = Document.XPathSelectElements(xpath, NamespaceManager).FirstOrDefault();
         Assert.IsNotNull(element, $"Element not found using {xpath}, expected {expectedContents}");
-        Assert.AreEqual(element.Value, expectedContents, $"Element {xpath} should be {expectedContents}, got: {element.Value}");
+        Assert.AreEqual(expectedContents, element.Value, $"Element {xpath} should be {expectedContents}, got: {element.Value}");
     }
 
     protected void VerifyTextElementPattern(string xpath, string expectedPattern) {

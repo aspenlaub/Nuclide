@@ -22,17 +22,20 @@ public class NuSpecCreator : INuSpecCreator {
     private readonly IPackageReferencesScanner _PackageReferencesScanner;
     private readonly IProjectFactory _ProjectFactory;
     private readonly ISecretRepository _SecretRepository;
+    private readonly IBranchesWithPackagesRepository _BranchesWithPackagesRepository;
 
-    public NuSpecCreator(IPackageReferencesScanner packageReferencesScanner, IProjectFactory projectFactory, ISecretRepository secretRepository) {
+    public NuSpecCreator(IPackageReferencesScanner packageReferencesScanner, IProjectFactory projectFactory,
+            ISecretRepository secretRepository, IBranchesWithPackagesRepository branchesWithPackagesRepository) {
         _PackageReferencesScanner = packageReferencesScanner;
         _ProjectFactory = projectFactory;
         _SecretRepository = secretRepository;
+        _BranchesWithPackagesRepository = branchesWithPackagesRepository;
         NugetNamespace = XmlNamespaces.NuSpecNamespaceUri;
         NamespaceManager = new XmlNamespaceManager(new NameTable());
         NamespaceManager.AddNamespace("cp", XmlNamespaces.CsProjNamespaceUri);
     }
 
-    public async Task<XDocument> CreateNuSpecAsync(string solutionFileFullName, IList<string> tags, IErrorsAndInfos errorsAndInfos) {
+    public async Task<XDocument> CreateNuSpecAsync(string solutionFileFullName, string checkedOutBranch, IList<string> tags, IErrorsAndInfos errorsAndInfos) {
         var document = new XDocument();
         var projectFile = solutionFileFullName.Replace(".sln", ".csproj");
         if (!File.Exists(projectFile)) {
@@ -74,7 +77,7 @@ public class NuSpecCreator : INuSpecCreator {
         var dependencyIdsAndVersions = await _PackageReferencesScanner.DependencyIdsAndVersionsAsync(solutionFileFullName.Substring(0, solutionFileFullName.LastIndexOf('\\') + 1), false, errorsAndInfos);
         var element = new XElement(NugetNamespace + "package");
         var solutionId = solutionFileFullName.Substring(solutionFileFullName.LastIndexOf('\\') + 1).Replace(".sln", "");
-        var metaData = await ReadMetaDataAsync(solutionId, projectDocument, dependencyIdsAndVersions, tags, namespaceSelector, version, targetFramework, errorsAndInfos);
+        var metaData = await ReadMetaDataAsync(solutionId, checkedOutBranch, projectDocument, dependencyIdsAndVersions, tags, namespaceSelector, version, targetFramework, errorsAndInfos);
         if (metaData == null) {
             errorsAndInfos.Errors.Add(string.Format(Properties.Resources.MissingMetaDataElementInProjectFile, projectFile));
             return document;
@@ -92,7 +95,7 @@ public class NuSpecCreator : INuSpecCreator {
         return document;
     }
 
-    protected async Task<XElement> ReadMetaDataAsync(string solutionId, XDocument projectDocument, IDictionary<string, string> dependencyIdsAndVersions, IList<string> tags, string namespaceSelector, string version, string targetFramework, IErrorsAndInfos errorsAndInfos) {
+    protected async Task<XElement> ReadMetaDataAsync(string solutionId, string checkedOutBranch, XDocument projectDocument, IDictionary<string, string> dependencyIdsAndVersions, IList<string> tags, string namespaceSelector, string version, string targetFramework, IErrorsAndInfos errorsAndInfos) {
         var rootNamespaceElement = projectDocument.XPathSelectElements("./" + namespaceSelector + "Project/" + namespaceSelector + "PropertyGroup/" + namespaceSelector + "RootNamespace", NamespaceManager).FirstOrDefault();
         if (rootNamespaceElement == null) { return null; }
 
@@ -103,6 +106,19 @@ public class NuSpecCreator : INuSpecCreator {
             return null;
         }
 
+        var branchesWithPackages = await _BranchesWithPackagesRepository.GetBranchIdsAsync(errorsAndInfos);
+        if (errorsAndInfos.AnyErrors()) {
+            return null;
+        }
+        if (branchesWithPackages == null) {
+            errorsAndInfos.Errors.Add(Properties.Resources.MissingBranchesWithPackagesSettings);
+            return null;
+        }
+        if (!branchesWithPackages.Contains(checkedOutBranch)) {
+            errorsAndInfos.Errors.Add(string.Format(Properties.Resources.BranchDoesNotHavePackages, checkedOutBranch));
+            return null;
+        }
+
         var author = developerSettings.Author;
         var gitHubRepositoryUrl = developerSettings.GitHubRepositoryUrl;
         var faviconUrl = developerSettings.FaviconUrl;
@@ -110,10 +126,17 @@ public class NuSpecCreator : INuSpecCreator {
         var packageId
             = projectDocument.XPathSelectElements("./" + namespaceSelector + "Project/" + namespaceSelector + "PropertyGroup/" + namespaceSelector + "PackageId", NamespaceManager).FirstOrDefault()?.Value
               ?? rootNamespaceElement.Value;
+        var packageIdWithBranch = checkedOutBranch == "master"
+            ? packageId
+            : packageId + "-" + _BranchesWithPackagesRepository.PackageInfix(checkedOutBranch);
+        var rootNamespaceWithBranch = checkedOutBranch == "master"
+            ? rootNamespaceElement.Value
+            : rootNamespaceElement.Value + "-" + _BranchesWithPackagesRepository.PackageInfix(checkedOutBranch);
 
         var element = new XElement(NugetNamespace + @"metadata");
         foreach (var elementName in new[] { @"id", @"title", @"description", @"releaseNotes" }) {
-            element.Add(new XElement(NugetNamespace + elementName, elementName == @"id" ? packageId : rootNamespaceElement.Value));
+            element.Add(
+                new XElement(NugetNamespace + elementName, elementName == @"id" ? packageIdWithBranch : rootNamespaceWithBranch));
         }
 
         foreach (var elementName in new[] { @"authors", @"owners" }) {
@@ -244,11 +267,11 @@ public class NuSpecCreator : INuSpecCreator {
         return libNetSuffix;
     }
 
-    public async Task CreateNuSpecFileIfRequiredOrPresentAsync(bool required, string solutionFileFullName, IList<string> tags, IErrorsAndInfos errorsAndInfos) {
+    public async Task CreateNuSpecFileIfRequiredOrPresentAsync(bool required, string solutionFileFullName, string checkedOutBranch, IList<string> tags, IErrorsAndInfos errorsAndInfos) {
         var nuSpecFile = solutionFileFullName.Replace(".sln", ".nuspec");
         if (!required && !File.Exists(nuSpecFile)) { return; }
 
-        var document = await CreateNuSpecAsync(solutionFileFullName, tags, errorsAndInfos);
+        var document = await CreateNuSpecAsync(solutionFileFullName, checkedOutBranch, tags, errorsAndInfos);
         if (errorsAndInfos.Errors.Any()) { return; }
 
         var tempFileName = Path.GetTempPath() + @"AspenlaubTemp\temp.nuspec";

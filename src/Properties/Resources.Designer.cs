@@ -19,7 +19,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -57,6 +57,15 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Properties {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Branch &apos;{0}&apos; does not produce packages.
+        /// </summary>
+        internal static string BranchDoesNotHavePackages {
+            get {
+                return ResourceManager.GetString("BranchDoesNotHavePackages", resourceCulture);
             }
         }
         
@@ -210,6 +219,15 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Properties {
         internal static string LoadingPushedHeadTipShas {
             get {
                 return ResourceManager.GetString("LoadingPushedHeadTipShas", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Missing secret branches with packages.
+        /// </summary>
+        internal static string MissingBranchesWithPackagesSettings {
+            get {
+                return ResourceManager.GetString("MissingBranchesWithPackagesSettings", resourceCulture);
             }
         }
         

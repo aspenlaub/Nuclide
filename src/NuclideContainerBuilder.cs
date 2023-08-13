@@ -19,6 +19,7 @@ public static class NuclideContainerBuilder {
         builder.RegisterType<PackageReferencesScanner>().As<IPackageReferencesScanner>();
         builder.RegisterType<PinnedAddInVersionChecker>().As<IPinnedAddInVersionChecker>();
         builder.RegisterType<PushedHeadTipShaRepository>().As<IPushedHeadTipShaRepository>();
+        builder.RegisterType<BranchesWithPackagesRepository>().As<IBranchesWithPackagesRepository>();
         return builder;
     }
     // ReSharper disable once UnusedMember.Global
@@ -32,6 +33,7 @@ public static class NuclideContainerBuilder {
         services.AddTransient<IPackageReferencesScanner, PackageReferencesScanner>();
         services.AddTransient<IPinnedAddInVersionChecker, PinnedAddInVersionChecker>();
         services.AddTransient<IPushedHeadTipShaRepository, PushedHeadTipShaRepository>();
+        services.AddSingleton<IBranchesWithPackagesRepository, BranchesWithPackagesRepository>();
         return services;
     }
 }

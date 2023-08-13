@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="BranchDoesNotHavePackages" xml:space="preserve">
+    <value>Branch '{0}' does not produce packages</value>
+  </data>
   <data name="CheckingProjectVsSolution" xml:space="preserve">
     <value>Checking project ID against solution ID</value>
   </data>
@@ -167,6 +170,9 @@
   </data>
   <data name="LoadingPushedHeadTipShas" xml:space="preserve">
     <value>Loading pushed head tip shas</value>
+  </data>
+  <data name="MissingBranchesWithPackagesSettings" xml:space="preserve">
+    <value>Missing secret branches with packages</value>
   </data>
   <data name="MissingDeveloperSettings" xml:space="preserve">
     <value>Missing 'DeveloperSettings' secret. Open "{0}" in SecretSamples, modify it and save it in SecretRepository</value>
