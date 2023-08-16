@@ -30,7 +30,8 @@ public class PushedHeadTipShaRepository : IPushedHeadTipShaRepository {
 
         var resultFiles = new List<string>();
         resultFiles.AddRange(Directory.GetFiles(folder.FullName, "*.txt", SearchOption.TopDirectoryOnly).Select(f => ExtractHeadTipShaFromFileName(f)));
-        var subFolder = folder.SubFolder(nugetFeedId);
+        resultFiles.AddRange(Directory.GetFiles(folder.SubFolder("common").FullName, "*.txt", SearchOption.TopDirectoryOnly).Select(f => ExtractHeadTipShaFromFileName(f)));
+        var subFolder = folder.SubFolder(string.IsNullOrEmpty(nugetFeedId) ? "nofeed" : nugetFeedId);
         subFolder.CreateIfNecessary();
         resultFiles.AddRange(Directory.GetFiles(subFolder.FullName, "*.json", SearchOption.TopDirectoryOnly).Select(f => ExtractHeadTipShaFromFileName(f)));
         if (!resultFiles.Any()) {
@@ -94,16 +95,18 @@ public class PushedHeadTipShaRepository : IPushedHeadTipShaRepository {
     }
 
     public async Task<DateTime> AddedAtAsync(string nugetFeedId, string headTipSha, IErrorsAndInfos errorsAndInfos) {
-        var folder = await RepositoryFolderAsync(errorsAndInfos);
+        var fileName = await TextFileNameAsync(headTipSha, errorsAndInfos);
         if (errorsAndInfos.AnyErrors()) { return DateTime.MaxValue;}
 
-        var fileName = folder.FullName + '\\' + headTipSha +  ".txt";
         return !File.Exists(fileName) ? DateTime.MaxValue : File.GetLastWriteTime(fileName);
     }
 
     private async Task<string> TextFileNameAsync(string headTipSha, IErrorsAndInfos errorsAndInfos) {
         var folder = await RepositoryFolderAsync(errorsAndInfos);
         if (errorsAndInfos.AnyErrors()) { return ""; }
+
+        folder = folder.SubFolder("common");
+        folder.CreateIfNecessary();
 
         return folder.FullName + '\\' + headTipSha + ".txt";
     }
