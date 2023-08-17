@@ -295,7 +295,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No pushed head tip shas found in &quot;{0}&quot;.
+        ///   Looks up a localized string similar to No pushed head tip shas found in &quot;{0}&quot; and &quot;{1}&quot;.
         /// </summary>
         internal static string NoPushedHeadTipShasFound {
             get {

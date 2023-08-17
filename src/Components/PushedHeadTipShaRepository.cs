@@ -35,15 +35,15 @@ public class PushedHeadTipShaRepository : IPushedHeadTipShaRepository {
         }
 
         var resultFiles = new List<string>();
-        resultFiles.AddRange(Directory.GetFiles(folder.FullName, "*.txt", SearchOption.TopDirectoryOnly).Select(f => ExtractHeadTipShaFromFileName(f)));
-        resultFiles.AddRange(Directory.GetFiles(folder.SubFolder("common").FullName, "*.txt", SearchOption.TopDirectoryOnly).Select(f => ExtractHeadTipShaFromFileName(f)));
-        var subFolder = folder.SubFolder(string.IsNullOrEmpty(nugetFeedId) ? "nofeed" : nugetFeedId);
-        subFolder.CreateIfNecessary();
-        resultFiles.AddRange(Directory.GetFiles(subFolder.FullName, "*.json", SearchOption.TopDirectoryOnly).Select(f => ExtractHeadTipShaFromFileName(f)));
+        resultFiles.AddRange(Directory.GetFiles(folder.FullName, "*.txt", SearchOption.TopDirectoryOnly).Select(ExtractHeadTipShaFromFileName));
+        var subFolder = folder.SubFolder("common");
+        resultFiles.AddRange(Directory.GetFiles(subFolder.FullName, "*.txt", SearchOption.TopDirectoryOnly).Select(ExtractHeadTipShaFromFileName));
         if (!resultFiles.Any()) {
-            errorsAndInfos.Errors.Add(string.Format(Properties.Resources.NoPushedHeadTipShasFound, folder.FullName));
+            errorsAndInfos.Errors.Add(string.Format(Properties.Resources.NoPushedHeadTipShasFound, folder.FullName, subFolder.FullName));
         }
-
+        subFolder = folder.SubFolder(string.IsNullOrEmpty(nugetFeedId) ? "nofeed" : nugetFeedId);
+        subFolder.CreateIfNecessary();
+        resultFiles.AddRange(Directory.GetFiles(subFolder.FullName, "*.json", SearchOption.TopDirectoryOnly).Select(ExtractHeadTipShaFromFileName));
         return resultFiles;
     }
 
