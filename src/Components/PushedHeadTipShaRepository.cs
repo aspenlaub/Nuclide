@@ -38,8 +38,13 @@ public class PushedHeadTipShaRepository : IPushedHeadTipShaRepository {
         resultFiles.AddRange(Directory.GetFiles(folder.FullName, "*.txt", SearchOption.TopDirectoryOnly).Select(ExtractHeadTipShaFromFileName));
         var subFolder = folder.SubFolder("common");
         resultFiles.AddRange(Directory.GetFiles(subFolder.FullName, "*.txt", SearchOption.TopDirectoryOnly).Select(ExtractHeadTipShaFromFileName));
+        var subFolder2 = folder.SubFolder("commonarchive");
+        subFolder2.CreateIfNecessary();
+        resultFiles.AddRange(Directory.GetFiles(subFolder2.FullName, "*.txt", SearchOption.TopDirectoryOnly).Select(ExtractHeadTipShaFromFileName));
         if (!resultFiles.Any()) {
-            errorsAndInfos.Errors.Add(string.Format(Properties.Resources.NoPushedHeadTipShasFound, folder.FullName, subFolder.FullName));
+            var folders = new[] { folder, subFolder };
+            var displayedFolders = string.Join(", ", folders.Select(f => '"' + f.FullName + '"'));
+            errorsAndInfos.Errors.Add(string.Format(Properties.Resources.NoPushedHeadTipShasFound, displayedFolders));
         }
         subFolder = folder.SubFolder(string.IsNullOrEmpty(nugetFeedId) ? "nofeed" : nugetFeedId);
         subFolder.CreateIfNecessary();

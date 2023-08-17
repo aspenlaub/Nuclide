@@ -196,7 +196,7 @@
     <value>Folder "{0}" does not contain any packages</value>
   </data>
   <data name="NoPushedHeadTipShasFound" xml:space="preserve">
-    <value>No pushed head tip shas found in "{0}" and "{1}"</value>
+    <value>No pushed head tip shas found in: {0}</value>
   </data>
   <data name="NuSpecFileUpdated" xml:space="preserve">
     <value>"{0}" has been updated</value>
