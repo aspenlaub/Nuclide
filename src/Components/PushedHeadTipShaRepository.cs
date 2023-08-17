@@ -4,9 +4,11 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Aspenlaub.Net.GitHub.CSharp.Nuclide.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 using Newtonsoft.Json;
+using NuGet.Packaging;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Components;
 
@@ -25,8 +27,12 @@ public class PushedHeadTipShaRepository : IPushedHeadTipShaRepository {
     }
 
     public async Task<List<string>> GetAsync(string nugetFeedId, IErrorsAndInfos errorsAndInfos) {
-        var folder = await RepositoryFolderAsync(errorsAndInfos);
-        if (errorsAndInfos.AnyErrors()) { return new List<string>(); }
+        var repositoryFolderErrorsAndInfos = new ErrorsAndInfos();
+        var folder = await RepositoryFolderAsync(repositoryFolderErrorsAndInfos);
+        if (repositoryFolderErrorsAndInfos.AnyErrors()) {
+            errorsAndInfos.Errors.AddRange(repositoryFolderErrorsAndInfos.Errors);
+            return new List<string>();
+        }
 
         var resultFiles = new List<string>();
         resultFiles.AddRange(Directory.GetFiles(folder.FullName, "*.txt", SearchOption.TopDirectoryOnly).Select(f => ExtractHeadTipShaFromFileName(f)));
