@@ -198,9 +198,6 @@
   <data name="NoPushedHeadTipShasFound" xml:space="preserve">
     <value>No pushed head tip shas found in "{0}"</value>
   </data>
-  <data name="NoRemotePackageFilesFound" xml:space="preserve">
-    <value>Feed "{0}" does not provide package "{1}"</value>
-  </data>
   <data name="NuSpecFileUpdated" xml:space="preserve">
     <value>"{0}" has been updated</value>
   </data>

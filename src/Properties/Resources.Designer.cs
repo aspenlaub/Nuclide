@@ -304,15 +304,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Feed &quot;{0}&quot; does not provide package &quot;{1}&quot;.
-        /// </summary>
-        internal static string NoRemotePackageFilesFound {
-            get {
-                return ResourceManager.GetString("NoRemotePackageFilesFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to &quot;{0}&quot; has been updated.
         /// </summary>
         internal static string NuSpecFileUpdated {
