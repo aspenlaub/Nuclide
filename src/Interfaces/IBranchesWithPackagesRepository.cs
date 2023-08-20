@@ -8,5 +8,5 @@ public interface IBranchesWithPackagesRepository {
     Task<IList<string>> GetBranchIdsAsync(IErrorsAndInfos errorsAndInfos);
     Task<IList<string>> GetValidFoldersAsync(IErrorsAndInfos errorsAndInfos);
     string LogicalFolderToWorkWith(string branch);
-    string PackageInfix(string branch);
+    string PackageInfix(string branch, bool withDash);
 }

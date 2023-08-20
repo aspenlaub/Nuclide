@@ -32,12 +32,13 @@ public class BranchesWithPackagesRepository : IBranchesWithPackagesRepository {
     }
 
     public string LogicalFolderToWorkWith(string branch) {
-        return branch == "master" ? "GitHub" : "GitHub-" + PackageInfix(branch);
+        return "GitHub" + PackageInfix(branch, true);
     }
 
-    public string PackageInfix(string branch) {
+    public string PackageInfix(string branch, bool withDash) {
         return branch == "master"
             ? ""
-            : string.Join("", branch.Split("-").Select(p => p.Substring(0, 1).ToUpper() + p.Substring(1)));
+            : (withDash ? "-" : "")
+                + string.Join("", branch.Split("-").Select(p => p.Substring(0, 1).ToUpper() + p.Substring(1)));
     }
 }

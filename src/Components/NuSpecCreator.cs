@@ -126,12 +126,10 @@ public class NuSpecCreator : INuSpecCreator {
         var packageId
             = projectDocument.XPathSelectElements("./" + namespaceSelector + "Project/" + namespaceSelector + "PropertyGroup/" + namespaceSelector + "PackageId", NamespaceManager).FirstOrDefault()?.Value
               ?? rootNamespaceElement.Value;
-        var packageIdWithBranch = checkedOutBranch == "master"
-            ? packageId
-            : packageId + "-" + _BranchesWithPackagesRepository.PackageInfix(checkedOutBranch);
-        var rootNamespaceWithBranch = checkedOutBranch == "master"
-            ? rootNamespaceElement.Value
-            : rootNamespaceElement.Value + "-" + _BranchesWithPackagesRepository.PackageInfix(checkedOutBranch);
+        var packageIdWithBranch = packageId
+            + "-" + _BranchesWithPackagesRepository.PackageInfix(checkedOutBranch, true);
+        var rootNamespaceWithBranch = rootNamespaceElement.Value
+            + _BranchesWithPackagesRepository.PackageInfix(checkedOutBranch, true);
 
         var element = new XElement(NugetNamespace + @"metadata");
         foreach (var elementName in new[] { @"id", @"title", @"description", @"releaseNotes" }) {
