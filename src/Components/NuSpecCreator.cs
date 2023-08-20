@@ -127,7 +127,7 @@ public class NuSpecCreator : INuSpecCreator {
             = projectDocument.XPathSelectElements("./" + namespaceSelector + "Project/" + namespaceSelector + "PropertyGroup/" + namespaceSelector + "PackageId", NamespaceManager).FirstOrDefault()?.Value
               ?? rootNamespaceElement.Value;
         var packageIdWithBranch = packageId
-            + "-" + _BranchesWithPackagesRepository.PackageInfix(checkedOutBranch, true);
+            + _BranchesWithPackagesRepository.PackageInfix(checkedOutBranch, true);
         var rootNamespaceWithBranch = rootNamespaceElement.Value
             + _BranchesWithPackagesRepository.PackageInfix(checkedOutBranch, true);
 
