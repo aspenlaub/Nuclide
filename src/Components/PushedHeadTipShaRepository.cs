@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Aspenlaub.Net.GitHub.CSharp.Nuclide.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
-using Newtonsoft.Json;
 using NuGet.Packaging;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Components;
@@ -100,7 +100,7 @@ public class PushedHeadTipShaRepository : IPushedHeadTipShaRepository {
             {nameof(headTipSha), headTipSha}, {nameof(packageId), packageId}, {nameof(packageVersion), packageVersion}, {nameof(nugetFeedId), nugetFeedId}
         };
 
-        var json = JsonConvert.SerializeObject(dictionary);
+        var json = JsonSerializer.Serialize(dictionary);
 
         await File.WriteAllTextAsync(fileName, json);
     }
@@ -140,9 +140,9 @@ public class PushedHeadTipShaRepository : IPushedHeadTipShaRepository {
             return "";
         }
 
-        var dictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(await File.ReadAllTextAsync(fileName));
-        if (dictionary?.ContainsKey("packageVersion") == true) {
-            return dictionary["packageVersion"];
+        var dictionary = JsonSerializer.Deserialize<Dictionary<string, string>>(await File.ReadAllTextAsync(fileName));
+        if (dictionary?.TryGetValue("packageVersion", out var packageVersion) is true) {
+            return packageVersion;
         }
 
         errorsAndInfos.Errors.Add(string.Format(Properties.Resources.CouldNotDeserializeFromFile, fileName));
