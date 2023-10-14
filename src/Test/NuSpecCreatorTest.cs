@@ -119,7 +119,7 @@ public class NuSpecCreatorTest {
         VerifyTextElement(@"/package/metadata/copyright", $"Copyright {year}");
         VerifyTextElementPattern(@"/package/metadata/version", @"\d+.\d+.\d+.\d+");
         VerifyElements(@"/package/metadata/dependencies/group", "targetFramework", new List<string> { @"net7.0" }, false);
-        VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "Autofac" , "LibGit2Sharp", "Newton" + "soft.Json" }, false);
+        VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "Autofac" }, false);
         VerifyElements(@"/package/files/file", "src", new List<string> { @"bin\Release\Aspenlaub.*.dll", @"bin\Release\Aspenlaub.*.pdb", @"bin\Release\packageicon.png" }, false);
         VerifyElements(@"/package/files/file", "exclude", new List<string> { @"bin\Release\*.Test*.*;bin\Release\*.exe;bin\Release\ref\*.*", @"bin\Release\*.Test*.*;bin\Release\*.exe;bin\Release\ref\*.*", null }, false);
         var target = @"lib\" + targetFrameworkElement.Value;
@@ -175,7 +175,7 @@ public class NuSpecCreatorTest {
         Document = await sut.CreateNuSpecAsync(solutionFileFullName, checkedOutBranch, new List<string> { "The", "Little", "Things" }, errorsAndInfos);
         Assert.IsNotNull(Document);
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
-        VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "Dvin", "Microsoft.EntityFrameworkCore.SqlServer", "Newton" + "soft.Json", "System.ComponentModel.Annotations" }, true);
+        VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "Dvin", "Microsoft.EntityFrameworkCore.SqlServer", "System.ComponentModel.Annotations" }, true);
         VerifyTargetFrameworkMoniker(@"/package/metadata/dependencies/group", "targetFramework");
         VerifyTargetFrameworkMoniker(@"/package/files/file", "target");
     }
@@ -200,7 +200,7 @@ public class NuSpecCreatorTest {
         Document = await sut.CreateNuSpecAsync(solutionFileFullName, checkedOutBranch, new List<string> { "The", "Little", "Things" }, errorsAndInfos);
         Assert.IsNotNull(Document);
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
-        VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "MSTest.TestAdapter", "MSTest.TestFramework", "Newton" + "soft.Json", "TashClient" }, true);
+        VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "MSTest.TestAdapter", "MSTest.TestFramework", "TashClient" }, true);
         VerifyTargetFrameworkMoniker(@"/package/metadata/dependencies/group", "targetFramework");
         VerifyTargetFrameworkMoniker(@"/package/files/file", "target");
     }
