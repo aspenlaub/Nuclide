@@ -150,7 +150,7 @@ public class NuSpecCreatorTest {
         Assert.IsNotNull(Document);
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
         VerifyElementsInverse(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "Dvin" });
-        VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "Microsoft.AspNetCore.Hosting", "Pegh" }, true);
+        VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "Pegh" }, true);
         VerifyTargetFrameworkMoniker(@"/package/metadata/dependencies/group", "targetFramework");
         VerifyTargetFrameworkMoniker(@"/package/files/file", "target");
     }
@@ -251,7 +251,7 @@ public class NuSpecCreatorTest {
         VerifyTextElement(@"/package/metadata/copyright", $"Copyright {year}");
         VerifyTextElementPattern(@"/package/metadata/version", @"\d+.\d+.\d+.\d+");
         VerifyElements(@"/package/metadata/dependencies/group", "targetFramework", new List<string> { @"net7.0" }, false);
-        VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "Autofac", "Newton" + "soft.Json" }, false);
+        VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "Autofac", "System.Text.Json" }, false);
         VerifyElements(@"/package/files/file", "src", new List<string> { @"bin\Release\Aspenlaub.*.dll", @"bin\Release\Aspenlaub.*.pdb", @"bin\Release\packageicon.png" }, false);
         VerifyElements(@"/package/files/file", "exclude", new List<string> { @"bin\Release\*.Test*.*;bin\Release\*.exe;bin\Release\ref\*.*", @"bin\Release\*.Test*.*;bin\Release\*.exe;bin\Release\ref\*.*", null }, false);
         var target = @"lib\" + targetFrameworkElement.Value;
