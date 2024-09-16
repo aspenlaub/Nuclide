@@ -12,15 +12,9 @@ using NuGet.Packaging;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Components;
 
-public class PushedHeadTipShaRepository : IPushedHeadTipShaRepository {
-    private readonly IFolderResolver _FolderResolver;
-
-    public PushedHeadTipShaRepository(IFolderResolver folderResolver) {
-        _FolderResolver = folderResolver;
-    }
-
+public class PushedHeadTipShaRepository(IFolderResolver folderResolver) : IPushedHeadTipShaRepository {
     private async Task<IFolder> RepositoryFolderAsync(IErrorsAndInfos errorsAndInfos) {
-        var folder = await _FolderResolver.ResolveAsync(@"$(CSharp)\GitHub\PushedHeadTipShas", errorsAndInfos);
+        var folder = await folderResolver.ResolveAsync(@"$(CSharp)\GitHub\PushedHeadTipShas", errorsAndInfos);
         if (errorsAndInfos.AnyErrors()) { return null; }
         folder.CreateIfNecessary();
         return folder;
@@ -41,6 +35,9 @@ public class PushedHeadTipShaRepository : IPushedHeadTipShaRepository {
         var subFolder2 = folder.SubFolder("commonarchive");
         subFolder2.CreateIfNecessary();
         resultFiles.AddRange(Directory.GetFiles(subFolder2.FullName, "*.txt", SearchOption.TopDirectoryOnly).Select(ExtractHeadTipShaFromFileName));
+        var subFolder3 = folder.SubFolder("aspenlaub.local.archive");
+        subFolder3.CreateIfNecessary();
+        resultFiles.AddRange(Directory.GetFiles(subFolder3.FullName, "*.txt", SearchOption.TopDirectoryOnly).Select(ExtractHeadTipShaFromFileName));
         if (!resultFiles.Any()) {
             var folders = new[] { folder, subFolder };
             var displayedFolders = string.Join(", ", folders.Select(f => '"' + f.FullName + '"'));
