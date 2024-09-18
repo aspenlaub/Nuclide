@@ -29,7 +29,7 @@ public class BranchesWithPackagesRepository : IBranchesWithPackagesRepository {
 
     public async Task<IList<string>> GetValidFoldersAsync(IErrorsAndInfos errorsAndInfos) {
         var branchIds = await GetBranchIdsAsync(errorsAndInfos);
-        return branchIds.Select(LogicalFolderToWorkWith).ToList();
+        return branchIds.Select(LogicalFolderToWorkWith).Distinct().ToList();
     }
 
     public string LogicalFolderToWorkWith(string branch) {
