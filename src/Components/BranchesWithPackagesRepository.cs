@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Aspenlaub.Net.GitHub.CSharp.Gitty.Components;
 using Aspenlaub.Net.GitHub.CSharp.Nuclide.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 using BranchesWithPackages = Aspenlaub.Net.GitHub.CSharp.Nuclide.Entities.BranchesWithPackages;
@@ -36,7 +37,7 @@ public class BranchesWithPackagesRepository : IBranchesWithPackagesRepository {
     }
 
     public string PackageInfix(string branch, bool withDash) {
-        return branch == "master"
+        return MasterMaind.IsMainOrMaster(branch)
             ? ""
             : (withDash ? "-" : "")
                 + string.Join("", branch.Split("-").Select(p => p.Substring(0, 1).ToUpper() + p.Substring(1)));
