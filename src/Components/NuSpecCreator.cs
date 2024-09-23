@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
@@ -37,18 +38,18 @@ public class NuSpecCreator : INuSpecCreator {
 
     public async Task<XDocument> CreateNuSpecAsync(string solutionFileFullName, string checkedOutBranch, IList<string> tags, IErrorsAndInfos errorsAndInfos) {
         var document = new XDocument();
-        var projectFile = solutionFileFullName.Replace(".sln", ".csproj");
-        if (!File.Exists(projectFile)) {
-            errorsAndInfos.Errors.Add(string.Format(Properties.Resources.ProjectFileNotFound, projectFile));
+        var projectFileFullName = solutionFileFullName.Replace(".sln", ".csproj");
+        if (!File.Exists(projectFileFullName)) {
+            errorsAndInfos.Errors.Add(string.Format(Properties.Resources.ProjectFileNotFound, projectFileFullName));
             return document;
         }
 
         XDocument projectDocument;
         string namespaceSelector, targetFramework;
         try {
-            projectDocument = XDocument.Load(projectFile);
+            projectDocument = XDocument.Load(projectFileFullName);
         } catch {
-            errorsAndInfos.Errors.Add(string.Format(Properties.Resources.InvalidXmlFile, projectFile));
+            errorsAndInfos.Errors.Add(string.Format(Properties.Resources.InvalidXmlFile, projectFileFullName));
             return document;
         }
         try {
@@ -56,37 +57,48 @@ public class NuSpecCreator : INuSpecCreator {
             namespaceSelector = targetFrameworkElement != null ? "" : "cp:";
             targetFramework = targetFrameworkElement != null ? targetFrameworkElement.Value : "";
         } catch {
-            errorsAndInfos.Errors.Add(string.Format(Properties.Resources.ErrorReadingTargetFramework, projectFile));
+            errorsAndInfos.Errors.Add(string.Format(Properties.Resources.ErrorReadingTargetFramework, projectFileFullName));
             return document;
         }
 
-        var version = @"$version$";
+        var versionAsString = @"$version$";
         if (namespaceSelector == "") {
-            var project = _ProjectFactory.Load(solutionFileFullName, projectFile, errorsAndInfos);
+            var project = _ProjectFactory.Load(solutionFileFullName, projectFileFullName, errorsAndInfos);
             var releasePropertyGroup = project.PropertyGroups.FirstOrDefault(p => p.Condition.Contains("Release"));
             if (releasePropertyGroup != null) {
                 var solutionFolder = new Folder(solutionFileFullName.Substring(0, solutionFileFullName.LastIndexOf('\\')));
                 var fullOutputFolder = new Folder(Path.Combine(solutionFolder.FullName, releasePropertyGroup.OutputPath == "" ? @"bin\Release\" : releasePropertyGroup.OutputPath));
                 var assemblyFileName = fullOutputFolder.FullName + '\\' + project.RootNamespace + ".dll";
                 if (File.Exists(assemblyFileName)) {
-                    version = FileVersionInfo.GetVersionInfo(assemblyFileName).FileVersion;
+                    versionAsString = FileVersionInfo.GetVersionInfo(assemblyFileName).FileVersion;
                 }
             }
+        }
+
+        var versionFile = projectFileFullName.Substring(0, projectFileFullName.LastIndexOf('\\') + 1) + "version.json";
+        if (File.Exists(versionFile)) {
+            var version = JsonSerializer.Deserialize<Entities.Version>(await File.ReadAllTextAsync(versionFile));
+            if (version == null) {
+                throw new FileNotFoundException(versionFile);
+            }
+            version.Build = DateTime.UtcNow.Subtract(new DateTime(2019, 7, 24)).Days;
+            version.Revision = (int)Math.Floor(DateTime.UtcNow.Subtract(DateTime.UtcNow.Date).TotalMinutes);
+            versionAsString = version.ToString();
         }
 
         var dependencyIdsAndVersions = await _PackageReferencesScanner.DependencyIdsAndVersionsAsync(solutionFileFullName.Substring(0, solutionFileFullName.LastIndexOf('\\') + 1), false, errorsAndInfos);
         var element = new XElement(NugetNamespace + "package");
         var solutionId = solutionFileFullName.Substring(solutionFileFullName.LastIndexOf('\\') + 1).Replace(".sln", "");
-        var metaData = await ReadMetaDataAsync(solutionId, checkedOutBranch, projectDocument, dependencyIdsAndVersions, tags, namespaceSelector, version, targetFramework, errorsAndInfos);
+        var metaData = await ReadMetaDataAsync(solutionId, checkedOutBranch, projectDocument, dependencyIdsAndVersions, tags, namespaceSelector, versionAsString, targetFramework, errorsAndInfos);
         if (metaData == null) {
-            errorsAndInfos.Errors.Add(string.Format(Properties.Resources.MissingMetaDataElementInProjectFile, projectFile));
+            errorsAndInfos.Errors.Add(string.Format(Properties.Resources.MissingMetaDataElementInProjectFile, projectFileFullName));
             return document;
         }
 
         element.Add(metaData);
         var files = Files(projectDocument, namespaceSelector, errorsAndInfos);
         if (files == null) {
-            errorsAndInfos.Errors.Add(string.Format(Properties.Resources.MissingElementInProjectFile, projectFile));
+            errorsAndInfos.Errors.Add(string.Format(Properties.Resources.MissingElementInProjectFile, projectFileFullName));
             return document;
         }
 

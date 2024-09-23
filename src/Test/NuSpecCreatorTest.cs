@@ -249,7 +249,7 @@ public class NuSpecCreatorTest {
         VerifyTextElement(@"/package/metadata/requireLicenseAcceptance", @"false");
         var year = DateTime.Now.Year;
         VerifyTextElement(@"/package/metadata/copyright", $"Copyright {year}");
-        VerifyTextElementPattern(@"/package/metadata/version", @"\d+.\d+.\d+.\d+");
+        VerifyTextElementPattern(@"/package/metadata/version", @"2.4.\d+.\d+");
         VerifyElements(@"/package/metadata/dependencies/group", "targetFramework", new List<string> { @"net8.0" }, false);
         VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "Autofac", "System.Text.Json" }, false);
         VerifyElements(@"/package/files/file", "src", new List<string> { @"bin\Release\Aspenlaub.*.dll", @"bin\Release\Aspenlaub.*.pdb", @"bin\Release\packageicon.png" }, false);
