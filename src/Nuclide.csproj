@@ -35,10 +35,10 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Gitty" Version="2.0.2139.1099" />
+    <PackageReference Include="Gitty" Version="2.0.2167.1419" />
     <PackageReference Include="NuGet.Client" Version="4.2.0" />
     <PackageReference Include="NuGet.Protocol.Core.v3" Version="4.2.0" />
-    <PackageReference Include="Protch" Version="2.0.2139.1118" />
+    <PackageReference Include="Protch" Version="2.0.2168.1056" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">
