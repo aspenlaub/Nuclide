@@ -118,7 +118,7 @@ public class NuSpecCreatorTest {
         var year = DateTime.Now.Year;
         VerifyTextElement(@"/package/metadata/copyright", $"Copyright {year}");
         VerifyTextElementPattern(@"/package/metadata/version", @"\d+.\d+.\d+.\d+");
-        VerifyElements(@"/package/metadata/dependencies/group", "targetFramework", new List<string> { @"net9.0" }, false);
+        VerifyElements(@"/package/metadata/dependencies/group", "targetFramework", new List<string> { @"net10.0" }, false);
         VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "Autofac" }, false);
         VerifyElements(@"/package/files/file", "src", new List<string> { @"bin\Release\Aspenlaub.*.dll", @"bin\Release\Aspenlaub.*.pdb", @"bin\Release\packageicon.png" }, false);
         VerifyElements(@"/package/files/file", "exclude", new List<string> { @"bin\Release\*.Test*.*;bin\Release\*.exe;bin\Release\ref\*.*", @"bin\Release\*.Test*.*;bin\Release\*.exe;bin\Release\ref\*.*", null }, false);
@@ -250,7 +250,7 @@ public class NuSpecCreatorTest {
         var year = DateTime.Now.Year;
         VerifyTextElement(@"/package/metadata/copyright", $"Copyright {year}");
         VerifyTextElementPattern(@"/package/metadata/version", @"2.4.\d+.\d+");
-        VerifyElements(@"/package/metadata/dependencies/group", "targetFramework", new List<string> { @"net9.0" }, false);
+        VerifyElements(@"/package/metadata/dependencies/group", "targetFramework", new List<string> { @"net10.0" }, false);
         VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "Autofac", "System.Text.Json" }, false);
         VerifyElements(@"/package/files/file", "src", new List<string> { @"bin\Release\Aspenlaub.*.dll", @"bin\Release\Aspenlaub.*.pdb", @"bin\Release\packageicon.png" }, false);
         VerifyElements(@"/package/files/file", "exclude", new List<string> { @"bin\Release\*.Test*.*;bin\Release\*.exe;bin\Release\ref\*.*", @"bin\Release\*.Test*.*;bin\Release\*.exe;bin\Release\ref\*.*", null }, false);
