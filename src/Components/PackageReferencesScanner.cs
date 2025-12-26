@@ -12,13 +12,7 @@ using Aspenlaub.Net.GitHub.CSharp.Protch;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Components;
 
-public class PackageReferencesScanner : IPackageReferencesScanner {
-    private readonly ISecretRepository _SecretRepository;
-
-    public PackageReferencesScanner(ISecretRepository secretRepository) {
-        _SecretRepository = secretRepository;
-    }
-
+public class PackageReferencesScanner(ISecretRepository secretRepository) : IPackageReferencesScanner {
     public async Task<IDictionary<string, string>> DependencyIdsAndVersionsAsync(string projectFolder, bool includeTest, IErrorsAndInfos errorsAndInfos) {
         return await DependencyIdsAndVersionsAsync(projectFolder, includeTest, false, errorsAndInfos);
     }
@@ -28,7 +22,7 @@ public class PackageReferencesScanner : IPackageReferencesScanner {
         var searchOption = topFolderOnly ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories;
 
         var secret = new SecretPackagesReferencedWithoutVersion();
-        var packagesReferencedWithoutVersion = await _SecretRepository.GetAsync(secret, errorsAndInfos);
+        var packagesReferencedWithoutVersion = await secretRepository.GetAsync(secret, errorsAndInfos);
         if (errorsAndInfos.AnyErrors()) { return dependencyIdsAndVersions; }
 
         var namespaceManager = new XmlNamespaceManager(new NameTable());
@@ -74,8 +68,8 @@ public class PackageReferencesScanner : IPackageReferencesScanner {
 
                 if (dependencyIdsAndVersions.ContainsKey(id) && dependencyIdsAndVersions[id] == version) { continue; }
 
-                if (dependencyIdsAndVersions.ContainsKey(id)) {
-                    errorsAndInfos.Errors.Add(string.Format(Properties.Resources.PackageVersionClashDueToFile, fileName, id, version, dependencyIdsAndVersions[id]));
+                if (dependencyIdsAndVersions.TryGetValue(id, out string version2)) {
+                    errorsAndInfos.Errors.Add(string.Format(Properties.Resources.PackageVersionClashDueToFile, fileName, id, version, version2));
                     continue;
                 }
 

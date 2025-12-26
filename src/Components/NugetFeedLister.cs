@@ -14,27 +14,19 @@ using NuGet.Protocol.Core.Types;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Components;
 
-public class NugetFeedLister : INugetFeedLister {
-    private readonly ISecretRepository _SecretRepository;
-    private readonly IFolderResolver _FolderResolver;
-
-    public NugetFeedLister(ISecretRepository secretRepository, IFolderResolver folderResolver) {
-        _SecretRepository = secretRepository;
-        _FolderResolver = folderResolver;
-    }
-
+public class NugetFeedLister(ISecretRepository secretRepository, IFolderResolver folderResolver) : INugetFeedLister {
     public async Task<IList<IPackageSearchMetadata>> ListReleasedPackagesAsync(string nugetFeedId, string packageId, IErrorsAndInfos errorsAndInfos) {
         var nugetFeedsSecret = new SecretNugetFeeds();
-        var nugetFeeds = await _SecretRepository.GetAsync(nugetFeedsSecret, errorsAndInfos);
+        var nugetFeeds = await secretRepository.GetAsync(nugetFeedsSecret, errorsAndInfos);
         var nugetFeed = nugetFeeds.FirstOrDefault(f => f.Id == nugetFeedId);
         if (nugetFeed == null) {
             errorsAndInfos.Errors.Add(string.Format(Properties.Resources.UnknownNugetFeed, nugetFeedId, nugetFeedsSecret.Guid + ".xml"));
-            return new List<IPackageSearchMetadata>();
+            return [];
         }
 
         try {
-            var source = await nugetFeed.UrlOrResolvedFolderAsync(_FolderResolver, errorsAndInfos);
-            if (errorsAndInfos.AnyErrors()) {  return new List<IPackageSearchMetadata>(); }
+            var source = await nugetFeed.UrlOrResolvedFolderAsync(folderResolver, errorsAndInfos);
+            if (errorsAndInfos.AnyErrors()) {  return []; }
 
             var packageSource = new PackageSource(source);
             var providers = new List<Lazy<INuGetResourceProvider>>();
@@ -45,7 +37,7 @@ public class NugetFeedLister : INugetFeedLister {
             return packageMetaData;
         } catch {
             errorsAndInfos.Errors.Add(string.Format(Properties.Resources.CouldNotAccessNugetFeed, nugetFeedId));
-            return new List<IPackageSearchMetadata>();
+            return [];
         }
     }
 }

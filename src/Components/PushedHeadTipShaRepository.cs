@@ -25,7 +25,7 @@ public class PushedHeadTipShaRepository(IFolderResolver folderResolver) : IPushe
         var folder = await RepositoryFolderAsync(repositoryFolderErrorsAndInfos);
         if (repositoryFolderErrorsAndInfos.AnyErrors()) {
             errorsAndInfos.Errors.AddRange(repositoryFolderErrorsAndInfos.Errors);
-            return new List<string>();
+            return [];
         }
 
         var resultFiles = new List<string>();

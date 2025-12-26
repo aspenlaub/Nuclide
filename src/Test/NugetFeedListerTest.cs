@@ -16,23 +16,23 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test;
 
 [TestClass]
 public class NugetFeedListerTest {
-    private static IContainer Container;
+    private static IContainer _container;
 
     [ClassInitialize]
     public static void ClassInitialize(TestContext testContext) {
-        Container = new ContainerBuilder().UseGittyTestUtilities().UseNuclideProtchGittyAndPegh("Nuclide", new DummyCsArgumentPrompter()).Build();
+        _container = new ContainerBuilder().UseGittyTestUtilities().UseNuclideProtchGittyAndPegh("Nuclide", new DummyCsArgumentPrompter()).Build();
     }
 
     [TestMethod]
     public async Task CanFindNuclidePackages() {
         var developerSettingsSecret = new DeveloperSettingsSecret();
         var errorsAndInfos  = new ErrorsAndInfos();
-        var developerSettings = await Container.Resolve<ISecretRepository>().GetAsync(developerSettingsSecret, errorsAndInfos);
+        var developerSettings = await _container.Resolve<ISecretRepository>().GetAsync(developerSettingsSecret, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
         Assert.IsNotNull(developerSettings);
 
         const string packageId = "Nuclide";
-        var sut = Container.Resolve<INugetFeedLister>();
+        var sut = _container.Resolve<INugetFeedLister>();
 
         var packages = (await sut.ListReleasedPackagesAsync(NugetFeed.AspenlaubLocalFeed, packageId, errorsAndInfos)).ToList();
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());

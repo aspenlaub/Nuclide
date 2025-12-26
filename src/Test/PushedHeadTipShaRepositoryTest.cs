@@ -13,30 +13,30 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test;
 
 [TestClass]
 public class PushedHeadTipShaRepositoryTest {
-    private const string TestId = "{99F6A5C5-9FB9-4E86-AE67-EB4CA91FD710}", JsonTestId = "{AE41FC25-3F81-419F-AC4E-376C953FB83A}";
-    private const string PackageId = nameof(PushedHeadTipShaRepositoryTest), PackageVersion = "24.7.70";
-    private static IContainer Container;
+    private const string _testId = "{99F6A5C5-9FB9-4E86-AE67-EB4CA91FD710}", _jsonTestId = "{AE41FC25-3F81-419F-AC4E-376C953FB83A}";
+    private const string _packageId = nameof(PushedHeadTipShaRepositoryTest), _packageVersion = "24.7.70";
+    private static IContainer _container;
 
     private IPushedHeadTipShaRepository _Sut;
 
     [ClassInitialize]
     public static void ClassInitialize(TestContext context) {
-        Container = new ContainerBuilder().UseNuclideProtchGittyAndPegh("Nuclide", new DummyCsArgumentPrompter()).Build();
+        _container = new ContainerBuilder().UseNuclideProtchGittyAndPegh("Nuclide", new DummyCsArgumentPrompter()).Build();
     }
 
     [TestInitialize]
     public void Initialize() {
-        _Sut = Container.Resolve<IPushedHeadTipShaRepository>();
+        _Sut = _container.Resolve<IPushedHeadTipShaRepository>();
         var errorsAndInfos = new ErrorsAndInfos();
 
-        _Sut.RemoveAsync(NugetFeed.AspenlaubLocalFeed, TestId, errorsAndInfos).Wait();
+        _Sut.RemoveAsync(NugetFeed.AspenlaubLocalFeed, _testId, errorsAndInfos).Wait();
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
-        _Sut.RemoveAsync(NugetFeed.AspenlaubLocalFeed, JsonTestId, errorsAndInfos).Wait();
+        _Sut.RemoveAsync(NugetFeed.AspenlaubLocalFeed, _jsonTestId, errorsAndInfos).Wait();
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
         var headTipShas = _Sut.GetAsync(NugetFeed.AspenlaubLocalFeed, errorsAndInfos).Result;
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
         Assert.IsNotNull(headTipShas);
-        Assert.IsFalse(headTipShas.Any(s => s == TestId || s == JsonTestId));
+        Assert.IsFalse(headTipShas.Any(s => s == _testId || s == _jsonTestId));
     }
 
     [TestMethod]
@@ -44,22 +44,22 @@ public class PushedHeadTipShaRepositoryTest {
         var errorsAndInfos = new ErrorsAndInfos();
         var timeStamp = DateTime.Now.AddSeconds(-10);
 
-        await _Sut.AddAsync(NugetFeed.AspenlaubLocalFeed, TestId, errorsAndInfos);
+        await _Sut.AddAsync(NugetFeed.AspenlaubLocalFeed, _testId, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
         var headTipShas = await _Sut.GetAsync(NugetFeed.AspenlaubLocalFeed, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
-        Assert.IsTrue(headTipShas.Any(s => s == TestId));
+        Assert.IsTrue(headTipShas.Any(s => s == _testId));
 
-        var addedAt = await _Sut.AddedAtAsync(NugetFeed.AspenlaubLocalFeed, TestId, errorsAndInfos);
+        var addedAt = await _Sut.AddedAtAsync(NugetFeed.AspenlaubLocalFeed, _testId, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
         var now = DateTime.Now.AddSeconds(10);
         Assert.IsTrue(addedAt >= timeStamp && addedAt <= now, $"Time stamp {addedAt.ToLongTimeString()} should be between {timeStamp.ToLongTimeString()} and {now.ToLongTimeString()}");
 
-        await _Sut.RemoveAsync(NugetFeed.AspenlaubLocalFeed, TestId, errorsAndInfos);
+        await _Sut.RemoveAsync(NugetFeed.AspenlaubLocalFeed, _testId, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
         headTipShas = await _Sut.GetAsync(NugetFeed.AspenlaubLocalFeed, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
-        Assert.IsFalse(headTipShas.Any(s => s == TestId));
+        Assert.IsFalse(headTipShas.Any(s => s == _testId));
 
     }
 
@@ -67,20 +67,20 @@ public class PushedHeadTipShaRepositoryTest {
     public async Task CanGetRemoveAndAddPushedHeadTipShasUsingJson() {
         var errorsAndInfos = new ErrorsAndInfos();
 
-        await _Sut.AddAsync(NugetFeed.AspenlaubLocalFeed, JsonTestId, PackageId, PackageVersion, errorsAndInfos);
+        await _Sut.AddAsync(NugetFeed.AspenlaubLocalFeed, _jsonTestId, _packageId, _packageVersion, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
         var headTipShas = await _Sut.GetAsync(NugetFeed.AspenlaubLocalFeed, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
-        Assert.IsTrue(headTipShas.Any(s => s == JsonTestId));
+        Assert.IsTrue(headTipShas.Any(s => s == _jsonTestId));
 
-        var packageVersion = await _Sut.PackageVersionAsync(NugetFeed.AspenlaubLocalFeed, JsonTestId, errorsAndInfos);
+        var packageVersion = await _Sut.PackageVersionAsync(NugetFeed.AspenlaubLocalFeed, _jsonTestId, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
-        Assert.AreEqual(PackageVersion, packageVersion);
+        Assert.AreEqual(_packageVersion, packageVersion);
 
-        await _Sut.RemoveAsync(NugetFeed.AspenlaubLocalFeed, JsonTestId, errorsAndInfos);
+        await _Sut.RemoveAsync(NugetFeed.AspenlaubLocalFeed, _jsonTestId, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
         headTipShas = await _Sut.GetAsync(NugetFeed.AspenlaubLocalFeed, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
-        Assert.IsFalse(headTipShas.Any(s => s == JsonTestId));
+        Assert.IsFalse(headTipShas.Any(s => s == _jsonTestId));
     }
 }

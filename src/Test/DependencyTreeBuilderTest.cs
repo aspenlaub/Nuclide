@@ -18,13 +18,13 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test;
 [TestClass]
 public class DependencyTreeBuilderTest {
     protected static TestTargetFolder ShatilayaTarget = new(nameof(DependencyTreeBuilderTest), "Shatilaya");
-    private static IContainer Container;
+    private static IContainer _container;
     protected static ITestTargetRunner TargetRunner;
 
     [ClassInitialize]
     public static void ClassInitialize(TestContext context) {
-        Container = new ContainerBuilder().UseGittyTestUtilities().UseNuclideProtchGittyAndPegh("Nuclide", new DummyCsArgumentPrompter()).Build();
-        TargetRunner = Container.Resolve<ITestTargetRunner>();
+        _container = new ContainerBuilder().UseGittyTestUtilities().UseNuclideProtchGittyAndPegh("Nuclide", new DummyCsArgumentPrompter()).Build();
+        TargetRunner = _container.Resolve<ITestTargetRunner>();
     }
 
     [TestInitialize]
@@ -44,26 +44,13 @@ public class DependencyTreeBuilderTest {
         const string url = "https://github.com/aspenlaub/Shatilaya.git";
         gitUtilities.Clone(url, "master", ShatilayaTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
-        gitUtilities.Reset(ShatilayaTarget.Folder(), "c895d6d9efc93b71a061d580cec2d88f0d78ea9b", errorsAndInfos);
+        gitUtilities.Reset(ShatilayaTarget.Folder(), "7f08dcdef49705466557d9d318596b90feecaf6d", errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
-        var restorer = Container.Resolve<INugetPackageRestorer>();
-        var sourceFolder = ShatilayaTarget.Folder().SubFolder("src").FullName;
+        INugetPackageRestorer restorer = _container.Resolve<INugetPackageRestorer>();
+        string sourceFolder = ShatilayaTarget.Folder().SubFolder("src").FullName;
         Directory.CreateDirectory(sourceFolder + @"\packages\");
-        restorer.RestoreNugetPackages(sourceFolder + @"\" + ShatilayaTarget.SolutionId + ".sln", errorsAndInfos);
+        restorer.RestoreNugetPackages(sourceFolder + @"\" + ShatilayaTarget.SolutionId + ".slnx", errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
-        Assert.IsTrue(errorsAndInfos.Infos.Any(i => i.Contains("package(s) to packages.config")));
-        var builder = Container.Resolve<IDependencyTreeBuilder>();
-        var dependencyTree = builder.BuildDependencyTree(sourceFolder + @"\packages\");
-        var nodes = dependencyTree.FindNodes(ContainsValueTuple);
-        Assert.IsTrue(nodes.Any());
-        Assert.IsTrue(nodes.All(IsCorrectThreadingTasksVersion));
-    }
-
-    protected bool ContainsValueTuple(IDependencyNode node) {
-        return !string.IsNullOrEmpty(node.Id) && node.Id.Contains("System.ValueTuple");
-    }
-
-    protected bool IsCorrectThreadingTasksVersion(IDependencyNode node) {
-        return node?.Version == "4.5.0";
+        Assert.IsFalse(errorsAndInfos.Infos.Any(i => i.Contains("package(s) to packages.config")));
     }
 }

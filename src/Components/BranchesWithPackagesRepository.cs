@@ -9,13 +9,8 @@ using SecretBranchesWithPackages = Aspenlaub.Net.GitHub.CSharp.Nuclide.Entities.
 
 namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Components;
 
-public class BranchesWithPackagesRepository : IBranchesWithPackagesRepository {
-    private readonly BranchesWithPackages _BranchWithPackages = new();
-    private readonly ISecretRepository _SecretRepository;
-
-    public BranchesWithPackagesRepository(ISecretRepository secretRepository) {
-        _SecretRepository = secretRepository;
-    }
+public class BranchesWithPackagesRepository(ISecretRepository secretRepository) : IBranchesWithPackagesRepository {
+    private readonly BranchesWithPackages _BranchWithPackages = [];
 
     public async Task<IList<string>> GetBranchIdsAsync(IErrorsAndInfos errorsAndInfos) {
         if (_BranchWithPackages.Any()) {
@@ -23,7 +18,7 @@ public class BranchesWithPackagesRepository : IBranchesWithPackagesRepository {
         }
 
         var secret = new SecretBranchesWithPackages();
-        _BranchWithPackages.AddRange(await _SecretRepository.GetAsync(secret, errorsAndInfos));
+        _BranchWithPackages.AddRange(await secretRepository.GetAsync(secret, errorsAndInfos));
         return _BranchWithPackages.Select(b => b.Branch).ToList();
     }
 

@@ -13,18 +13,18 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test;
 
 [TestClass]
 public class SecretNugetFeedsTest {
-    private static IContainer Container;
+    private static IContainer _container;
 
     [ClassInitialize]
     public static void ClassInitialize(TestContext testContext) {
-        Container = new ContainerBuilder().UseGittyTestUtilities().UseNuclideProtchGittyAndPegh("Nuclide", new DummyCsArgumentPrompter()).Build();
+        _container = new ContainerBuilder().UseGittyTestUtilities().UseNuclideProtchGittyAndPegh("Nuclide", new DummyCsArgumentPrompter()).Build();
     }
 
     [TestMethod]
     public async Task CanGetSecretNugetFeeds() {
         var nugetFeedsSecret = new SecretNugetFeeds();
         var errorsAndInfos = new ErrorsAndInfos();
-        var nugetFeeds = await Container.Resolve<ISecretRepository>().GetAsync(nugetFeedsSecret, errorsAndInfos);
+        var nugetFeeds = await _container.Resolve<ISecretRepository>().GetAsync(nugetFeedsSecret, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
         Assert.IsNotNull(nugetFeeds);
         Assert.IsTrue(nugetFeeds.Count(f => f.IsMainFeed) == 1);

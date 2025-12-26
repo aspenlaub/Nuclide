@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Nuclide.csproj" />
+  <Project Path="Test/Nuclide.Test.csproj" />
+</Solution>

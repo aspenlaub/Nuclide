@@ -9,11 +9,11 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test;
 
 [TestClass]
 public class NugetRestorerTest {
-    private static IFolder AutomationTestProjectsFolder;
+    private static IFolder _automationTestProjectsFolder;
 
     [ClassInitialize]
     public static void ClassInitialize(TestContext testContext) {
-        AutomationTestProjectsFolder = new Folder(Path.GetTempPath()).SubFolder("AspenlaubTemp").SubFolder(nameof(NugetRestorerTest));
+        _automationTestProjectsFolder = new Folder(Path.GetTempPath()).SubFolder("AspenlaubTemp").SubFolder(nameof(NugetRestorerTest));
     }
 
     [TestInitialize]
@@ -23,9 +23,9 @@ public class NugetRestorerTest {
 
     [TestCleanup]
     public void CleanUp() {
-        if (!AutomationTestProjectsFolder.Exists()) { return; }
+        if (!_automationTestProjectsFolder.Exists()) { return; }
 
         var deleter = new FolderDeleter();
-        deleter.DeleteFolder(AutomationTestProjectsFolder);
+        deleter.DeleteFolder(_automationTestProjectsFolder);
     }
 }

@@ -14,6 +14,7 @@ using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Protch;
 using Aspenlaub.Net.GitHub.CSharp.Protch.Interfaces;
+using Version = Aspenlaub.Net.GitHub.CSharp.Nuclide.Entities.Version;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Components;
 
@@ -38,7 +39,9 @@ public class NuSpecCreator : INuSpecCreator {
 
     public async Task<XDocument> CreateNuSpecAsync(string solutionFileFullName, string checkedOutBranch, IList<string> tags, IErrorsAndInfos errorsAndInfos) {
         var document = new XDocument();
-        var projectFileFullName = solutionFileFullName.Replace(".sln", ".csproj");
+        string projectFileFullName = solutionFileFullName
+            .Replace(".slnx", ".csproj")
+            .Replace(".sln", ".csproj");
         if (!File.Exists(projectFileFullName)) {
             errorsAndInfos.Errors.Add(string.Format(Properties.Resources.ProjectFileNotFound, projectFileFullName));
             return document;
@@ -53,7 +56,7 @@ public class NuSpecCreator : INuSpecCreator {
             return document;
         }
         try {
-            var targetFrameworkElement = projectDocument.XPathSelectElements("./Project/PropertyGroup/TargetFramework", NamespaceManager).FirstOrDefault();
+            XElement targetFrameworkElement = projectDocument.XPathSelectElements("./Project/PropertyGroup/TargetFramework", NamespaceManager).FirstOrDefault();
             namespaceSelector = targetFrameworkElement != null ? "" : "cp:";
             targetFramework = targetFrameworkElement != null ? targetFrameworkElement.Value : "";
         } catch {
@@ -61,23 +64,23 @@ public class NuSpecCreator : INuSpecCreator {
             return document;
         }
 
-        var versionAsString = @"$version$";
+        string versionAsString = @"$version$";
         if (namespaceSelector == "") {
-            var project = _ProjectFactory.Load(solutionFileFullName, projectFileFullName, errorsAndInfos);
-            var releasePropertyGroup = project.PropertyGroups.FirstOrDefault(p => p.Condition.Contains("Release"));
+            IProject project = _ProjectFactory.Load(solutionFileFullName, projectFileFullName, errorsAndInfos);
+            IPropertyGroup releasePropertyGroup = project.PropertyGroups.FirstOrDefault(p => p.Condition.Contains("Release"));
             if (releasePropertyGroup != null) {
                 var solutionFolder = new Folder(solutionFileFullName.Substring(0, solutionFileFullName.LastIndexOf('\\')));
                 var fullOutputFolder = new Folder(Path.Combine(solutionFolder.FullName, releasePropertyGroup.OutputPath == "" ? @"bin\Release\" : releasePropertyGroup.OutputPath));
-                var assemblyFileName = fullOutputFolder.FullName + '\\' + project.RootNamespace + ".dll";
+                string assemblyFileName = fullOutputFolder.FullName + '\\' + project.RootNamespace + ".dll";
                 if (File.Exists(assemblyFileName)) {
                     versionAsString = FileVersionInfo.GetVersionInfo(assemblyFileName).FileVersion;
                 }
             }
         }
 
-        var versionFile = projectFileFullName.Substring(0, projectFileFullName.LastIndexOf('\\') + 1) + "version.json";
+        string versionFile = projectFileFullName.Substring(0, projectFileFullName.LastIndexOf('\\') + 1) + "version.json";
         if (File.Exists(versionFile)) {
-            var version = JsonSerializer.Deserialize<Entities.Version>(await File.ReadAllTextAsync(versionFile));
+            Version version = JsonSerializer.Deserialize<Version>(await File.ReadAllTextAsync(versionFile));
             if (version == null) {
                 throw new FileNotFoundException(versionFile);
             }
@@ -86,17 +89,19 @@ public class NuSpecCreator : INuSpecCreator {
             versionAsString = version.ToString();
         }
 
-        var dependencyIdsAndVersions = await _PackageReferencesScanner.DependencyIdsAndVersionsAsync(solutionFileFullName.Substring(0, solutionFileFullName.LastIndexOf('\\') + 1), false, errorsAndInfos);
+        IDictionary<string, string> dependencyIdsAndVersions = await _PackageReferencesScanner.DependencyIdsAndVersionsAsync(solutionFileFullName.Substring(0, solutionFileFullName.LastIndexOf('\\') + 1), false, errorsAndInfos);
         var element = new XElement(NugetNamespace + "package");
-        var solutionId = solutionFileFullName.Substring(solutionFileFullName.LastIndexOf('\\') + 1).Replace(".sln", "");
-        var metaData = await ReadMetaDataAsync(solutionId, checkedOutBranch, projectDocument, dependencyIdsAndVersions, tags, namespaceSelector, versionAsString, targetFramework, errorsAndInfos);
+        string solutionId = solutionFileFullName.Substring(solutionFileFullName.LastIndexOf('\\') + 1)
+            .Replace(".slnx", "")
+            .Replace(".sln", "");
+        XElement metaData = await ReadMetaDataAsync(solutionId, checkedOutBranch, projectDocument, dependencyIdsAndVersions, tags, namespaceSelector, versionAsString, targetFramework, errorsAndInfos);
         if (metaData == null) {
             errorsAndInfos.Errors.Add(string.Format(Properties.Resources.MissingMetaDataElementInProjectFile, projectFileFullName));
             return document;
         }
 
         element.Add(metaData);
-        var files = Files(projectDocument, namespaceSelector, errorsAndInfos);
+        XElement files = Files(projectDocument, namespaceSelector, errorsAndInfos);
         if (files == null) {
             errorsAndInfos.Errors.Add(string.Format(Properties.Resources.MissingElementInProjectFile, projectFileFullName));
             return document;
@@ -108,17 +113,17 @@ public class NuSpecCreator : INuSpecCreator {
     }
 
     protected async Task<XElement> ReadMetaDataAsync(string solutionId, string checkedOutBranch, XDocument projectDocument, IDictionary<string, string> dependencyIdsAndVersions, IList<string> tags, string namespaceSelector, string version, string targetFramework, IErrorsAndInfos errorsAndInfos) {
-        var rootNamespaceElement = projectDocument.XPathSelectElements("./" + namespaceSelector + "Project/" + namespaceSelector + "PropertyGroup/" + namespaceSelector + "RootNamespace", NamespaceManager).FirstOrDefault();
+        XElement rootNamespaceElement = projectDocument.XPathSelectElements("./" + namespaceSelector + "Project/" + namespaceSelector + "PropertyGroup/" + namespaceSelector + "RootNamespace", NamespaceManager).FirstOrDefault();
         if (rootNamespaceElement == null) { return null; }
 
         var developerSettingsSecret = new DeveloperSettingsSecret();
-        var developerSettings = await _SecretRepository.GetAsync(developerSettingsSecret, errorsAndInfos);
+        DeveloperSettings developerSettings = await _SecretRepository.GetAsync(developerSettingsSecret, errorsAndInfos);
         if (developerSettings == null) {
             errorsAndInfos.Errors.Add(string.Format(Properties.Resources.MissingDeveloperSettings, developerSettingsSecret.Guid + ".xml"));
             return null;
         }
 
-        var branchesWithPackages = await _BranchesWithPackagesRepository.GetBranchIdsAsync(errorsAndInfos);
+        IList<string> branchesWithPackages = await _BranchesWithPackagesRepository.GetBranchIdsAsync(errorsAndInfos);
         if (errorsAndInfos.AnyErrors()) {
             return null;
         }
@@ -131,25 +136,25 @@ public class NuSpecCreator : INuSpecCreator {
             return null;
         }
 
-        var author = developerSettings.Author;
-        var gitHubRepositoryUrl = developerSettings.GitHubRepositoryUrl;
-        var faviconUrl = developerSettings.FaviconUrl;
+        string author = developerSettings.Author;
+        string gitHubRepositoryUrl = developerSettings.GitHubRepositoryUrl;
+        string faviconUrl = developerSettings.FaviconUrl;
 
-        var packageId
+        string packageId
             = projectDocument.XPathSelectElements("./" + namespaceSelector + "Project/" + namespaceSelector + "PropertyGroup/" + namespaceSelector + "PackageId", NamespaceManager).FirstOrDefault()?.Value
               ?? rootNamespaceElement.Value;
-        var packageIdWithBranch = packageId
-            + _BranchesWithPackagesRepository.PackageInfix(checkedOutBranch, true);
-        var rootNamespaceWithBranch = rootNamespaceElement.Value
-            + _BranchesWithPackagesRepository.PackageInfix(checkedOutBranch, true);
+        string packageIdWithBranch = packageId
+                                     + _BranchesWithPackagesRepository.PackageInfix(checkedOutBranch, true);
+        string rootNamespaceWithBranch = rootNamespaceElement.Value
+                                         + _BranchesWithPackagesRepository.PackageInfix(checkedOutBranch, true);
 
         var element = new XElement(NugetNamespace + @"metadata");
-        foreach (var elementName in new[] { @"id", @"title", @"description", @"releaseNotes" }) {
+        foreach (string elementName in new[] { @"id", @"title", @"description", @"releaseNotes" }) {
             element.Add(
                 new XElement(NugetNamespace + elementName, elementName == @"id" ? packageIdWithBranch : rootNamespaceWithBranch));
         }
 
-        foreach (var elementName in new[] { @"authors", @"owners" }) {
+        foreach (string elementName in new[] { @"authors", @"owners" }) {
             element.Add(new XElement(NugetNamespace + elementName, author));
         }
 
@@ -157,7 +162,7 @@ public class NuSpecCreator : INuSpecCreator {
         element.Add(new XElement(NugetNamespace + @"icon", "packageicon.png"));
         element.Add(new XElement(NugetNamespace + @"iconUrl", faviconUrl));
         element.Add(new XElement(NugetNamespace + @"requireLicenseAcceptance", @"false"));
-        var year = DateTime.Now.Year;
+        int year = DateTime.Now.Year;
         element.Add(new XElement(NugetNamespace + @"copyright", $"Copyright {year}"));
         element.Add(new XElement(NugetNamespace + @"version", version));
         tags = tags.Where(t => !t.Contains('<') && !t.Contains('>') && !t.Contains('&') && !t.Contains(' ')).ToList();
@@ -173,7 +178,7 @@ public class NuSpecCreator : INuSpecCreator {
             dependenciesElement.Add(groupElement);
             dependenciesElement = groupElement;
         } else {
-            var targetFrameworkElement =
+            XElement targetFrameworkElement =
                 projectDocument.XPathSelectElements("./" + namespaceSelector + "Project/" + namespaceSelector + "PropertyGroup/" + namespaceSelector + "TargetFrameworkVersion", NamespaceManager)
                     .FirstOrDefault()
                 ?? projectDocument.XPathSelectElements("./" + namespaceSelector + "Project/" + namespaceSelector + "PropertyGroup/" + namespaceSelector + "TargetFramework", NamespaceManager)
@@ -185,10 +190,10 @@ public class NuSpecCreator : INuSpecCreator {
             }
         }
 
-        foreach (var dependencyElement in dependencyIdsAndVersions.Select(dependencyIdAndVersion
-                     => dependencyIdAndVersion.Value == ""
-                         ? new XElement(NugetNamespace + @"dependency", new XAttribute("id", dependencyIdAndVersion.Key))
-                         : new XElement(NugetNamespace + @"dependency", new XAttribute("id", dependencyIdAndVersion.Key), new XAttribute("version", dependencyIdAndVersion.Value)))) {
+        foreach (XElement dependencyElement in dependencyIdsAndVersions.Select(dependencyIdAndVersion
+                                                                                   => dependencyIdAndVersion.Value == ""
+                                                                                       ? new XElement(NugetNamespace + @"dependency", new XAttribute("id", dependencyIdAndVersion.Key))
+                                                                                       : new XElement(NugetNamespace + @"dependency", new XAttribute("id", dependencyIdAndVersion.Key), new XAttribute("version", dependencyIdAndVersion.Value)))) {
             dependenciesElement.Add(dependencyElement);
         }
 
@@ -200,35 +205,35 @@ public class NuSpecCreator : INuSpecCreator {
     }
 
     protected XElement Files(XDocument projectDocument, string namespaceSelector, IErrorsAndInfos errorsAndInfos) {
-        var rootNamespaceElement = projectDocument.XPathSelectElements("./" + namespaceSelector + "Project/" + namespaceSelector + "PropertyGroup/" + namespaceSelector + "RootNamespace", NamespaceManager).FirstOrDefault();
+        XElement rootNamespaceElement = projectDocument.XPathSelectElements("./" + namespaceSelector + "Project/" + namespaceSelector + "PropertyGroup/" + namespaceSelector + "RootNamespace", NamespaceManager).FirstOrDefault();
         if (rootNamespaceElement == null) {
             errorsAndInfos.Errors.Add(Properties.Resources.MissingRootNamespace);
             return null;
         }
 
-        var outputPathElement = projectDocument.XPathSelectElements("./" + namespaceSelector + "Project/" + namespaceSelector + "PropertyGroup/" + namespaceSelector + "OutputPath", NamespaceManager).SingleOrDefault(ParentIsReleasePropertyGroup);
-        var outputPath = outputPathElement == null ? @"bin\Release\" : outputPathElement.Value;
+        XElement outputPathElement = projectDocument.XPathSelectElements("./" + namespaceSelector + "Project/" + namespaceSelector + "PropertyGroup/" + namespaceSelector + "OutputPath", NamespaceManager).SingleOrDefault(ParentIsReleasePropertyGroup);
+        string outputPath = outputPathElement == null ? @"bin\Release\" : outputPathElement.Value;
 
-        var targetFrameworkElement = projectDocument.XPathSelectElements("./" + namespaceSelector + "Project/" + namespaceSelector + "PropertyGroup/" + namespaceSelector + "TargetFrameworkVersion", NamespaceManager).FirstOrDefault()
-                                     ?? projectDocument.XPathSelectElements("./" + namespaceSelector + "Project/" + namespaceSelector + "PropertyGroup/" + namespaceSelector + "TargetFramework", NamespaceManager).FirstOrDefault();
+        XElement targetFrameworkElement = projectDocument.XPathSelectElements("./" + namespaceSelector + "Project/" + namespaceSelector + "PropertyGroup/" + namespaceSelector + "TargetFrameworkVersion", NamespaceManager).FirstOrDefault()
+                                          ?? projectDocument.XPathSelectElements("./" + namespaceSelector + "Project/" + namespaceSelector + "PropertyGroup/" + namespaceSelector + "TargetFramework", NamespaceManager).FirstOrDefault();
         if (targetFrameworkElement == null) {
             errorsAndInfos.Errors.Add(Properties.Resources.MissingTargetFramework);
             return null;
         }
 
         var filesElement = new XElement(NugetNamespace + @"files");
-        var topLevelNamespace = rootNamespaceElement.Value;
+        string topLevelNamespace = rootNamespaceElement.Value;
         if (!topLevelNamespace.Contains('.')) {
             errorsAndInfos.Errors.Add(string.Format(Properties.Resources.TopLevelNamespaceLacksADot, topLevelNamespace));
             return null;
         }
 
         topLevelNamespace = topLevelNamespace.Substring(0, topLevelNamespace.IndexOf('.'));
-        foreach (var fileElement in new[] { @"dll", @"pdb" }.Select(extension
-                     => new XElement(NugetNamespace + @"file",
-                         new XAttribute(@"src", outputPath + topLevelNamespace + ".*." + extension),
-                         new XAttribute(@"exclude", string.Join(";", outputPath + @"*.Test*.*", outputPath + @"*.exe", outputPath + @"ref\*.*")),
-                         new XAttribute(@"target", @"lib\net" + TargetFrameworkElementToLibNetSuffix(targetFrameworkElement))))) {
+        foreach (XElement fileElement in new[] { @"dll", @"pdb" }.Select(extension
+                                                                             => new XElement(NugetNamespace + @"file",
+                                                                                             new XAttribute(@"src", outputPath + topLevelNamespace + ".*." + extension),
+                                                                                             new XAttribute(@"exclude", string.Join(";", outputPath + @"*.Test*.*", outputPath + @"*.exe", outputPath + @"ref\*.*")),
+                                                                                             new XAttribute(@"target", @"lib\net" + TargetFrameworkElementToLibNetSuffix(targetFrameworkElement))))) {
             filesElement.Add(fileElement);
         }
 
@@ -238,8 +243,8 @@ public class NuSpecCreator : INuSpecCreator {
 
         var foldersToPack = projectDocument.XPathSelectElements("./" + namespaceSelector + "Project/" + namespaceSelector + "ItemGroup/" + namespaceSelector + "Content", NamespaceManager)
             .Where(IncludesFileToPack).Select(IncludeAttributeValue).Select(f => f.Substring(0, f.LastIndexOf('\\'))).Distinct().ToList();
-        foreach (var folderToPack in foldersToPack) {
-            var target = folderToPack;
+        foreach (string folderToPack in foldersToPack) {
+            string target = folderToPack;
             if (folderToPack.StartsWith("lib")) {
                 target = @"lib\net" + TargetFrameworkElementToLibNetSuffix(targetFrameworkElement) + target.Substring(3);
             }
@@ -253,7 +258,7 @@ public class NuSpecCreator : INuSpecCreator {
     }
 
     private static string IncludeAttributeValue(XElement contentElement) {
-        var attribute = contentElement.Attributes().FirstOrDefault(a => a.Name == "Include");
+        XAttribute attribute = contentElement.Attributes().FirstOrDefault(a => a.Name == "Include");
         return new[] { @"build\", @"lib\", @"runtimes\" }.Any(folder => attribute?.Value.StartsWith(folder) == true) ? attribute?.Value : null;
     }
 
@@ -266,7 +271,7 @@ public class NuSpecCreator : INuSpecCreator {
     }
 
     private static string TargetFrameworkToLibNetSuffix(string targetFramework) {
-        var libNetSuffix = targetFramework.StartsWith("v")
+        string libNetSuffix = targetFramework.StartsWith("v")
             ? targetFramework.Replace("v", "").Replace(".", "")
             : targetFramework.StartsWith("net")
                 ? targetFramework.Substring(3)
@@ -278,13 +283,15 @@ public class NuSpecCreator : INuSpecCreator {
     }
 
     public async Task CreateNuSpecFileIfRequiredOrPresentAsync(bool required, string solutionFileFullName, string checkedOutBranch, IList<string> tags, IErrorsAndInfos errorsAndInfos) {
-        var nuSpecFile = solutionFileFullName.Replace(".sln", ".nuspec");
+        string nuSpecFile = solutionFileFullName
+            .Replace(".slnx", ".nuspec")
+            .Replace(".sln", ".nuspec");
         if (!required && !File.Exists(nuSpecFile)) { return; }
 
-        var document = await CreateNuSpecAsync(solutionFileFullName, checkedOutBranch, tags, errorsAndInfos);
+        XDocument document = await CreateNuSpecAsync(solutionFileFullName, checkedOutBranch, tags, errorsAndInfos);
         if (errorsAndInfos.Errors.Any()) { return; }
 
-        var tempFileName = Path.GetTempPath() + @"AspenlaubTemp\temp.nuspec";
+        string tempFileName = Path.GetTempPath() + @"AspenlaubTemp\temp.nuspec";
         document.Save(tempFileName);
         if (File.Exists(nuSpecFile) && await File.ReadAllTextAsync(nuSpecFile) == await File.ReadAllTextAsync(tempFileName)) { return; }
 

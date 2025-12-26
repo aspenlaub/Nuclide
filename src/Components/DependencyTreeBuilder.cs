@@ -14,7 +14,7 @@ public class DependencyTreeBuilder : IDependencyTreeBuilder {
         var logger = new NullLogger();
         var repository = new FindLocalPackagesResourceV2(packagesFolder);
         var packages = repository.GetPackages(logger, CancellationToken.None);
-        return BuildDependencyTree(repository, packages, new List<DependencyNode>());
+        return BuildDependencyTree(repository, packages, []);
     }
 
     protected IDependencyNode BuildDependencyTree(FindLocalPackagesResource repository, IEnumerable<LocalPackageInfo> packages, IList<DependencyNode> ignoreNodes) {
@@ -27,7 +27,7 @@ public class DependencyTreeBuilder : IDependencyTreeBuilder {
                 continue;
             }
 
-            IList<LocalPackageInfo> dependentPackages = new List<LocalPackageInfo>();
+            IList<LocalPackageInfo> dependentPackages = [];
             // ReSharper disable once LoopCanBeConvertedToQuery
             foreach (var dependencySet in package.Nuspec.GetDependencyGroups()) {
                 // ReSharper disable once LoopCanBePartlyConvertedToQuery
