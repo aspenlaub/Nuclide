@@ -3,7 +3,9 @@ using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Entities;
 
 public class SecretBranchesWithPackages : ISecret<BranchesWithPackages> {
-    public BranchesWithPackages DefaultValue => field ??= [
+    private BranchesWithPackages _DefaultBranchesWithPackages;
+
+    public BranchesWithPackages DefaultValue => _DefaultBranchesWithPackages ??= [
         new() { Branch = "master" },
         new() { Branch = "main" }
     ];

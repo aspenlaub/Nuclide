@@ -3,7 +3,8 @@
 namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Entities;
 
 public class SecretPackagesReferencedWithoutVersion : ISecret<PackagesReferencedWithoutVersion> {
-    public PackagesReferencedWithoutVersion DefaultValue => field ??= [
+    private PackagesReferencedWithoutVersion _DefaultPackagesReferencedWithoutVersion;
+    public PackagesReferencedWithoutVersion DefaultValue => _DefaultPackagesReferencedWithoutVersion ??= [
         new() { Id = "Microsoft.AspNetCore.App" },
         new() { Id = "Microsoft.NETCore.App" },
         new() { Id = "Microsoft.AspNetCore.All" }

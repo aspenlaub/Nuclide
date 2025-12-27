@@ -4,7 +4,8 @@ using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Entities;
 
 public class DeveloperSettingsSecret : ISecret<DeveloperSettings> {
-    public DeveloperSettings DefaultValue => field ??= Sample();
+    private DeveloperSettings _DefaultDeveloperSettings;
+    public DeveloperSettings DefaultValue => _DefaultDeveloperSettings ??= Sample();
 
     private DeveloperSettings Sample() {
         return new() {
