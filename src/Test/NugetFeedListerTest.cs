@@ -10,6 +10,7 @@ using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NuGet.Protocol.Core.Types;
 using IContainer = Autofac.IContainer;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Test;
@@ -27,18 +28,18 @@ public class NugetFeedListerTest {
     public async Task CanFindNuclidePackages() {
         var developerSettingsSecret = new DeveloperSettingsSecret();
         var errorsAndInfos  = new ErrorsAndInfos();
-        var developerSettings = await _container.Resolve<ISecretRepository>().GetAsync(developerSettingsSecret, errorsAndInfos);
+        DeveloperSettings developerSettings = await _container.Resolve<ISecretRepository>().GetAsync(developerSettingsSecret, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
         Assert.IsNotNull(developerSettings);
 
         const string packageId = "Nuclide";
-        var sut = _container.Resolve<INugetFeedLister>();
+        INugetFeedLister sut = _container.Resolve<INugetFeedLister>();
 
         var packages = (await sut.ListReleasedPackagesAsync(NugetFeed.AspenlaubLocalFeed, packageId, errorsAndInfos)).ToList();
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
-        Assert.IsTrue(packages.Count > 1, $"No {packageId} package was found");
-        Assert.IsTrue(packages.Count > 2, $"Only {packages.Count} {packageId} package/-s was/were found");
-        foreach (var package in packages) {
+        Assert.IsNotEmpty(packages, $"No {packageId} package was found");
+        Assert.IsGreaterThan(2, packages.Count, $"Only {packages.Count} {packageId} package/-s was/were found");
+        foreach (IPackageSearchMetadata package in packages) {
             Assert.AreEqual(packageId, package.Identity.Id);
         }
     }

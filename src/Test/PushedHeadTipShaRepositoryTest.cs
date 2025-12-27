@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Aspenlaub.Net.GitHub.CSharp.Nuclide.Entities;
@@ -33,7 +34,7 @@ public class PushedHeadTipShaRepositoryTest {
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
         _Sut.RemoveAsync(NugetFeed.AspenlaubLocalFeed, _jsonTestId, errorsAndInfos).Wait();
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
-        var headTipShas = _Sut.GetAsync(NugetFeed.AspenlaubLocalFeed, errorsAndInfos).Result;
+        List<string> headTipShas = _Sut.GetAsync(NugetFeed.AspenlaubLocalFeed, errorsAndInfos).Result;
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
         Assert.IsNotNull(headTipShas);
         Assert.IsFalse(headTipShas.Any(s => s == _testId || s == _jsonTestId));
@@ -42,17 +43,17 @@ public class PushedHeadTipShaRepositoryTest {
     [TestMethod]
     public async Task CanGetRemoveAndAddPushedHeadTipShas() {
         var errorsAndInfos = new ErrorsAndInfos();
-        var timeStamp = DateTime.Now.AddSeconds(-10);
+        DateTime timeStamp = DateTime.Now.AddSeconds(-10);
 
         await _Sut.AddAsync(NugetFeed.AspenlaubLocalFeed, _testId, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
-        var headTipShas = await _Sut.GetAsync(NugetFeed.AspenlaubLocalFeed, errorsAndInfos);
+        List<string> headTipShas = await _Sut.GetAsync(NugetFeed.AspenlaubLocalFeed, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
         Assert.IsTrue(headTipShas.Any(s => s == _testId));
 
-        var addedAt = await _Sut.AddedAtAsync(NugetFeed.AspenlaubLocalFeed, _testId, errorsAndInfos);
+        DateTime addedAt = await _Sut.AddedAtAsync(NugetFeed.AspenlaubLocalFeed, _testId, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
-        var now = DateTime.Now.AddSeconds(10);
+        DateTime now = DateTime.Now.AddSeconds(10);
         Assert.IsTrue(addedAt >= timeStamp && addedAt <= now, $"Time stamp {addedAt.ToLongTimeString()} should be between {timeStamp.ToLongTimeString()} and {now.ToLongTimeString()}");
 
         await _Sut.RemoveAsync(NugetFeed.AspenlaubLocalFeed, _testId, errorsAndInfos);
@@ -69,11 +70,11 @@ public class PushedHeadTipShaRepositoryTest {
 
         await _Sut.AddAsync(NugetFeed.AspenlaubLocalFeed, _jsonTestId, _packageId, _packageVersion, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
-        var headTipShas = await _Sut.GetAsync(NugetFeed.AspenlaubLocalFeed, errorsAndInfos);
+        List<string> headTipShas = await _Sut.GetAsync(NugetFeed.AspenlaubLocalFeed, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
         Assert.IsTrue(headTipShas.Any(s => s == _jsonTestId));
 
-        var packageVersion = await _Sut.PackageVersionAsync(NugetFeed.AspenlaubLocalFeed, _jsonTestId, errorsAndInfos);
+        string packageVersion = await _Sut.PackageVersionAsync(NugetFeed.AspenlaubLocalFeed, _jsonTestId, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
         Assert.AreEqual(_packageVersion, packageVersion);
 

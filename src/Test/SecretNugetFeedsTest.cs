@@ -24,9 +24,9 @@ public class SecretNugetFeedsTest {
     public async Task CanGetSecretNugetFeeds() {
         var nugetFeedsSecret = new SecretNugetFeeds();
         var errorsAndInfos = new ErrorsAndInfos();
-        var nugetFeeds = await _container.Resolve<ISecretRepository>().GetAsync(nugetFeedsSecret, errorsAndInfos);
+        NugetFeeds nugetFeeds = await _container.Resolve<ISecretRepository>().GetAsync(nugetFeedsSecret, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
         Assert.IsNotNull(nugetFeeds);
-        Assert.IsTrue(nugetFeeds.Count(f => f.IsMainFeed) == 1);
+        Assert.HasCount(1, nugetFeeds.Where(f => f.IsMainFeed));
     }
 }

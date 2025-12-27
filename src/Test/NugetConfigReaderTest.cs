@@ -35,7 +35,7 @@ public class NugetConfigReaderTest {
     [TestMethod]
     public void CanGetApiKey() {
         CreateNugetConfig();
-        var sut = _container.Resolve<INugetConfigReader>();
+        INugetConfigReader sut = _container.Resolve<INugetConfigReader>();
         var errorsAndInfos = new ErrorsAndInfos();
         Assert.AreEqual(ApiKey, sut.GetApiKey(NugetConfigFileName, Source, errorsAndInfos));
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
