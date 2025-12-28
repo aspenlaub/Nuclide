@@ -15,10 +15,10 @@ public class PackagesReferencedWithoutVersionTest {
     public async Task CanGetPackagesReferencedWithoutVersion() {
         var errorsAndInfos = new ErrorsAndInfos();
         var secret = new SecretPackagesReferencedWithoutVersion();
-        var container = new ContainerBuilder().UsePegh("Nuclide", new DummyCsArgumentPrompter()).Build();
-        var packagesReferencedWithoutVersion = await container.Resolve<ISecretRepository>().GetAsync(secret, errorsAndInfos);
+        IContainer container = new ContainerBuilder().UsePegh("Nuclide", new DummyCsArgumentPrompter()).Build();
+        PackagesReferencedWithoutVersion packagesReferencedWithoutVersion = await container.Resolve<ISecretRepository>().GetAsync(secret, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsPlusRelevantInfos());
         Assert.IsNotNull(packagesReferencedWithoutVersion);
-        Assert.IsTrue(packagesReferencedWithoutVersion.Count >= 3);
+        Assert.IsGreaterThanOrEqualTo(3, packagesReferencedWithoutVersion.Count);
     }
 }

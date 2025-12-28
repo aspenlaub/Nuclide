@@ -16,10 +16,10 @@ public class BranchesWithPackagesTest {
     public async Task CanGetBranchesWithPackages() {
         var errorsAndInfos = new ErrorsAndInfos();
         var secret = new SecretBranchesWithPackages();
-        var container = new ContainerBuilder().UsePegh("TheLittleThings", new DummyCsArgumentPrompter()).Build();
-        var branchesWithPackages = await container.Resolve<ISecretRepository>().GetAsync(secret, errorsAndInfos);
+        IContainer container = new ContainerBuilder().UsePegh("TheLittleThings", new DummyCsArgumentPrompter()).Build();
+        BranchesWithPackages branchesWithPackages = await container.Resolve<ISecretRepository>().GetAsync(secret, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsPlusRelevantInfos());
-        foreach (var expectedBranch in new[] { "master", "pkg-branch-test" }) {
+        foreach (string expectedBranch in new[] { "master", "pkg-branch-test" }) {
             Assert.IsTrue(branchesWithPackages.Any(s => s.Branch == expectedBranch),
                 $"Branch {expectedBranch} not found among branches with packages");
         }
