@@ -9,7 +9,6 @@ using Aspenlaub.Net.GitHub.CSharp.Nuclide.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 using NuGet.Common;
 using NuGet.Configuration;
-using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Components;
@@ -17,23 +16,23 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Components;
 public class NugetFeedLister(ISecretRepository secretRepository, IFolderResolver folderResolver) : INugetFeedLister {
     public async Task<IList<IPackageSearchMetadata>> ListReleasedPackagesAsync(string nugetFeedId, string packageId, IErrorsAndInfos errorsAndInfos) {
         var nugetFeedsSecret = new SecretNugetFeeds();
-        var nugetFeeds = await secretRepository.GetAsync(nugetFeedsSecret, errorsAndInfos);
-        var nugetFeed = nugetFeeds.FirstOrDefault(f => f.Id == nugetFeedId);
+        NugetFeeds nugetFeeds = await secretRepository.GetAsync(nugetFeedsSecret, errorsAndInfos);
+        NugetFeed nugetFeed = nugetFeeds.FirstOrDefault(f => f.Id == nugetFeedId);
         if (nugetFeed == null) {
             errorsAndInfos.Errors.Add(string.Format(Properties.Resources.UnknownNugetFeed, nugetFeedId, nugetFeedsSecret.Guid + ".xml"));
             return [];
         }
 
         try {
-            var source = await nugetFeed.UrlOrResolvedFolderAsync(folderResolver, errorsAndInfos);
+            string source = await nugetFeed.UrlOrResolvedFolderAsync(folderResolver, errorsAndInfos);
             if (errorsAndInfos.AnyErrors()) {  return []; }
 
             var packageSource = new PackageSource(source);
             var providers = new List<Lazy<INuGetResourceProvider>>();
             providers.AddRange(Repository.Provider.GetCoreV3());
             var repository = new SourceRepository(packageSource, providers);
-            var packageMetaDataResource = await repository.GetResourceAsync<PackageMetadataResource>();
-            var packageMetaData = (await packageMetaDataResource.GetMetadataAsync(packageId, false, false, new NullLogger(), CancellationToken.None)).ToList();
+            PackageMetadataResource packageMetaDataResource = await repository.GetResourceAsync<PackageMetadataResource>();
+            var packageMetaData = (await packageMetaDataResource.GetMetadataAsync(packageId, false, false, new SourceCacheContext(), new NullLogger(), CancellationToken.None)).ToList();
             return packageMetaData;
         } catch {
             errorsAndInfos.Errors.Add(string.Format(Properties.Resources.CouldNotAccessNugetFeed, nugetFeedId));

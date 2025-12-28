@@ -57,19 +57,19 @@ public class PinnedAddInVersionCheckerTest {
         await sut.CheckPinnedAddInVersionsAsync(PeghTarget.Folder(), errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
-        await sut.CheckPinnedAddInVersionsAsync(new List<string>(), PeghTarget.Folder(), errorsAndInfos);
+        await sut.CheckPinnedAddInVersionsAsync([], PeghTarget.Folder(), errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
         string package = dependencyIdsAndVersions.First().Key;
-        await sut.CheckPinnedAddInVersionsAsync(new List<string> { $"#addin nuget:?package={package}" }, PeghTarget.Folder(), errorsAndInfos);
+        await sut.CheckPinnedAddInVersionsAsync([$"#addin nuget:?package={package}"], PeghTarget.Folder(), errorsAndInfos);
         Assert.IsTrue(errorsAndInfos.Errors.Any());
         errorsAndInfos.Errors.Clear();
 
         string version = dependencyIdsAndVersions.First().Value;
-        await sut.CheckPinnedAddInVersionsAsync(new List<string> { $"#addin nuget:?package={package}&version={version}" }, PeghTarget.Folder(), errorsAndInfos);
+        await sut.CheckPinnedAddInVersionsAsync([$"#addin nuget:?package={package}&version={version}"], PeghTarget.Folder(), errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
-        await sut.CheckPinnedAddInVersionsAsync(new List<string> { $"#addin nuget:?package={package}&version=3.{version}" }, PeghTarget.Folder(), errorsAndInfos);
+        await sut.CheckPinnedAddInVersionsAsync([$"#addin nuget:?package={package}&version=3.{version}"], PeghTarget.Folder(), errorsAndInfos);
         Assert.IsTrue(errorsAndInfos.Errors.Any());
     }
 }

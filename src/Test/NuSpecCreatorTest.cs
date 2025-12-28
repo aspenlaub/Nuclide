@@ -100,7 +100,7 @@ public class NuSpecCreatorTest {
         XElement rootNamespaceElement = Document.XPathSelectElements("./Project/PropertyGroup/RootNamespace", NamespaceManager).FirstOrDefault();
         Assert.IsNotNull(rootNamespaceElement);
         string checkedOutBranch = _gitUtilities.CheckedOutBranch(_chabTarget.Folder());
-        Document = await sut.CreateNuSpecAsync(solutionFileFullName, checkedOutBranch , new List<string> { "Red", "White", "Blue", "Green<", "Orange&", "Violet>" }, errorsAndInfos);
+        Document = await sut.CreateNuSpecAsync(solutionFileFullName, checkedOutBranch , ["Red", "White", "Blue", "Green<", "Orange&", "Violet>"], errorsAndInfos);
         Assert.IsNotNull(Document);
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
         var developerSettingsSecret = new DeveloperSettingsSecret();
@@ -119,12 +119,12 @@ public class NuSpecCreatorTest {
         int year = DateTime.Now.Year;
         VerifyTextElement(@"/package/metadata/copyright", $"Copyright {year}");
         VerifyTextElementPattern(@"/package/metadata/version", @"\d+.\d+.\d+.\d+");
-        VerifyElements(@"/package/metadata/dependencies/group", "targetFramework", new List<string> { @"net10.0" }, false);
-        VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "Autofac" }, false);
-        VerifyElements(@"/package/files/file", "src", new List<string> { @"bin\Release\Aspenlaub.*.dll", @"bin\Release\Aspenlaub.*.pdb", @"bin\Release\packageicon.png" }, false);
-        VerifyElements(@"/package/files/file", "exclude", new List<string> { @"bin\Release\*.Test*.*;bin\Release\*.exe;bin\Release\ref\*.*", @"bin\Release\*.Test*.*;bin\Release\*.exe;bin\Release\ref\*.*", null }, false);
+        VerifyElements(@"/package/metadata/dependencies/group", "targetFramework", [@"net10.0"], false);
+        VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", ["Autofac"], false);
+        VerifyElements(@"/package/files/file", "src", [@"bin\Release\Aspenlaub.*.dll", @"bin\Release\Aspenlaub.*.pdb", @"bin\Release\packageicon.png"], false);
+        VerifyElements(@"/package/files/file", "exclude", [@"bin\Release\*.Test*.*;bin\Release\*.exe;bin\Release\ref\*.*", @"bin\Release\*.Test*.*;bin\Release\*.exe;bin\Release\ref\*.*", null], false);
         string target = @"lib\" + targetFrameworkElement.Value;
-        VerifyElements(@"/package/files/file", "target", new List<string> { target, target, "" }, false);
+        VerifyElements(@"/package/files/file", "target", [target, target, ""], false);
         VerifyTextElement(@"/package/metadata/tags", @"Red White Blue");
         VerifyTargetFrameworkMoniker(@"/package/metadata/dependencies/group", "targetFramework");
         VerifyTargetFrameworkMoniker(@"/package/files/file", "target");
@@ -148,11 +148,11 @@ public class NuSpecCreatorTest {
         string solutionFileFullName = _dvinTarget.Folder().SubFolder("src").FullName + @"\" + _dvinTarget.SolutionId + ".slnx";
         Assert.IsTrue(File.Exists(solutionFileFullName));
         string checkedOutBranch = _gitUtilities.CheckedOutBranch(_dvinTarget.Folder());
-        Document = await sut.CreateNuSpecAsync(solutionFileFullName, checkedOutBranch, new List<string> { "The", "Little", "Things" }, errorsAndInfos);
+        Document = await sut.CreateNuSpecAsync(solutionFileFullName, checkedOutBranch, ["The", "Little", "Things"], errorsAndInfos);
         Assert.IsNotNull(Document);
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
-        VerifyElementsInverse(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "Dvin" });
-        VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "Pegh" }, true);
+        VerifyElementsInverse(@"/package/metadata/dependencies/group/dependency", "id", ["Dvin"]);
+        VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", ["Pegh"], true);
         VerifyTargetFrameworkMoniker(@"/package/metadata/dependencies/group", "targetFramework");
         VerifyTargetFrameworkMoniker(@"/package/files/file", "target");
     }
@@ -175,10 +175,10 @@ public class NuSpecCreatorTest {
         string solutionFileFullName = _vishizhukelTarget.Folder().SubFolder("src").FullName + @"\" + _vishizhukelTarget.SolutionId + ".slnx";
         Assert.IsTrue(File.Exists(solutionFileFullName));
         string checkedOutBranch = _gitUtilities.CheckedOutBranch(_vishizhukelTarget.Folder());
-        Document = await sut.CreateNuSpecAsync(solutionFileFullName, checkedOutBranch, new List<string> { "The", "Little", "Things" }, errorsAndInfos);
+        Document = await sut.CreateNuSpecAsync(solutionFileFullName, checkedOutBranch, ["The", "Little", "Things"], errorsAndInfos);
         Assert.IsNotNull(Document);
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
-        VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "Dvin", "Microsoft.EntityFrameworkCore.SqlServer", "System.ComponentModel.Annotations" }, true);
+        VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", ["Dvin", "Microsoft.EntityFrameworkCore.SqlServer", "System.ComponentModel.Annotations"], true);
         VerifyTargetFrameworkMoniker(@"/package/metadata/dependencies/group", "targetFramework");
         VerifyTargetFrameworkMoniker(@"/package/files/file", "target");
     }
@@ -201,10 +201,10 @@ public class NuSpecCreatorTest {
         string solutionFileFullName = _vishnetIntegrationTestToolsTarget.Folder().SubFolder("src").FullName + @"\" + _vishnetIntegrationTestToolsTarget.SolutionId + ".slnx";
         Assert.IsTrue(File.Exists(solutionFileFullName));
         string checkedOutBranch = _gitUtilities.CheckedOutBranch(_vishnetIntegrationTestToolsTarget.Folder());
-        Document = await sut.CreateNuSpecAsync(solutionFileFullName, checkedOutBranch, new List<string> { "The", "Little", "Things" }, errorsAndInfos);
+        Document = await sut.CreateNuSpecAsync(solutionFileFullName, checkedOutBranch, ["The", "Little", "Things"], errorsAndInfos);
         Assert.IsNotNull(Document);
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
-        VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "MSTest.TestAdapter", "MSTest.TestFramework", "TashClient" }, true);
+        VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", ["MSTest.TestAdapter", "MSTest.TestFramework", "TashClient"], true);
         VerifyTargetFrameworkMoniker(@"/package/metadata/dependencies/group", "targetFramework");
         VerifyTargetFrameworkMoniker(@"/package/files/file", "target");
     }
@@ -235,7 +235,7 @@ public class NuSpecCreatorTest {
         XElement rootNamespaceElement = Document.XPathSelectElements("./Project/PropertyGroup/RootNamespace", NamespaceManager).FirstOrDefault();
         Assert.IsNotNull(rootNamespaceElement);
         string checkedOutBranch = _gitUtilities.CheckedOutBranch(_pakledTarget.Folder());
-        Document = await sut.CreateNuSpecAsync(solutionFileFullName, checkedOutBranch, new List<string> { "Red", "White", "Blue", "Green<", "Orange&", "Violet>" }, errorsAndInfos);
+        Document = await sut.CreateNuSpecAsync(solutionFileFullName, checkedOutBranch, ["Red", "White", "Blue", "Green<", "Orange&", "Violet>"], errorsAndInfos);
         Assert.IsNotNull(Document);
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
         var developerSettingsSecret = new DeveloperSettingsSecret();
@@ -255,12 +255,12 @@ public class NuSpecCreatorTest {
         int year = DateTime.Now.Year;
         VerifyTextElement(@"/package/metadata/copyright", $"Copyright {year}");
         VerifyTextElementPattern(@"/package/metadata/version", @"2.4.\d+.\d+");
-        VerifyElements(@"/package/metadata/dependencies/group", "targetFramework", new List<string> { @"net10.0" }, false);
-        VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "Autofac", "System.Text.Json" }, false);
-        VerifyElements(@"/package/files/file", "src", new List<string> { @"bin\Release\Aspenlaub.*.dll", @"bin\Release\Aspenlaub.*.pdb", @"bin\Release\packageicon.png" }, false);
-        VerifyElements(@"/package/files/file", "exclude", new List<string> { @"bin\Release\*.Test*.*;bin\Release\*.exe;bin\Release\ref\*.*", @"bin\Release\*.Test*.*;bin\Release\*.exe;bin\Release\ref\*.*", null }, false);
+        VerifyElements(@"/package/metadata/dependencies/group", "targetFramework", [@"net10.0"], false);
+        VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", ["Autofac", "System.Text.Json"], false);
+        VerifyElements(@"/package/files/file", "src", [@"bin\Release\Aspenlaub.*.dll", @"bin\Release\Aspenlaub.*.pdb", @"bin\Release\packageicon.png"], false);
+        VerifyElements(@"/package/files/file", "exclude", [@"bin\Release\*.Test*.*;bin\Release\*.exe;bin\Release\ref\*.*", @"bin\Release\*.Test*.*;bin\Release\*.exe;bin\Release\ref\*.*", null], false);
         string target = @"lib\" + targetFrameworkElement.Value;
-        VerifyElements(@"/package/files/file", "target", new List<string> { target, target, "" }, false);
+        VerifyElements(@"/package/files/file", "target", [target, target, ""], false);
         VerifyTextElement(@"/package/metadata/tags", @"Red White Blue");
         VerifyTargetFrameworkMoniker(@"/package/metadata/dependencies/group", "targetFramework");
         VerifyTargetFrameworkMoniker(@"/package/files/file", "target");
