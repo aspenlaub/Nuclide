@@ -35,7 +35,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Gitty" Version="2.0.2330.1300" />
+    <PackageReference Include="Gitty" Version="2.0.2350.655" />
     <PackageReference Include="NuGet.Packaging" Version="7.0.1" />
     <PackageReference Include="NuGet.Protocol" Version="7.0.1" />
     <PackageReference Include="Protch" Version="2.0.2348.1256" />
