@@ -19,15 +19,15 @@ public class PackageReferencesScanner(ISecretRepository secretRepository) : IPac
 
     public async Task<IDictionary<string, string>> DependencyIdsAndVersionsAsync(string projectFolder, bool includeTest, bool topFolderOnly, IErrorsAndInfos errorsAndInfos) {
         var dependencyIdsAndVersions = new Dictionary<string, string>();
-        var searchOption = topFolderOnly ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories;
+        SearchOption searchOption = topFolderOnly ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories;
 
         var secret = new SecretPackagesReferencedWithoutVersion();
-        var packagesReferencedWithoutVersion = await secretRepository.GetAsync(secret, errorsAndInfos);
+        PackagesReferencedWithoutVersion packagesReferencedWithoutVersion = await secretRepository.GetAsync(secret, errorsAndInfos);
         if (errorsAndInfos.AnyErrors()) { return dependencyIdsAndVersions; }
 
         var namespaceManager = new XmlNamespaceManager(new NameTable());
         namespaceManager.AddNamespace("cp", XmlNamespaces.CsProjNamespaceUri);
-        foreach (var fileName in Directory.GetFiles(projectFolder, "*.csproj", searchOption).Where(f => includeTest || !f.Contains(@"Test."))) {
+        foreach (string fileName in Directory.GetFiles(projectFolder, "*.csproj", searchOption).Where(f => includeTest || !f.Contains(@"Test."))) {
             XDocument document;
             string namespaceSelector;
             try {
@@ -36,21 +36,21 @@ public class PackageReferencesScanner(ISecretRepository secretRepository) : IPac
                 continue;
             }
             try {
-                var targetFrameworkElement = document.XPathSelectElements("./Project/PropertyGroup/TargetFramework", namespaceManager).FirstOrDefault();
+                XElement targetFrameworkElement = document.XPathSelectElements("./Project/PropertyGroup/TargetFramework", namespaceManager).FirstOrDefault();
                 namespaceSelector = targetFrameworkElement != null ? "" : "cp:";
             } catch {
                 continue;
             }
 
 
-            foreach (var element in document.XPathSelectElements("/" + namespaceSelector + "Project/" + namespaceSelector + "ItemGroup/" + namespaceSelector + "PackageReference", namespaceManager)) {
-                var id = element.Attribute("Include")?.Value;
+            foreach (XElement element in document.XPathSelectElements("/" + namespaceSelector + "Project/" + namespaceSelector + "ItemGroup/" + namespaceSelector + "PackageReference", namespaceManager)) {
+                string id = element.Attribute("Include")?.Value;
                 if (string.IsNullOrEmpty(id)) {
                     errorsAndInfos.Errors.Add(string.Format(Properties.Resources.PackageWithoutId, fileName));
                     continue;
                 }
 
-                var version = element.Attribute("Version")?.Value;
+                string version = element.Attribute("Version")?.Value;
                 if (string.IsNullOrEmpty(version)) {
                     version = element.XPathSelectElement("./" + namespaceSelector + "Version", namespaceManager)?.Value;
                 }

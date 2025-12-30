@@ -23,7 +23,7 @@ public class BranchesWithPackagesRepository(ISecretRepository secretRepository) 
     }
 
     public async Task<IList<string>> GetValidFoldersAsync(IErrorsAndInfos errorsAndInfos) {
-        var branchIds = await GetBranchIdsAsync(errorsAndInfos);
+        IList<string> branchIds = await GetBranchIdsAsync(errorsAndInfos);
         return branchIds.Select(LogicalFolderToWorkWith).Distinct().ToList();
     }
 

@@ -4,6 +4,7 @@ using System.Threading;
 using Aspenlaub.Net.GitHub.CSharp.Nuclide.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Nuclide.Interfaces;
 using NuGet.Common;
+using NuGet.Packaging;
 using NuGet.Protocol;
 using LocalPackageInfo = NuGet.Protocol.LocalPackageInfo;
 
@@ -13,14 +14,14 @@ public class DependencyTreeBuilder : IDependencyTreeBuilder {
     public IDependencyNode BuildDependencyTree(string packagesFolder) {
         var logger = new NullLogger();
         var repository = new FindLocalPackagesResourceV2(packagesFolder);
-        var packages = repository.GetPackages(logger, CancellationToken.None);
+        IEnumerable<LocalPackageInfo> packages = repository.GetPackages(logger, CancellationToken.None);
         return BuildDependencyTree(repository, packages, []);
     }
 
     protected IDependencyNode BuildDependencyTree(FindLocalPackagesResource repository, IEnumerable<LocalPackageInfo> packages, IList<DependencyNode> ignoreNodes) {
         var logger = new NullLogger();
         var tree = new DependencyNode();
-        foreach (var package in packages) {
+        foreach (LocalPackageInfo package in packages) {
             tree.Id = package.Identity.Id;
             tree.Version = package.Identity.Version.ToString();
             if (ignoreNodes.Any(n => EqualNodes(n, tree))) {
@@ -29,9 +30,9 @@ public class DependencyTreeBuilder : IDependencyTreeBuilder {
 
             IList<LocalPackageInfo> dependentPackages = [];
             // ReSharper disable once LoopCanBeConvertedToQuery
-            foreach (var dependencySet in package.Nuspec.GetDependencyGroups()) {
+            foreach (PackageDependencyGroup dependencySet in package.Nuspec.GetDependencyGroups()) {
                 // ReSharper disable once LoopCanBePartlyConvertedToQuery
-                foreach (var dependentPackage in dependencySet.Packages.SelectMany(d => repository.FindPackagesById(d.Id, logger, CancellationToken.None))) {
+                foreach (LocalPackageInfo dependentPackage in dependencySet.Packages.SelectMany(d => repository.FindPackagesById(d.Id, logger, CancellationToken.None))) {
                     var dependencyNode = new DependencyNode { Id = dependentPackage.Identity.Id, Version = dependentPackage.Identity.Version.Version.ToString() };
                     if (ignoreNodes.Any(n => EqualNodes(n, dependencyNode))) {
                         continue;

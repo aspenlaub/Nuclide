@@ -6,10 +6,10 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Extensions;
 
 public static class NugetFeedExtensions {
     public static async Task<string> UrlOrResolvedFolderAsync(this NugetFeed nugetFeed, IFolderResolver folderResolver, IErrorsAndInfos errorsAndInfos) {
-        var source = nugetFeed.Url;
+        string source = nugetFeed.Url;
         if (!nugetFeed.IsAFolderToResolve()) { return source; }
 
-        var folder = await folderResolver.ResolveAsync(source, errorsAndInfos);
+        IFolder folder = await folderResolver.ResolveAsync(source, errorsAndInfos);
         if (errorsAndInfos.AnyErrors()) { return source; }
 
         source = folder.FullName;

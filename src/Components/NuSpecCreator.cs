@@ -40,8 +40,7 @@ public class NuSpecCreator : INuSpecCreator {
     public async Task<XDocument> CreateNuSpecAsync(string solutionFileFullName, string checkedOutBranch, IList<string> tags, IErrorsAndInfos errorsAndInfos) {
         var document = new XDocument();
         string projectFileFullName = solutionFileFullName
-            .Replace(".slnx", ".csproj")
-            .Replace(".sln", ".csproj");
+            .Replace(".slnx", ".csproj");
         if (!File.Exists(projectFileFullName)) {
             errorsAndInfos.Errors.Add(string.Format(Properties.Resources.ProjectFileNotFound, projectFileFullName));
             return document;
@@ -58,7 +57,7 @@ public class NuSpecCreator : INuSpecCreator {
         try {
             XElement targetFrameworkElement = projectDocument.XPathSelectElements("./Project/PropertyGroup/TargetFramework", NamespaceManager).FirstOrDefault();
             namespaceSelector = targetFrameworkElement != null ? "" : "cp:";
-            targetFramework = targetFrameworkElement != null ? targetFrameworkElement.Value : "";
+            targetFramework = targetFrameworkElement?.Value ?? "";
         } catch {
             errorsAndInfos.Errors.Add(string.Format(Properties.Resources.ErrorReadingTargetFramework, projectFileFullName));
             return document;
@@ -92,8 +91,7 @@ public class NuSpecCreator : INuSpecCreator {
         IDictionary<string, string> dependencyIdsAndVersions = await _PackageReferencesScanner.DependencyIdsAndVersionsAsync(solutionFileFullName.Substring(0, solutionFileFullName.LastIndexOf('\\') + 1), false, errorsAndInfos);
         var element = new XElement(NugetNamespace + "package");
         string solutionId = solutionFileFullName.Substring(solutionFileFullName.LastIndexOf('\\') + 1)
-            .Replace(".slnx", "")
-            .Replace(".sln", "");
+            .Replace(".slnx", "");
         XElement metaData = await ReadMetaDataAsync(solutionId, checkedOutBranch, projectDocument, dependencyIdsAndVersions, tags, namespaceSelector, versionAsString, targetFramework, errorsAndInfos);
         if (metaData == null) {
             errorsAndInfos.Errors.Add(string.Format(Properties.Resources.MissingMetaDataElementInProjectFile, projectFileFullName));
@@ -212,7 +210,7 @@ public class NuSpecCreator : INuSpecCreator {
         }
 
         XElement outputPathElement = projectDocument.XPathSelectElements("./" + namespaceSelector + "Project/" + namespaceSelector + "PropertyGroup/" + namespaceSelector + "OutputPath", NamespaceManager).SingleOrDefault(ParentIsReleasePropertyGroup);
-        string outputPath = outputPathElement == null ? @"bin\Release\" : outputPathElement.Value;
+        string outputPath = outputPathElement?.Value ?? @"bin\Release\";
 
         XElement targetFrameworkElement = projectDocument.XPathSelectElements("./" + namespaceSelector + "Project/" + namespaceSelector + "PropertyGroup/" + namespaceSelector + "TargetFrameworkVersion", NamespaceManager).FirstOrDefault()
                                           ?? projectDocument.XPathSelectElements("./" + namespaceSelector + "Project/" + namespaceSelector + "PropertyGroup/" + namespaceSelector + "TargetFramework", NamespaceManager).FirstOrDefault();
@@ -284,8 +282,7 @@ public class NuSpecCreator : INuSpecCreator {
 
     public async Task CreateNuSpecFileIfRequiredOrPresentAsync(bool required, string solutionFileFullName, string checkedOutBranch, IList<string> tags, IErrorsAndInfos errorsAndInfos) {
         string nuSpecFile = solutionFileFullName
-            .Replace(".slnx", ".nuspec")
-            .Replace(".sln", ".nuspec");
+            .Replace(".slnx", ".nuspec");
         if (!required && !File.Exists(nuSpecFile)) { return; }
 
         XDocument document = await CreateNuSpecAsync(solutionFileFullName, checkedOutBranch, tags, errorsAndInfos);

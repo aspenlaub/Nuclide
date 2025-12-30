@@ -10,7 +10,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Components;
 
 public class PinnedAddInVersionChecker(IPackageReferencesScanner packageReferencesScanner) : IPinnedAddInVersionChecker {
     public async Task CheckPinnedAddInVersionsAsync(IFolder solutionFolder, IErrorsAndInfos errorsAndInfos) {
-        var buildCakeFileName = solutionFolder.FullName + @"\" + BuildCake.Standard;
+        string buildCakeFileName = solutionFolder.FullName + @"\" + BuildCake.Standard;
         if (!File.Exists(buildCakeFileName)) {
             errorsAndInfos.Errors.Add(string.Format(Properties.Resources.FileNotFound, buildCakeFileName));
             return;
@@ -20,10 +20,10 @@ public class PinnedAddInVersionChecker(IPackageReferencesScanner packageReferenc
     }
 
     public async Task CheckPinnedAddInVersionsAsync(IList<string> cakeScript, IFolder solutionFolder, IErrorsAndInfos errorsAndInfos) {
-        var dependencyIdsAndVersions = await packageReferencesScanner.DependencyIdsAndVersionsAsync(solutionFolder.FullName, true, errorsAndInfos);
+        IDictionary<string, string> dependencyIdsAndVersions = await packageReferencesScanner.DependencyIdsAndVersionsAsync(solutionFolder.FullName, true, errorsAndInfos);
         if (errorsAndInfos.AnyErrors()) { return; }
 
-        foreach (var dependencyIdAndVersion in dependencyIdsAndVersions) {
+        foreach (KeyValuePair<string, string> dependencyIdAndVersion in dependencyIdsAndVersions) {
             CheckPinnedAddInVersion(cakeScript, errorsAndInfos, dependencyIdAndVersion);
         }
     }
