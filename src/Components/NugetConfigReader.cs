@@ -16,15 +16,15 @@ public class NugetConfigReader : INugetConfigReader {
             return "";
         }
 
-        var sourceElement = document.XPathSelectElements("./configuration/packageSources/add[@key=\"" + source + "\"]").FirstOrDefault();
-        var sourceKey = sourceElement?.Attribute("value")?.Value;
+        XElement sourceElement = document.XPathSelectElements("./configuration/packageSources/add[@key=\"" + source + "\"]").FirstOrDefault();
+        string sourceKey = sourceElement?.Attribute("value")?.Value;
         if (string.IsNullOrEmpty(sourceKey)) {
             errorsAndInfos.Errors.Add(Properties.Resources.NoApiKeyFound);
             return "";
         }
 
-        var apiKeyElement = document.XPathSelectElements("./configuration/apikeys/add[@key=\"" + sourceKey + "\"]").FirstOrDefault();
-        var apiKey = apiKeyElement?.Attribute("value")?.Value;
+        XElement apiKeyElement = document.XPathSelectElements("./configuration/apikeys/add[@key=\"" + sourceKey + "\"]").FirstOrDefault();
+        string apiKey = apiKeyElement?.Attribute("value")?.Value;
         if (string.IsNullOrEmpty(apiKey)) {
             errorsAndInfos.Errors.Add(Properties.Resources.NoApiKeyFound);
         }

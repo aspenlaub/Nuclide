@@ -11,8 +11,8 @@ public class DependencyNode : IDependencyNode {
     public string Version { get; set; } = "";
 
     public List<IDependencyNode> FindNodes(Func<IDependencyNode, bool> criteriaFunc) {
-        var nodes = criteriaFunc(this) ? new List<IDependencyNode> { this } : null;
-        foreach (var childNodes in ChildNodes.Select(c => c.FindNodes(criteriaFunc)).Where(n => n != null)) {
+        List<IDependencyNode> nodes = criteriaFunc(this) ? [this] : null;
+        foreach (List<IDependencyNode> childNodes in ChildNodes.Select(c => c.FindNodes(criteriaFunc)).Where(n => n != null)) {
 
             if (nodes == null) {
                 nodes = childNodes;
