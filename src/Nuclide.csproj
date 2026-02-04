@@ -38,7 +38,7 @@
     <PackageReference Include="Gitty" Version="2.0.2387.519" />
     <PackageReference Include="NuGet.Packaging" Version="7.0.1" />
     <PackageReference Include="NuGet.Protocol" Version="7.0.1" />
-    <PackageReference Include="Protch" Version="2.0.2365.1362" />
+    <PackageReference Include="Protch" Version="2.0.2387.536" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">
