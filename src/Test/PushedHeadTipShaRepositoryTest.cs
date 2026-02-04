@@ -22,7 +22,7 @@ public class PushedHeadTipShaRepositoryTest {
 
     [ClassInitialize]
     public static void ClassInitialize(TestContext context) {
-        _container = new ContainerBuilder().UseNuclideProtchGittyAndPegh("Nuclide", new DummyCsArgumentPrompter()).Build();
+        _container = new ContainerBuilder().UseNuclideProtchGittyAndPegh("Nuclide").Build();
     }
 
     [TestInitialize]

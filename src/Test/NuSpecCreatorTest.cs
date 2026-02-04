@@ -50,7 +50,7 @@ public class NuSpecCreatorTest {
 
     [ClassInitialize]
     public static void ClassInitialize(TestContext context) {
-        _container = new ContainerBuilder().UseGittyTestUtilities().UseProtch().UseNuclideProtchGittyAndPegh("Nuclide", new DummyCsArgumentPrompter()).Build();
+        _container = new ContainerBuilder().UseGittyTestUtilities().UseProtch().UseNuclideProtchGittyAndPegh("Nuclide").Build();
         _gitUtilities = _container.Resolve<IGitUtilities>();
     }
 

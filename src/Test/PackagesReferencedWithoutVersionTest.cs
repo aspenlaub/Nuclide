@@ -15,7 +15,7 @@ public class PackagesReferencedWithoutVersionTest {
     public async Task CanGetPackagesReferencedWithoutVersion() {
         var errorsAndInfos = new ErrorsAndInfos();
         var secret = new SecretPackagesReferencedWithoutVersion();
-        IContainer container = new ContainerBuilder().UsePegh("Nuclide", new DummyCsArgumentPrompter()).Build();
+        IContainer container = new ContainerBuilder().UsePegh("Nuclide").Build();
         PackagesReferencedWithoutVersion packagesReferencedWithoutVersion = await container.Resolve<ISecretRepository>().GetAsync(secret, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsPlusRelevantInfos());
         Assert.IsNotNull(packagesReferencedWithoutVersion);

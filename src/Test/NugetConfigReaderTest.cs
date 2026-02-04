@@ -22,7 +22,7 @@ public class NugetConfigReaderTest {
 
     [ClassInitialize]
     public static void ClassInitialize(TestContext testContext) {
-        _container = new ContainerBuilder().UseGittyTestUtilities().UseNuclideProtchGittyAndPegh("Nuclide", new DummyCsArgumentPrompter()).Build();
+        _container = new ContainerBuilder().UseGittyTestUtilities().UseNuclideProtchGittyAndPegh("Nuclide").Build();
     }
 
     [TestCleanup]

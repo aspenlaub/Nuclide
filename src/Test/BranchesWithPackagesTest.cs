@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Threading.Tasks;
 using Aspenlaub.Net.GitHub.CSharp.Gitty.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Nuclide.Entities;
@@ -17,11 +16,11 @@ public class BranchesWithPackagesTest {
     public async Task CanGetBranchesWithPackages() {
         var errorsAndInfos = new ErrorsAndInfos();
         var secret = new SecretBranchesWithPackages();
-        IContainer container = new ContainerBuilder().UsePegh("TheLittleThings", new DummyCsArgumentPrompter()).Build();
+        IContainer container = new ContainerBuilder().UsePegh("TheLittleThings").Build();
         BranchesWithPackages branchesWithPackages = await container.Resolve<ISecretRepository>().GetAsync(secret, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsPlusRelevantInfos());
         foreach (string expectedBranch in new[] { "master", "pkg-branch-test" }) {
-            Assert.IsTrue(branchesWithPackages.Any(s => s.Branch == expectedBranch),
+            Assert.Contains(s => s.Branch == expectedBranch, branchesWithPackages,
                 $"Branch {expectedBranch} not found among branches with packages");
         }
     }

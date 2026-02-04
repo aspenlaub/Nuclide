@@ -23,7 +23,7 @@ public class DependencyTreeBuilderTest {
 
     [ClassInitialize]
     public static void ClassInitialize(TestContext context) {
-        _container = new ContainerBuilder().UseGittyTestUtilities().UseNuclideProtchGittyAndPegh("Nuclide", new DummyCsArgumentPrompter()).Build();
+        _container = new ContainerBuilder().UseGittyTestUtilities().UseNuclideProtchGittyAndPegh("Nuclide").Build();
         TargetRunner = _container.Resolve<ITestTargetRunner>();
     }
 
