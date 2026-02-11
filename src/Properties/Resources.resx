@@ -6,7 +6,7 @@
     Version 2.0
     
     The primary goals of this format is to allow a simple XML format 
-    that is mostly human-readable. The generation and parsing of the 
+    that is mostly human readable. The generation and parsing of the 
     various data types are done through the TypeConverter classes 
     associated with the data types.
     
@@ -209,9 +209,6 @@
   </data>
   <data name="PackageNeedsToBePushed" xml:space="preserve">
     <value>The package needs to be pushed</value>
-  </data>
-  <data name="PackageNotPinnedToVersion" xml:space="preserve">
-    <value>Cake add-in package "{0}" is not pinned to version "{1}"</value>
   </data>
   <data name="PackageVersionClashDueToFile" xml:space="preserve">
     <value>File "{0}" requests package '{1}' with version {2}, but another one version {3}</value>

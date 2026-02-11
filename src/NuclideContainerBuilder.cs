@@ -16,7 +16,6 @@ public static class NuclideContainerBuilder {
         builder.RegisterType<NugetPackageRestorer>().As<INugetPackageRestorer>();
         builder.RegisterType<NuSpecCreator>().As<INuSpecCreator>();
         builder.RegisterType<PackageReferencesScanner>().As<IPackageReferencesScanner>();
-        builder.RegisterType<PinnedAddInVersionChecker>().As<IPinnedAddInVersionChecker>();
         builder.RegisterType<PushedHeadTipShaRepository>().As<IPushedHeadTipShaRepository>();
         builder.RegisterType<BranchesWithPackagesRepository>().As<IBranchesWithPackagesRepository>();
         return builder;
@@ -30,7 +29,6 @@ public static class NuclideContainerBuilder {
         services.AddTransient<INugetPackageRestorer, NugetPackageRestorer>();
         services.AddTransient<INuSpecCreator, NuSpecCreator>();
         services.AddTransient<IPackageReferencesScanner, PackageReferencesScanner>();
-        services.AddTransient<IPinnedAddInVersionChecker, PinnedAddInVersionChecker>();
         services.AddTransient<IPushedHeadTipShaRepository, PushedHeadTipShaRepository>();
         services.AddSingleton<IBranchesWithPackagesRepository, BranchesWithPackagesRepository>();
         return services;

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
@@ -16,7 +15,6 @@ using Aspenlaub.Net.GitHub.CSharp.Gitty.TestUtilities;
 using Aspenlaub.Net.GitHub.CSharp.Nuclide.Components;
 using Aspenlaub.Net.GitHub.CSharp.Nuclide.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Nuclide.Interfaces;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Components;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
@@ -82,10 +80,7 @@ public class NuSpecCreatorTest {
         gitUtilities.Clone(url, "master", _chabTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
-        _container.Resolve<IEmbeddedCakeScriptCopier>().CopyCakeScriptEmbeddedInAssembly(Assembly.GetExecutingAssembly(), BuildCake.Standard, _chabTarget, errorsAndInfos);
-        Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
-
-        _container.Resolve<ITestTargetRunner>().RunBuildCakeScript(BuildCake.Standard, _chabTarget, "IgnoreOutdatedBuildCakePendingChangesAndDoCreateOrPushPackage", errorsAndInfos);
+        await _container.Resolve<IShatilayaRunner>().RunShatilayaAsync(_chabTarget.Folder(), "IgnorePendingChangesAndDoNotCreateOrPushPackage", errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
         Assert.AreEqual(2, errorsAndInfos.Infos.Count(i => i.Contains("Results File:")));
 
@@ -138,10 +133,7 @@ public class NuSpecCreatorTest {
         gitUtilities.Clone(url, "master", _dvinTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
-        _container.Resolve<IEmbeddedCakeScriptCopier>().CopyCakeScriptEmbeddedInAssembly(Assembly.GetExecutingAssembly(), BuildCake.Standard, _dvinTarget, errorsAndInfos);
-        Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
-
-        _container.Resolve<ITestTargetRunner>().RunBuildCakeScript(BuildCake.Standard, _dvinTarget, "CleanRestorePull", errorsAndInfos);
+        await _container.Resolve<IShatilayaRunner>().RunShatilayaAsync(_dvinTarget.Folder(), "CleanRestorePull", errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
         INuSpecCreator sut = _container.Resolve<INuSpecCreator>();
@@ -165,10 +157,7 @@ public class NuSpecCreatorTest {
         gitUtilities.Clone(url, "master", _vishizhukelTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
-        _container.Resolve<IEmbeddedCakeScriptCopier>().CopyCakeScriptEmbeddedInAssembly(Assembly.GetExecutingAssembly(), BuildCake.Standard, _vishizhukelTarget, errorsAndInfos);
-        Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
-
-        _container.Resolve<ITestTargetRunner>().RunBuildCakeScript(BuildCake.Standard, _vishizhukelTarget, "CleanRestorePull", errorsAndInfos);
+        await _container.Resolve<IShatilayaRunner>().RunShatilayaAsync(_vishizhukelTarget.Folder(), "CleanRestorePull", errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
         INuSpecCreator sut = _container.Resolve<INuSpecCreator>();
@@ -191,10 +180,7 @@ public class NuSpecCreatorTest {
         gitUtilities.Clone(url, "master", _vishnetIntegrationTestToolsTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
-        _container.Resolve<IEmbeddedCakeScriptCopier>().CopyCakeScriptEmbeddedInAssembly(Assembly.GetExecutingAssembly(), BuildCake.Standard, _vishnetIntegrationTestToolsTarget, errorsAndInfos);
-        Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
-
-        _container.Resolve<ITestTargetRunner>().RunBuildCakeScript(BuildCake.Standard, _vishnetIntegrationTestToolsTarget, "CleanRestorePull", errorsAndInfos);
+        await _container.Resolve<IShatilayaRunner>().RunShatilayaAsync(_vishnetIntegrationTestToolsTarget.Folder(), "CleanRestorePull", errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
         INuSpecCreator sut = _container.Resolve<INuSpecCreator>();
@@ -217,10 +203,7 @@ public class NuSpecCreatorTest {
         gitUtilities.Clone(url, "pkg-branch-test", _pakledTarget.Folder(), new CloneOptions { BranchName = "pkg-branch-test" }, true, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
-        _container.Resolve<IEmbeddedCakeScriptCopier>().CopyCakeScriptEmbeddedInAssembly(Assembly.GetExecutingAssembly(), BuildCake.Standard, _pakledTarget, errorsAndInfos);
-        Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
-
-        _container.Resolve<ITestTargetRunner>().RunBuildCakeScript(BuildCake.Standard, _pakledTarget, "IgnoreOutdatedBuildCakePendingChangesAndDoCreateOrPushPackage", errorsAndInfos);
+        await _container.Resolve<IShatilayaRunner>().RunShatilayaAsync(_pakledTarget.Folder(), "IgnorePendingChangesAndDoNotCreateOrPushPackage", errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
         Assert.AreEqual(2, errorsAndInfos.Infos.Count(i => i.Contains("Results File:")));
 

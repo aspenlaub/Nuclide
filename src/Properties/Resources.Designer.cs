@@ -340,15 +340,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cake add-in package &quot;{0}&quot; is not pinned to version &quot;{1}&quot;.
-        /// </summary>
-        internal static string PackageNotPinnedToVersion {
-            get {
-                return ResourceManager.GetString("PackageNotPinnedToVersion", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to File &quot;{0}&quot; requests package &apos;{1}&apos; with version {2}, but another one version {3}.
         /// </summary>
         internal static string PackageVersionClashDueToFile {
