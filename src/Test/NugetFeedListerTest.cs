@@ -4,10 +4,9 @@ using Aspenlaub.Net.GitHub.CSharp.Gitty;
 using Aspenlaub.Net.GitHub.CSharp.Gitty.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Nuclide.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Nuclide.Interfaces;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Components;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.Seoa.Extensions;
+using Aspenlaub.Net.GitHub.CSharp.Skladasu.Entities;
 using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NuGet.Protocol.Core.Types;
@@ -29,7 +28,7 @@ public class NugetFeedListerTest {
         var developerSettingsSecret = new DeveloperSettingsSecret();
         var errorsAndInfos  = new ErrorsAndInfos();
         DeveloperSettings developerSettings = await _container.Resolve<ISecretRepository>().GetAsync(developerSettingsSecret, errorsAndInfos);
-        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+        Assert.That.ThereWereNoErrors(errorsAndInfos);
         Assert.IsNotNull(developerSettings);
 
         const string packageId = "Nuclide";

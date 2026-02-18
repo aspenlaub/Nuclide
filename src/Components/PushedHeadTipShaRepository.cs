@@ -5,9 +5,10 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Aspenlaub.Net.GitHub.CSharp.Nuclide.Interfaces;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.Skladasu.Entities;
+using Aspenlaub.Net.GitHub.CSharp.Skladasu.Interfaces;
 using NuGet.Packaging;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Components;

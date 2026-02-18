@@ -2,7 +2,7 @@
 using System.Xml.Linq;
 using System.Xml.XPath;
 using Aspenlaub.Net.GitHub.CSharp.Nuclide.Interfaces;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.Skladasu.Interfaces;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Components;
 

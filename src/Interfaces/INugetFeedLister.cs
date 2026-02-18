@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.Skladasu.Interfaces;
 using NuGet.Protocol.Core.Types;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Interfaces;

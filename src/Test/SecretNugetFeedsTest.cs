@@ -2,10 +2,9 @@
 using System.Threading.Tasks;
 using Aspenlaub.Net.GitHub.CSharp.Gitty;
 using Aspenlaub.Net.GitHub.CSharp.Nuclide.Entities;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Components;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.Seoa.Extensions;
+using Aspenlaub.Net.GitHub.CSharp.Skladasu.Entities;
 using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -25,7 +24,7 @@ public class SecretNugetFeedsTest {
         var nugetFeedsSecret = new SecretNugetFeeds();
         var errorsAndInfos = new ErrorsAndInfos();
         NugetFeeds nugetFeeds = await _container.Resolve<ISecretRepository>().GetAsync(nugetFeedsSecret, errorsAndInfos);
-        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+        Assert.That.ThereWereNoErrors(errorsAndInfos);
         Assert.IsNotNull(nugetFeeds);
         Assert.HasCount(1, nugetFeeds.Where(f => f.IsMainFeed));
     }

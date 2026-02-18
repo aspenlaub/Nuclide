@@ -7,6 +7,7 @@ using Aspenlaub.Net.GitHub.CSharp.Nuclide.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Nuclide.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Nuclide.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.Skladasu.Interfaces;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Protocol.Core.Types;

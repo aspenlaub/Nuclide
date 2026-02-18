@@ -14,6 +14,7 @@ using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Protch;
 using Aspenlaub.Net.GitHub.CSharp.Protch.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.Skladasu.Interfaces;
 using Version = Aspenlaub.Net.GitHub.CSharp.Nuclide.Entities.Version;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Nuclide.Components;
