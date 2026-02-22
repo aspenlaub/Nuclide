@@ -239,7 +239,7 @@ public class NuSpecCreatorTest {
         VerifyTextElement(@"/package/metadata/copyright", $"Copyright {year}");
         VerifyTextElementPattern(@"/package/metadata/version", @"2.4.\d+.\d+");
         VerifyElements(@"/package/metadata/dependencies/group", "targetFramework", [@"net10.0"], false);
-        VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", ["Autofac", "System.Text.Json"], false);
+        VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", ["Autofac"], false);
         VerifyElements(@"/package/files/file", "src", [@"bin\Release\Aspenlaub.*.dll", @"bin\Release\Aspenlaub.*.pdb", @"bin\Release\packageicon.png"], false);
         VerifyElements(@"/package/files/file", "exclude", [@"bin\Release\*.Test*.*;bin\Release\*.exe;bin\Release\ref\*.*", @"bin\Release\*.Test*.*;bin\Release\*.exe;bin\Release\ref\*.*", null], false);
         string target = @"lib\" + targetFrameworkElement.Value;
