@@ -18,7 +18,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Seoa" Version="2.0.2424.481" />
+    <PackageReference Include="Seoa" Version="2.0.2455.1107" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Nuclide.csproj" />
