@@ -296,7 +296,6 @@ public class NuSpecCreatorTest {
         foreach (XElement element in elements) {
             string actualMoniker = element.Attribute(attributeName)?.Value;
             Assert.IsNotNull(actualMoniker);
-            Assert.DoesNotContain("-windows", actualMoniker);
         }
     }
 }

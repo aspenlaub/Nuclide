@@ -275,9 +275,6 @@ public class NuSpecCreator : INuSpecCreator {
             : targetFramework.StartsWith("net")
                 ? targetFramework.Substring(3)
                 : targetFramework;
-        if (libNetSuffix.Contains("-")) {
-            libNetSuffix = libNetSuffix.Substring(0, libNetSuffix.IndexOf("-", StringComparison.InvariantCulture));
-        }
         return libNetSuffix;
     }
 
