@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
@@ -80,7 +81,8 @@ public class NuSpecCreatorTest {
         gitUtilities.Clone(url, "master", _chabTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
-        await _container.Resolve<IShatilayaRunner>().RunShatilayaAsync(_chabTarget.Folder(), "IgnorePendingChangesAndDoNotCreateOrPushPackage", errorsAndInfos);
+        await _container.Resolve<IShatilayaRunner>().RunShatilayaAsync(_chabTarget.Folder(), "IgnorePendingChangesAndDoNotCreateOrPushPackage",
+            errorsAndInfos, CancellationToken.None);
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
         Assert.AreEqual(2, errorsAndInfos.Infos.Count(i => i.Contains("Results File:")));
 
@@ -133,7 +135,8 @@ public class NuSpecCreatorTest {
         gitUtilities.Clone(url, "master", _dvinTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
-        await _container.Resolve<IShatilayaRunner>().RunShatilayaAsync(_dvinTarget.Folder(), "CleanRestorePull", errorsAndInfos);
+        await _container.Resolve<IShatilayaRunner>().RunShatilayaAsync(_dvinTarget.Folder(), "CleanRestorePull",
+            errorsAndInfos, CancellationToken.None);
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
         INuSpecCreator sut = _container.Resolve<INuSpecCreator>();
@@ -157,7 +160,8 @@ public class NuSpecCreatorTest {
         gitUtilities.Clone(url, "master", _vishizhukelTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
-        await _container.Resolve<IShatilayaRunner>().RunShatilayaAsync(_vishizhukelTarget.Folder(), "CleanRestorePull", errorsAndInfos);
+        await _container.Resolve<IShatilayaRunner>().RunShatilayaAsync(_vishizhukelTarget.Folder(), "CleanRestorePull",
+            errorsAndInfos, CancellationToken.None);
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
         INuSpecCreator sut = _container.Resolve<INuSpecCreator>();
@@ -180,7 +184,8 @@ public class NuSpecCreatorTest {
         gitUtilities.Clone(url, "master", _vishnetIntegrationTestToolsTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
-        await _container.Resolve<IShatilayaRunner>().RunShatilayaAsync(_vishnetIntegrationTestToolsTarget.Folder(), "CleanRestorePull", errorsAndInfos);
+        await _container.Resolve<IShatilayaRunner>().RunShatilayaAsync(_vishnetIntegrationTestToolsTarget.Folder(), "CleanRestorePull",
+            errorsAndInfos, CancellationToken.None);
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
         INuSpecCreator sut = _container.Resolve<INuSpecCreator>();
@@ -203,7 +208,8 @@ public class NuSpecCreatorTest {
         gitUtilities.Clone(url, "pkg-branch-test", _pakledTarget.Folder(), new CloneOptions { BranchName = "pkg-branch-test" }, true, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
-        await _container.Resolve<IShatilayaRunner>().RunShatilayaAsync(_pakledTarget.Folder(), "IgnorePendingChangesAndDoNotCreateOrPushPackage", errorsAndInfos);
+        await _container.Resolve<IShatilayaRunner>().RunShatilayaAsync(_pakledTarget.Folder(), "IgnorePendingChangesAndDoNotCreateOrPushPackage",
+            errorsAndInfos, CancellationToken.None);
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
         Assert.AreEqual(2, errorsAndInfos.Infos.Count(i => i.Contains("Results File:")));
 

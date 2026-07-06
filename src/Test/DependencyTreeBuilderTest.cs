@@ -1,5 +1,7 @@
 ﻿using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Aspenlaub.Net.GitHub.CSharp.Gitty;
 using Aspenlaub.Net.GitHub.CSharp.Gitty.Components;
 using Aspenlaub.Net.GitHub.CSharp.Gitty.Extensions;
@@ -37,7 +39,7 @@ public class DependencyTreeBuilderTest {
     }
 
     [TestMethod]
-    public void ThereArentAnyUnwantedDependencies() {
+    public async Task ThereArentAnyUnwantedDependencies() {
         var gitUtilities = new GitUtilities();
         var errorsAndInfos = new ErrorsAndInfos();
         const string url = "https://github.com/aspenlaub/Shatilaya.git";
@@ -48,7 +50,7 @@ public class DependencyTreeBuilderTest {
         INugetPackageRestorer restorer = _container.Resolve<INugetPackageRestorer>();
         string sourceFolder = ShatilayaTarget.Folder().SubFolder("src").FullName;
         Directory.CreateDirectory(sourceFolder + @"\packages\");
-        restorer.RestoreNugetPackages(sourceFolder + @"\" + ShatilayaTarget.SolutionId + ".slnx", errorsAndInfos);
+        await restorer.RestoreNugetPackagesAsync(sourceFolder + @"\" + ShatilayaTarget.SolutionId + ".slnx", errorsAndInfos, CancellationToken.None);
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
         Assert.IsFalse(errorsAndInfos.Infos.Any(i => i.Contains("package(s) to packages.config")));
     }
