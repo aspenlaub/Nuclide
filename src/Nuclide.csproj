@@ -36,11 +36,11 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Gitty" Version="2.0.2644.568" />
+    <PackageReference Include="Gitty" Version="2.0.2653.717" />
     <PackageReference Include="NuGet.Packaging" Version="7.9.0" />
     <PackageReference Include="NuGet.Protocol" Version="7.9.0" />
-    <PackageReference Include="Protch" Version="2.0.2644.571" />
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.13" />
+    <PackageReference Include="Protch" Version="2.0.2653.720" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.14" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">
