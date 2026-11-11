@@ -116,7 +116,7 @@ public class NuSpecCreatorTest {
         int year = DateTime.Now.Year;
         VerifyTextElement(@"/package/metadata/copyright", $"Copyright {year}");
         VerifyTextElementPattern(@"/package/metadata/version", @"\d+.\d+.\d+.\d+");
-        VerifyElements(@"/package/metadata/dependencies/group", "targetFramework", [@"net10.0"], false);
+        VerifyElements(@"/package/metadata/dependencies/group", "targetFramework", [@"net11.0"], false);
         VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", ["Autofac"], false);
         VerifyElements(@"/package/files/file", "src", [@"bin\Release\Aspenlaub.*.dll", @"bin\Release\Aspenlaub.*.pdb", @"bin\Release\packageicon.png"], false);
         VerifyElements(@"/package/files/file", "exclude", [@"bin\Release\*.Test*.*;bin\Release\*.exe;bin\Release\ref\*.*", @"bin\Release\*.Test*.*;bin\Release\*.exe;bin\Release\ref\*.*", null], false);
@@ -171,7 +171,7 @@ public class NuSpecCreatorTest {
         Document = await sut.CreateNuSpecAsync(solutionFileFullName, checkedOutBranch, ["The", "Little", "Things"], errorsAndInfos);
         Assert.IsNotNull(Document);
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
-        VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", ["Dvin", "Microsoft.EntityFrameworkCore.SqlServer", "System.ComponentModel.Annotations"], true);
+        VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", ["Dvin", "Microsoft.EntityFrameworkCore.SqlServer", "System.Security.Cryptography.Pkcs"], true);
         VerifyTargetFrameworkMoniker(@"/package/metadata/dependencies/group", "targetFramework");
         VerifyTargetFrameworkMoniker(@"/package/files/file", "target");
     }
@@ -244,7 +244,7 @@ public class NuSpecCreatorTest {
         int year = DateTime.Now.Year;
         VerifyTextElement(@"/package/metadata/copyright", $"Copyright {year}");
         VerifyTextElementPattern(@"/package/metadata/version", @"2.4.\d+.\d+");
-        VerifyElements(@"/package/metadata/dependencies/group", "targetFramework", [@"net10.0"], false);
+        VerifyElements(@"/package/metadata/dependencies/group", "targetFramework", [@"net11.0"], false);
         VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", ["Autofac"], false);
         VerifyElements(@"/package/files/file", "src", [@"bin\Release\Aspenlaub.*.dll", @"bin\Release\Aspenlaub.*.pdb", @"bin\Release\packageicon.png"], false);
         VerifyElements(@"/package/files/file", "exclude", [@"bin\Release\*.Test*.*;bin\Release\*.exe;bin\Release\ref\*.*", @"bin\Release\*.Test*.*;bin\Release\*.exe;bin\Release\ref\*.*", null], false);
