@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFramework>net11.0</TargetFramework>
     <AssemblyName>Aspenlaub.Net.GitHub.CSharp.Nuclide</AssemblyName>
     <RootNamespace>Aspenlaub.Net.GitHub.CSharp.Nuclide</RootNamespace>
     <GenerateBuildInfoConfigFile>false</GenerateBuildInfoConfigFile>
@@ -36,10 +36,10 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Gitty" Version="2.0.2666.1228" />
-    <PackageReference Include="NuGet.Packaging" Version="7.9.0" />
-    <PackageReference Include="NuGet.Protocol" Version="7.9.0" />
-    <PackageReference Include="Protch" Version="2.0.2666.1235" />
+    <PackageReference Include="Gitty" Version="2.0.2666.1397" />
+    <PackageReference Include="NuGet.Packaging" Version="8.0.0" />
+    <PackageReference Include="NuGet.Protocol" Version="8.0.0" />
+    <PackageReference Include="Protch" Version="2.0.2666.1414" />
     <PackageReference Include="System.Security.Cryptography.Pkcs" Version="11.0.0" />
   </ItemGroup>
   <ItemGroup>
