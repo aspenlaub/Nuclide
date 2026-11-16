@@ -36,10 +36,10 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Gitty" Version="2.0.2667.1288" />
+    <PackageReference Include="Gitty" Version="2.0.2672.849" />
     <PackageReference Include="NuGet.Packaging" Version="8.0.0" />
     <PackageReference Include="NuGet.Protocol" Version="8.0.0" />
-    <PackageReference Include="Protch" Version="2.0.2666.1414" />
+    <PackageReference Include="Protch" Version="2.0.2672.861" />
     <PackageReference Include="System.Security.Cryptography.Pkcs" Version="11.0.0" />
   </ItemGroup>
   <ItemGroup>
